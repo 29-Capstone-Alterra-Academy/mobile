@@ -23,7 +23,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               // SKip button
               Row(
                 children: [
@@ -35,6 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         opacity: value.isSkip ? 1.0 : 0.0,
                         child: TextButton(
                           style: TextButton.styleFrom(
+                            primary: const Color(0XFFF30030),
                             fixedSize: const Size(50, 20),
                           ),
                           onPressed: () {
@@ -67,7 +68,39 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     controller: controller,
                     onPageChanged: (index) => value.changePage(index),
                     itemBuilder: (BuildContext context, int index) {
-                      return value.items[index];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 20),
+                          // image
+                          SizedBox(
+                            height: 200,
+                            width: 200,
+                            child: Image.asset(
+                              value.items[index]['image'],
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          const SizedBox(height: 50),
+                          // title
+                          Text(
+                            value.items[index]['title'],
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          // subtitle
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 31),
+                            child: Text(
+                              value.items[index]['subtitle'],
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(color: Color(0XFF7C7C7C)),
+                            ),
+                          ),
+                        ],
+                      );
                     },
                   ),
                 ),
@@ -111,10 +144,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                     onPressed: () {
-                      controller.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.linear,
-                      );
+                      if (value.currentPage == value.items.length - 1) {
+                        log('Navigate to Login');
+                      } else {
+                        controller.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.linear,
+                        );
+                      }
                     },
                     child: value.isSkip
                         ? const Text('Berikutnya')

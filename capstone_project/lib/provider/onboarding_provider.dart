@@ -1,76 +1,25 @@
 import 'package:flutter/material.dart';
 
 class OnboardingProvider extends ChangeNotifier {
-  final List<Widget> items = [
-    Column(
-      children: const [
-        SizedBox(height: 20),
-        // image
-        FlutterLogo(
-          size: 200,
-        ),
-        SizedBox(height: 45),
-        // title
-        Text(
-          'Title 1',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 10),
-        // subtitle
-        Text(
-          'Subtitle 1',
-          style: TextStyle(color: Color(0XFF7C7C7C)),
-        ),
-      ],
-    ),
-    Column(
-      children: const [
-        SizedBox(height: 20),
-        // image
-        FlutterLogo(
-          size: 200,
-        ),
-        SizedBox(height: 45),
-        // title
-        Text(
-          'Title 2',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 10),
-        // subtitle
-        Text(
-          'Subtitle 2',
-          style: TextStyle(color: Color(0XFF7C7C7C)),
-        ),
-      ],
-    ),
-    Column(
-      children: const [
-        SizedBox(height: 20),
-        // image
-        FlutterLogo(
-          size: 200,
-        ),
-        SizedBox(height: 45),
-        // title
-        Text(
-          'Title 3',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 10),
-        // subtitle
-        Text(
-          'Subtitle 3',
-          style: TextStyle(color: Color(0XFF7C7C7C)),
-        ),
-      ],
-    )
+  final List<Map<String, dynamic>> items = [
+    {
+      'image': 'assets/img/onboarding/onboarding1.png',
+      'title': 'Free speech platform',
+      'subtitle':
+          'Nomizo memberikan kesempatan bagi anda untuk berpendapat secara bebas selama tanpa ada unsur ujaran kebencian',
+    },
+    {
+      'image': 'assets/img/onboarding/onboarding2.png',
+      'title': 'Saving your time',
+      'subtitle':
+          'Nomizo membantu anda untuk menghemat waktu yang anda butuhkan saat anda berdiskusi',
+    },
+    {
+      'image': 'assets/img/onboarding/onboarding3.png',
+      'title': 'Find ideas',
+      'subtitle':
+          'Nomizo memudahkan anda dalam mencari sebuah ide yang anda butuhkan',
+    },
   ];
 
   int currentPage = 0;
