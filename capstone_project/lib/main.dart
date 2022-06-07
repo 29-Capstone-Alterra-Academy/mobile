@@ -1,5 +1,5 @@
 import 'package:capstone_project/provider/onboarding_provider.dart';
-import 'package:capstone_project/screens/onboarding_screen.dart';
+import 'package:capstone_project/screens/onboarding/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Nomizo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'Inter'
       ),
       home: const OnboardingScreen(),
     );
