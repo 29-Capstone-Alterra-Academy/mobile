@@ -1,9 +1,11 @@
-import 'dart:developer';
-
+// import package
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:capstone_project/provider/onboarding_provider.dart';
+
+// import screen file
+import 'package:capstone_project/themes/nomizo_theme.dart';
+import 'package:capstone_project/modelview/onboarding_provider.dart';
 import 'package:capstone_project/screens/onboarding/onboarding_item.dart';
 
 class OnboardingScreen extends StatelessWidget {
@@ -28,26 +30,25 @@ class OnboardingScreen extends StatelessWidget {
                     child: Opacity(
                       opacity: value.isSkip ? 1.0 : 0.0,
                       child: TextButton(
-                        style: TextButton.styleFrom(
-                          primary: const Color(0XFFF30030),
-                          fixedSize: const Size(50, 20),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                        ),
+                        style: Theme.of(context)
+                            .textButtonTheme
+                            .style
+                            ?.copyWith(
+                              foregroundColor: MaterialStateProperty.all(
+                                NomizoTheme.nomizoRed.shade600,
+                              ),
+                              overlayColor: MaterialStateProperty.all(
+                                NomizoTheme.nomizoRed.shade50,
+                              ),
+                              textStyle: MaterialStateProperty.all(
+                                const TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                            ),
                         onPressed: () {
-                          controller.animateToPage(
-                            value.items.length - 1,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.linear,
-                          );
+                          // Navigator.pushNamedAndRemoveUntil(
+                          //     context, '/login', (route) => false);
                         },
-                        child: const Text(
-                          'Skip',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: const Text('Skip'),
                       ),
                     ),
                   ),
@@ -80,12 +81,12 @@ class OnboardingScreen extends StatelessWidget {
                 activeIndex: value.currentPage,
                 count: value.items.length,
                 effect: ScaleEffect(
+                  scale: 1.5,
                   dotWidth: 6.0,
                   dotHeight: 6.0,
                   spacing: 4.0,
-                  dotColor: Colors.blue.shade100,
-                  strokeWidth: 3.0,
-                  activeDotColor: Colors.blue,
+                  activeDotColor: Theme.of(context).primaryColor,
+                  dotColor: NomizoTheme.nomizoTosca.shade50,
                 ),
               ),
               const SizedBox(height: 10),
@@ -99,14 +100,13 @@ class OnboardingScreen extends StatelessWidget {
                     ignoring: !value.isPrev,
                     child: Opacity(
                       opacity: value.isPrev ? 1.0 : 0.0,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          fixedSize: const Size(140, 42),
-                          side: BorderSide.none,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(21),
-                          ),
-                        ),
+                      child: TextButton(
+                        style:
+                            Theme.of(context).textButtonTheme.style?.copyWith(
+                                  fixedSize: MaterialStateProperty.all(
+                                    const Size(140, 42),
+                                  ),
+                                ),
                         onPressed: () {
                           controller.previousPage(
                             duration: const Duration(milliseconds: 300),
@@ -120,15 +120,17 @@ class OnboardingScreen extends StatelessWidget {
                   const SizedBox(width: 32),
                   // Next Button
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: const Size(140, 42),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(21),
-                      ),
-                    ),
+                    style: Theme.of(context)
+                        .elevatedButtonTheme
+                        .style
+                        ?.copyWith(
+                          fixedSize:
+                              MaterialStateProperty.all(const Size(140, 42)),
+                        ),
                     onPressed: () {
                       if (value.currentPage == value.items.length - 1) {
-                        log('Navigate to Login');
+                        // Navigator.pushNamedAndRemoveUntil(
+                        //     context, '/login', (route) => false);
                       } else {
                         controller.nextPage(
                           duration: const Duration(milliseconds: 300),

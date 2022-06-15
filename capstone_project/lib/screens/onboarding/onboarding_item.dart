@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:capstone_project/provider/onboarding_provider.dart';
+import 'package:capstone_project/themes/nomizo_theme.dart';
+import 'package:capstone_project/modelview/onboarding_provider.dart';
 
 class OnboardingItem extends StatefulWidget {
   final OnboardingProvider provider;
@@ -33,22 +34,21 @@ class _OnboardingItemState extends State<OnboardingItem> {
         // title
         Text(
           widget.provider.items[widget.indexPage]['title'],
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
         ),
         const SizedBox(height: 10),
         // subtitle
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+        Container(
+          width: 328,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
             widget.provider.items[widget.indexPage]['subtitle'],
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Color(0XFF7C7C7C),
-              fontSize: 14,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: NomizoTheme.nomizoDark.shade500,
+                ),
           ),
         ),
       ],
