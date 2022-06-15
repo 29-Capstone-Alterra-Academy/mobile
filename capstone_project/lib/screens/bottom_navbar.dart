@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:capstone_project/provider/bottom_navbar_provider.dart';
+import 'package:capstone_project/modelview/bottom_navbar_provider.dart';
 
 class BottomNavbar extends StatefulWidget {
   const BottomNavbar({Key? key}) : super(key: key);
