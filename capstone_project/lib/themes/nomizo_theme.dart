@@ -43,7 +43,7 @@ class NomizoTheme {
       style: TextButton.styleFrom(
         primary: nomizoTosca.shade600,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(4),
         ),
         textStyle: const TextStyle(
           fontSize: 14,
@@ -56,7 +56,7 @@ class NomizoTheme {
       style: OutlinedButton.styleFrom(
         primary: nomizoTosca.shade600,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(21),
+          borderRadius: BorderRadius.circular(4),
         ),
         textStyle: const TextStyle(
           fontSize: 14,
@@ -69,12 +69,40 @@ class NomizoTheme {
       style: ElevatedButton.styleFrom(
         primary: nomizoTosca.shade600,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(21),
+          borderRadius: BorderRadius.circular(4),
         ),
         textStyle: const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
+      ),
+    ),
+
+    /// Appbar theme
+    appBarTheme: AppBarTheme(
+      centerTitle: true,
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      iconTheme: IconThemeData(
+        color: nomizoDark.shade900,
+      ),
+      titleTextStyle: TextStyle(
+        fontSize: 18,
+        color: nomizoDark.shade900,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+
+    tabBarTheme: TabBarTheme(
+      labelColor: nomizoDark.shade900,
+      labelStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelColor: nomizoDark.shade500,
+      unselectedLabelStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
       ),
     ),
   );

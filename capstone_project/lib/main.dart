@@ -3,21 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-// import provider file
-import 'package:capstone_project/modelview/onboarding_provider.dart';
-import 'package:capstone_project/modelview/bottom_navbar_provider.dart';
-
-// import 
+// import utils & theme
 import 'package:capstone_project/utils/routes.dart';
+import 'package:capstone_project/utils/providers.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 
 void main() {
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => BottomNavbarProvider()),
-        ChangeNotifierProvider(create: (_) => OnboardingProvider()),
-      ],
+      providers: providers,
       child: const MyApp(),
     ),
   );
