@@ -1,16 +1,15 @@
 // import package
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:capstone_project/themes/nomizo_theme.dart';
+
+// import provider file
 import 'package:capstone_project/modelview/onboarding_provider.dart';
 import 'package:capstone_project/modelview/bottom_navbar_provider.dart';
 
-// import screen file
-import 'package:capstone_project/screens/auth_screen/login_screen.dart';
-import 'package:capstone_project/screens/home_screen/home_screen.dart';
-import 'package:capstone_project/screens/onboarding/onboarding_screen.dart';
+// import 
+import 'package:capstone_project/utils/routes.dart';
+import 'package:capstone_project/themes/nomizo_theme.dart';
 
 void main() {
   runApp(
@@ -39,20 +38,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Nomizo',
       theme: NomizoTheme.nomizoTheme,
       initialRoute: '/onboard',
-      onGenerateRoute: (RouteSettings settings) {
-        switch (settings.name) {
-          case '/':
-            return CupertinoPageRoute(
-                builder: (_) => const HomeScreen(), settings: settings);
-          case '/onboard':
-            return CupertinoPageRoute(
-                builder: (_) => const OnboardingScreen(), settings: settings);
-          case '/login':
-            return CupertinoPageRoute(
-                builder: (_) => const LoginScreen(), settings: settings);
-        }
-        return null;
-      },
+      onGenerateRoute: nomizoRoutes,
     );
   }
 }

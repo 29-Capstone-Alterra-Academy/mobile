@@ -45,8 +45,8 @@ class OnboardingScreen extends StatelessWidget {
                               ),
                             ),
                         onPressed: () {
-                          // Navigator.pushNamedAndRemoveUntil(
-                          //     context, '/login', (route) => false);
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/', (route) => false);
                         },
                         child: const Text('Skip'),
                       ),
@@ -129,8 +129,8 @@ class OnboardingScreen extends StatelessWidget {
                         ),
                     onPressed: () {
                       if (value.currentPage == value.items.length - 1) {
-                        // Navigator.pushNamedAndRemoveUntil(
-                        //     context, '/login', (route) => false);
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/', (route) => false);
                       } else {
                         controller.nextPage(
                           duration: const Duration(milliseconds: 300),
