@@ -42,12 +42,23 @@ class APIServices {
     }
   }
 
-  /// GET POPULAR CATEGORY
-  Future getCategroy() async {
+  /// POST | CREATE CATEGORY
+  Future createCategory(CategoryModel categoryModel) async {
+    try {
+      await dio.post('$_baseURL/topic', data: categoryModel.toJson());
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// GET POPULAR | Newesr CATEGORY
+  Future getCategroy({String? sortby}) async {
     try {
       var response = await dio.get(
         '$_baseURL/topic',
-        queryParameters: {'sort_by': 'activity_count'},
+        queryParameters: {'sort_by': sortby ?? 'activity_count'},
       );
 
       List<CategoryModel> topics = (response.data as List)
@@ -61,18 +72,17 @@ class APIServices {
     }
   }
 
+  /// GET CATEGORY BY ID
   Future getCategroyById(int idCategory) async {
     try {
-      var response = await dio.get(
-        '$_baseURL/topic/$idCategory',
-        queryParameters: {'sort_by': 'activity_count'},
-      );
+      var response = await dio.get('$_baseURL/topic/$idCategory');
 
-      List<CategoryModel> category = (response.data as List)
+      // CategoryModel category = CategoryModel.fromJson(response.data);
+      List<CategoryModel> topics = (response.data as List)
           .map((e) => CategoryModel.fromJson(e))
           .toList();
 
-      return category.first;
+      return topics.first;
     } on Exception catch (e) {
       log(e.toString());
       return CategoryModel();
@@ -119,10 +129,6 @@ class APIServices {
   Future getUsersById(int idUser) async {
     try {
       var response = await dio.get('$_baseURL/user/$idUser');
-
-      // List<UserModel> topics = (response.data as List)
-      //     .map((e) => UserModel.fromJson(e))
-      //     .toList();
 
       var users = UserModel.fromJson(response.data);
 
@@ -298,6 +304,21 @@ class APIServices {
       );
     } catch (e) {
       log(e.toString());
+    }
+  }
+
+  /// POST | UPLOAD THREAD
+  Future uploadThread(ThreadModel threadModel) async {
+    try {
+      await dio.post(
+        '$_baseURL/topic/${threadModel.topic!.id}/thread',
+        data: threadModel.toJson(),
+      );
+
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return true;
     }
   }
 

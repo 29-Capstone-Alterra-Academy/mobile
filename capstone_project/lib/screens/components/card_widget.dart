@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 // import package
+import 'package:capstone_project/modelview/upload_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -46,6 +47,74 @@ Widget circlePic(double size, String img) {
     ),
   );
 }
+
+/// SELECT CATEGORY CARD
+Widget selectCategory(
+    BuildContext context,
+    CategoryModel categoryModel,
+    UploadProvider uploadProvider,
+  ) {
+    final provider = Provider.of<CategoryProvider>(context, listen: false);
+    return InkWell(
+      onTap: () {
+        uploadProvider.selectCategory(categoryModel);
+        Navigator.pop(context);
+      },
+      child: Container(
+        height: 60,
+        padding: const EdgeInsets.all(4),
+        child: Row(
+          children: [
+            // image
+            circlePic(52, categoryModel.profileImage!),
+            const SizedBox(width: 8),
+            // content
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // title
+                  Text(
+                    categoryModel.name ?? '',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                  const SizedBox(height: 2),
+                  // subtitle
+                  Text(
+                    '${categoryModel.activityCount} Postingan',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: NomizoTheme.nomizoDark.shade500,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            // button
+            Consumer<CategoryProvider>(builder: (context, value, _) {
+              if (value.isSub) {
+                return outlinedBtn28(context, () async {
+                  buildLoading(context);
+                  await provider
+                      .unsubscribeCategory(value.currentCategory.id ?? 9)
+                      .then((value) => Navigator.pop(context));
+                }, 'Mengikuti');
+              }
+              return elevatedBtn28(context, () async {
+                buildLoading(context);
+                provider
+                    .subscribeCategory(value.currentCategory.id ?? 9)
+                    .then((value) => Navigator.pop(context));
+              }, 'Ikuti');
+            }),
+          ],
+        ),
+      ),
+    );
+  }
 
 /// CATEGORY CARD
 Widget categoryCard(BuildContext context, CategoryModel categoryModel) {
@@ -562,8 +631,7 @@ Widget threadCard(BuildContext context, ThreadModel threadModel) {
           if (threadModel.images!.isNotEmpty)
             CarouselSlider.builder(
               itemCount: threadModel.images!.length,
-              itemBuilder:
-                  (BuildContext context, int itemIndex, int pageViewIndex) {
+              itemBuilder: (context, itemIndex, pageViewIndex) {
                 return Image.network(
                   threadModel.images![itemIndex],
                   errorBuilder: (context, error, stackTrace) {

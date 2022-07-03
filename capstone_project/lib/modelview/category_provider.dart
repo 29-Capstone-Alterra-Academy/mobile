@@ -61,7 +61,6 @@ class CategoryProvider extends ChangeNotifier {
     changeState(FiniteState.loading);
     category = await _apiServices.getCategroy();
     changeState(FiniteState.none);
-    notifyListeners();
   }
 
   /// Get Category By ID
@@ -134,7 +133,7 @@ class CategoryProvider extends ChangeNotifier {
     changeState(FiniteState.none);
   }
 
-  /// Reset search reslut
+  /// Reset search result
   void resetSearchResult() {
     isSearched = false;
     results = null;

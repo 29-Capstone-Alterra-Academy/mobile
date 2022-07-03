@@ -1,5 +1,7 @@
 // import package
+import 'package:capstone_project/modelview/upload_provider.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
+import 'package:capstone_project/screens/upload_screen/upload_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -395,7 +397,12 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
           },
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Provider.of<UploadProvider>(context, listen: false)
+                .selectCategory(provider.currentCategory);
+            Navigator.pushNamed(context, '/upload');
+          },
+          backgroundColor: NomizoTheme.nomizoTosca.shade600,
           child: const Icon(Icons.add),
         ),
       ),
