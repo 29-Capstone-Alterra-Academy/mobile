@@ -1,24 +1,19 @@
 // import package
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:capstone_project/themes/nomizo_theme.dart';
-import 'package:capstone_project/modelview/onboarding_provider.dart';
-import 'package:capstone_project/modelview/bottom_navbar_provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
-// import screen file
-import 'package:capstone_project/screens/auth_screen/login_screen.dart';
-import 'package:capstone_project/screens/home_screen/home_screen.dart';
-import 'package:capstone_project/screens/onboarding/onboarding_screen.dart';
+// import utils & theme
+import 'package:capstone_project/utils/routes.dart';
+import 'package:capstone_project/utils/providers.dart';
+import 'package:capstone_project/themes/nomizo_theme.dart';
+import 'package:capstone_project/screens/components/custom_timeago_message.dart';
 
 void main() {
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => BottomNavbarProvider()),
-        ChangeNotifierProvider(create: (_) => OnboardingProvider()),
-      ],
+      providers: providers,
       child: const MyApp(),
     ),
   );
@@ -34,25 +29,14 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    // Override "en" locale messages with custom messages that are more precise and short
+    timeago.setLocaleMessages('id', MyCustomMessages());
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Nomizo',
       theme: NomizoTheme.nomizoTheme,
-      initialRoute: '/onboard',
-      onGenerateRoute: (RouteSettings settings) {
-        switch (settings.name) {
-          case '/':
-            return CupertinoPageRoute(
-                builder: (_) => const HomeScreen(), settings: settings);
-          case '/onboard':
-            return CupertinoPageRoute(
-                builder: (_) => const OnboardingScreen(), settings: settings);
-          case '/login':
-            return CupertinoPageRoute(
-                builder: (_) => const LoginScreen(), settings: settings);
-        }
-        return null;
-      },
+      initialRoute: '/',
+      onGenerateRoute: nomizoRoutes,
     );
   }
 }
