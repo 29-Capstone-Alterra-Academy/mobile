@@ -1,28 +1,23 @@
-// import package
+import 'package:capstone_project/modelview/search_screen_provider.dart';
+import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/themes/nomizo_theme.dart';
+import 'package:capstone_project/utils/finite_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// import utils, theme & component
-import 'package:capstone_project/utils/finite_state.dart';
-import 'package:capstone_project/themes/nomizo_theme.dart';
-import 'package:capstone_project/screens/components/card_widget.dart';
-
-// import provider
-import 'package:capstone_project/modelview/search_screen_provider.dart';
-
-class PopularCategoryScreen extends StatefulWidget {
-  const PopularCategoryScreen({Key? key}) : super(key: key);
+class PopularUserScreen extends StatefulWidget {
+  const PopularUserScreen({Key? key}) : super(key: key);
 
   @override
-  State<PopularCategoryScreen> createState() => _PopularCategoryScreenState();
+  State<PopularUserScreen> createState() => _PopularUserScreenState();
 }
 
-class _PopularCategoryScreenState extends State<PopularCategoryScreen> {
+class _PopularUserScreenState extends State<PopularUserScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<SearchScreenProvider>(context, listen: false)
-          .getPopularCategory();
+          .getPopularUser();
     });
     super.initState();
   }
@@ -39,11 +34,11 @@ class _PopularCategoryScreenState extends State<PopularCategoryScreen> {
             Icons.keyboard_arrow_left,
           ),
         ),
-        title: const Text('Kategori Terpopuler'),
+        title: const Text('Pengguna Terpopuler'),
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/searchCategory');
+              Navigator.pushNamed(context, '/searchUser');
             },
             icon: const Icon(Icons.search),
           ),
@@ -64,14 +59,14 @@ class _PopularCategoryScreenState extends State<PopularCategoryScreen> {
               child: Text('Something Wrong!!!'),
             );
           } else {
-            if (value.popularCategory.isEmpty) {
-              return const Center(child: Text('TOPIC TERPOPULER TIDAK ADA'));
+            if (value.popularUser.isEmpty) {
+              return const Center(child: Text('User Terpopuler Tidak Ada'));
             } else {
               return ListView.builder(
-                itemCount: value.popularCategory.length,
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                itemCount: value.popularUser.length,
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                 itemBuilder: (context, index) {
-                  return categoryCard(context, value.popularCategory[index]);
+                  return userCard(context, value.popularUser[index]);
                 },
               );
             }

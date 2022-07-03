@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart';
+import 'package:capstone_project/modelview/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
@@ -12,6 +13,14 @@ class BottomNavbar extends StatefulWidget {
 }
 
 class _BottomNavbarState extends State<BottomNavbar> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<ProfileProvider>(context, listen: false).getProfile();
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<BottomNavbarProvider>(context, listen: false);

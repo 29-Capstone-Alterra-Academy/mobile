@@ -124,7 +124,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               children: [
                 threadTabView(value.searchResult.threads),
                 // threadTabView('date'),
-                notFound(),
+                notFound(context),
                 categoryTabView(value.searchResult.topics),
                 usersTabView(value.searchResult.users),
               ],
@@ -137,7 +137,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Widget threadTabView(List<ThreadModel>? threadModel) {
     if (threadModel == null) {
-      return notFound();
+      return notFound(context);
     }
     return ListView.separated(
       itemCount: threadModel.length,
@@ -166,7 +166,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Widget categoryTabView(List<CategoryModel>? categoryModel) {
     if (categoryModel == null) {
-      return notFound();
+      return notFound(context);
     }
     return ListView.separated(
       itemCount: categoryModel.length,
@@ -183,7 +183,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Widget usersTabView(List<UserModel>? userModel) {
     if (userModel == null) {
-      return notFound();
+      return notFound(context);
     }
     return ListView.separated(
       itemCount: userModel.length,
@@ -196,27 +196,5 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         return userCard(context, userModel[index]);
       },
     );
-  }
-
-  Widget notFound() {
-    return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset('assets/img/not_found.png'),
-        const SizedBox(height: 18),
-        Text(
-          'Oops, Maaf !',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: NomizoTheme.nomizoRed.shade600,
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-        Text(
-          'Pencarian tidak ditemukan',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-      ],
-    ));
   }
 }
