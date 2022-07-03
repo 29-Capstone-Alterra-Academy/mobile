@@ -1,18 +1,22 @@
 // import package
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
-// import screen file
-import 'package:capstone_project/screen/auth_screen/login_screen.dart';
-import 'package:capstone_project/screen/home_screen/home_screen.dart';
-import 'package:capstone_project/screen/auth_screen/register_screen.dart';
-import 'screen/auth_screen/reset_password/email_verification_screen.dart';
-import 'screen/auth_screen/reset_password/code_verification_screen.dart';
-import 'screen/auth_screen/reset_password/reset_password_screen.dart';
+// import utils & theme
+import 'package:capstone_project/utils/routes.dart';
+import 'package:capstone_project/utils/providers.dart';
+import 'package:capstone_project/themes/nomizo_theme.dart';
+import 'package:capstone_project/screens/components/custom_timeago_message.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: providers,
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -25,40 +29,14 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    // Override "en" locale messages with custom messages that are more precise and short
+    timeago.setLocaleMessages('id', MyCustomMessages());
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        //primarySwatch: Colors.white,
-        fontFamily: 'Inter',
-      ),
-      initialRoute: '/login',
-      onGenerateRoute: (RouteSettings settings) {
-        switch (settings.name) {
-          case '/':
-            return CupertinoPageRoute(
-                builder: (_) => const HomeScreen(), settings: settings);
-          case '/login':
-            return CupertinoPageRoute(
-                builder: (_) => const LoginScreen(), settings: settings);
-          case '/register':
-            return CupertinoPageRoute(
-                builder: (_) => const RegisterScreen(), settings: settings);
-          case '/verifiedEmail':
-            return CupertinoPageRoute(
-                builder: (_) => const VerificationEmailScreen(),
-                settings: settings);
-          case '/verifiedCode':
-            return CupertinoPageRoute(
-                builder: (_) => const VerificationCodeScreen(),
-                settings: settings);
-          case '/resetpassword':
-            return CupertinoPageRoute(
-                builder: (_) => const ResetPasswordScreen(),
-                settings: settings);
-        }
-        return null;
-      },
+      title: 'Flutter Nomizo',
+      theme: NomizoTheme.nomizoTheme,
+      initialRoute: '/',
+      onGenerateRoute: nomizoRoutes,
     );
   }
 }
