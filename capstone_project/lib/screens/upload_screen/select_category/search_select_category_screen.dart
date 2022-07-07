@@ -1,19 +1,27 @@
-import 'package:capstone_project/modelview/category_provider.dart';
-import 'package:capstone_project/screens/components/card_widget.dart';
-import 'package:capstone_project/screens/components/thread_component.dart';
-import 'package:capstone_project/themes/nomizo_theme.dart';
-import 'package:capstone_project/utils/finite_state.dart';
+// import package
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class SearchThreadScreen extends StatefulWidget {
-  const SearchThreadScreen({Key? key}) : super(key: key);
+// import utils & theme
+import 'package:capstone_project/utils/finite_state.dart';
+import 'package:capstone_project/themes/nomizo_theme.dart';
+
+// import component
+import 'package:capstone_project/screens/components/card_widget.dart';
+
+// import provider
+import 'package:capstone_project/modelview/upload_provider.dart';
+
+class SearchSelectCategoryScreen extends StatefulWidget {
+  const SearchSelectCategoryScreen({Key? key}) : super(key: key);
 
   @override
-  State<SearchThreadScreen> createState() => _SearchThreadScreenState();
+  State<SearchSelectCategoryScreen> createState() =>
+      _SearchSelectCategoryScreenState();
 }
 
-class _SearchThreadScreenState extends State<SearchThreadScreen> {
+class _SearchSelectCategoryScreenState
+    extends State<SearchSelectCategoryScreen> {
   late final TextEditingController _searchController;
 
   @override
@@ -30,7 +38,7 @@ class _SearchThreadScreenState extends State<SearchThreadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<CategoryProvider>(context, listen: false);
+    final provider = Provider.of<UploadProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -46,11 +54,11 @@ class _SearchThreadScreenState extends State<SearchThreadScreen> {
           controller: _searchController,
           autofocus: true,
           onSubmitted: (value) {
-            provider.getSearchResult(category: provider.currentCategory.name);
+            provider.searchCategory(_searchController.text.trim());
           },
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
-            hintText: 'Cari aktivitas di',
+            hintText: 'Cari kategori',
             suffixIcon: IconButton(
               onPressed: () {
                 _searchController.clear();
@@ -66,7 +74,7 @@ class _SearchThreadScreenState extends State<SearchThreadScreen> {
           ),
         ),
       ),
-      body: Consumer<CategoryProvider>(
+      body: Consumer<UploadProvider>(
         builder: (context, value, _) {
           if (value.state == FiniteState.loading) {
             return Center(
@@ -80,7 +88,7 @@ class _SearchThreadScreenState extends State<SearchThreadScreen> {
               child: Text('Something Wrong!!!'),
             );
           } else {
-            if (value.results == null || value.results!.threads == null) {
+            if (value.results == null || value.results!.topics == null) {
               if (value.isSearched) {
                 return notFound(context);
               }
@@ -88,10 +96,12 @@ class _SearchThreadScreenState extends State<SearchThreadScreen> {
             } else {
               return ListView.builder(
                 itemCount: value.results!.threads!.length,
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                 itemBuilder: (context, index) {
-                  return ThreadComponent(
-                    threadModel: value.results!.threads![index],
-                    isOpened: false,
+                  return selectCategory(
+                    context,
+                    value.results!.topics![index],
+                    provider,
                   );
                 },
               );

@@ -21,13 +21,16 @@ class _SplashScreenState extends State<SplashScreen> {
         } else {
           Navigator.pushNamedAndRemoveUntil(
               context, '/login', (route) => false);
-
         }
       });
     });
     return Scaffold(
       body: Center(
-        child: Image.asset('assets/img/app_logo.png'),
+        child: Image.asset(
+          'assets/images/nomizo-icon.png',
+          width: MediaQuery.of(context).size.width / 2.5,
+          height: MediaQuery.of(context).size.height / 5,
+        ),
       ),
     );
   }

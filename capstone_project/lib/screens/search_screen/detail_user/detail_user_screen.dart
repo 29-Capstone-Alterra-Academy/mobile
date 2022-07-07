@@ -1,16 +1,25 @@
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/modelview/user_provider.dart';
-import 'package:capstone_project/screens/components/button_widget.dart';
-import 'package:capstone_project/screens/components/card_widget.dart';
-import 'package:capstone_project/themes/nomizo_theme.dart';
-import 'package:capstone_project/utils/finite_state.dart';
+// import package
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+// import utils & theme
+import 'package:capstone_project/utils/finite_state.dart';
+import 'package:capstone_project/themes/nomizo_theme.dart';
+
+// import component
+import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/screens/components/button_widget.dart';
+import 'package:capstone_project/screens/components/more_component.dart';
+import 'package:capstone_project/screens/components/thread_component.dart';
+import 'package:capstone_project/screens/components/report_component.dart';
+
+// import provider
+import 'package:capstone_project/modelview/user_provider.dart';
+
 class DetailUserScreen extends StatefulWidget {
-  final UserModel? userModel;
-  const DetailUserScreen({Key? key, this.userModel}) : super(key: key);
+  final int idUser;
+  const DetailUserScreen({Key? key, required this.idUser}) : super(key: key);
 
   @override
   State<DetailUserScreen> createState() => _DetailUserScreenState();
@@ -21,9 +30,7 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<UserProvider>(context, listen: false)
-          .getUserById(widget.userModel!.id ?? 0);
-      Provider.of<UserProvider>(context, listen: false)
-          .changePage(0, widget.userModel!.username!);
+          .getDetailUser(widget.idUser);
     });
     super.initState();
   }
@@ -63,42 +70,29 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
           const SizedBox(width: 12),
           IconButton(
             onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              showMoreMenu(
+                context,
+                MoreComponent(
+                  myLabels: const <String>[
+                    'Bagikan profil pengguna',
+                    'Laporkan',
+                  ],
+                  myFunctions: <void Function()>[
+                    // share user
+                    () async {
+                      Navigator.pop(context);
+                      await Share.share('Share');
+                    },
+                    // report thread
+                    () {
+                      Navigator.pop(context);
+                      showMoreMenu(
+                        context,
+                        const ReportComponent(type: "user"),
+                      );
+                    },
+                  ],
                 ),
-                builder: (context) {
-                  return bottomSheetCard(
-                    context,
-                    [
-                      'Bagikan profil pengguna',
-                      'Laporkan',
-                    ],
-                    [
-                      // share category
-                      () async {
-                        Navigator.pop(context);
-                        await Share.share('Share');
-                      },
-                      // report category
-                      () {
-                        Navigator.pop(context);
-                        showModalBottomSheet(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.vertical(top: Radius.circular(16)),
-                          ),
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return reportCard(context, "user");
-                          },
-                        );
-                      },
-                    ],
-                  );
-                },
               );
             },
             icon: const Icon(Icons.more_horiz),
@@ -124,7 +118,8 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Column(
                     children: [
                       // Profile
@@ -311,9 +306,15 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         if (value.currentPage == 0) {
-                          return threadCard(context, value.threads[index]);
+                          return ThreadComponent(
+                            threadModel: value.threads[index],
+                            isOpened: false,
+                          );
                         } else {
-                          return threadCard(context, value.threads[index]);
+                          return ThreadComponent(
+                            threadModel: value.threads[index],
+                            isOpened: false,
+                          );
                         }
                       },
                     );

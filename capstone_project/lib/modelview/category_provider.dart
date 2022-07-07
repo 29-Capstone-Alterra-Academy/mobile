@@ -1,9 +1,13 @@
+// import package
 import 'package:flutter/cupertino.dart';
 
+// import utils
 import 'package:capstone_project/utils/finite_state.dart';
 
+// import service
 import 'package:capstone_project/services/api_services.dart';
 
+// import model
 import 'package:capstone_project/model/user_model.dart';
 import 'package:capstone_project/model/search_model.dart';
 import 'package:capstone_project/model/thread_model.dart';
@@ -61,15 +65,15 @@ class CategoryProvider extends ChangeNotifier {
     changeState(FiniteState.loading);
     category = await _apiServices.getCategroy();
     changeState(FiniteState.none);
-    notifyListeners();
   }
 
   /// Get Category By ID
-  void getCategoryById(int idCategory) async {
+  void getDetailCategory(int idCategory) async {
     changeState(FiniteState.loading);
     currentCategory = await _apiServices.getCategroyById(idCategory);
+    threads = await _apiServices.getThread(
+        categoryName: currentCategory.name, sortby: 'like');
     changeState(FiniteState.none);
-    notifyListeners();
   }
 
   /// Get Moderator On This Category
@@ -134,7 +138,7 @@ class CategoryProvider extends ChangeNotifier {
     changeState(FiniteState.none);
   }
 
-  /// Reset search reslut
+  /// Reset search result
   void resetSearchResult() {
     isSearched = false;
     results = null;

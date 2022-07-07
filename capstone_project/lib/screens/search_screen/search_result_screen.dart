@@ -1,4 +1,5 @@
 // import package
+import 'package:capstone_project/screens/components/thread_component.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -145,9 +146,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         height: 1,
         color: NomizoTheme.nomizoDark.shade100,
       ),
-      itemBuilder: (context, index) {
-        return threadCard(context, threadModel[index]);
-      },
+      itemBuilder: (context, index) => ThreadComponent(
+        threadModel: threadModel[index],
+        isOpened: false,
+      ),
+      // return threadCard(context, threadModel[index]);
+      // },
     );
   }
 

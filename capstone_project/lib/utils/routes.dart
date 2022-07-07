@@ -1,8 +1,10 @@
 // import package
-import 'package:capstone_project/screens/splash_screen.dart';
+
+import 'package:capstone_project/screens/upload_screen/select_category/create_category_screen.dart';
 import 'package:flutter/cupertino.dart';
 
 // import screen
+import 'package:capstone_project/screens/splash_screen.dart';
 import 'package:capstone_project/screens/bottom_navbar.dart';
 import 'package:capstone_project/screens/auth_screen/login_screen.dart';
 import 'package:capstone_project/screens/upload_screen/upload_screen.dart';
@@ -16,9 +18,11 @@ import 'package:capstone_project/screens/search_screen/detail_category/contibuto
 import 'package:capstone_project/screens/auth_screen/reset_password/reset_password_screen.dart';
 import 'package:capstone_project/screens/search_screen/detail_category/search_thread_screen.dart';
 import 'package:capstone_project/screens/auth_screen/reset_password/code_verification_screen.dart';
+import 'package:capstone_project/screens/upload_screen/select_category/select_category_screen.dart';
 import 'package:capstone_project/screens/auth_screen/reset_password/email_verification_screen.dart';
 import 'package:capstone_project/screens/search_screen/popular_category/search_category_screen.dart';
 import 'package:capstone_project/screens/search_screen/popular_category/popular_category_screen.dart';
+import 'package:capstone_project/screens/upload_screen/select_category/search_select_category_screen.dart';
 
 Route<dynamic>? nomizoRoutes(RouteSettings settings) {
   switch (settings.name) {
@@ -73,6 +77,16 @@ Route<dynamic>? nomizoRoutes(RouteSettings settings) {
     case '/searchUser':
       return CupertinoPageRoute(
           builder: (_) => const SearchUserScreen(), settings: settings);
+    case '/selectCategory':
+      return CupertinoPageRoute(
+          builder: (_) => const SelectCategoryScreen(), settings: settings);
+    case '/searchSelectCategory':
+      return CupertinoPageRoute(
+          builder: (_) => const SearchSelectCategoryScreen(),
+          settings: settings);
+    case '/createCategory':
+      return CupertinoPageRoute(
+          builder: (_) => const CreateCategoryScreen(), settings: settings);
   }
   return null;
 }

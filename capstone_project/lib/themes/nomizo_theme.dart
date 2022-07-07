@@ -81,8 +81,9 @@ class NomizoTheme {
     /// Appbar theme
     appBarTheme: AppBarTheme(
       centerTitle: true,
-      elevation: 0,
-      backgroundColor: Colors.transparent,
+      elevation: 1,
+      backgroundColor: nomizoDark.shade50,
+      shadowColor: nomizoDark.shade100,
       iconTheme: IconThemeData(
         color: nomizoDark.shade900,
       ),

@@ -1,10 +1,17 @@
-import 'package:capstone_project/model/moderator_model.dart';
+// import package
+import 'package:flutter/cupertino.dart';
+
+// import utils
+import 'package:capstone_project/utils/finite_state.dart';
+
+// import service
+import 'package:capstone_project/services/api_services.dart';
+
+// import model
+import 'package:capstone_project/model/user_model.dart';
 import 'package:capstone_project/model/search_model.dart';
 import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/services/api_services.dart';
-import 'package:capstone_project/utils/finite_state.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:capstone_project/model/moderator_model.dart';
 
 class UserProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
@@ -52,11 +59,14 @@ class UserProvider extends ChangeNotifier {
   }
 
   /// Get User By ID
-  void getUserById(int idUser) async {
+  void getDetailUser(int idUser) async {
     changeState(FiniteState.loading);
     selectedUser = await _apiServices.getUsersById(idUser);
+    threads = await _apiServices.getThread(
+      username: selectedUser!.username,
+      sortby: 'like',
+    );
     changeState(FiniteState.none);
-    notifyListeners();
   }
 
   /// Get Popular Thread From This User
@@ -110,5 +120,4 @@ class UserProvider extends ChangeNotifier {
     results = null;
     notifyListeners();
   }
-
 }
