@@ -1,23 +1,29 @@
 // import package
-import 'package:capstone_project/modelview/upload_provider.dart';
-import 'package:capstone_project/screens/components/button_widget.dart';
-import 'package:capstone_project/screens/upload_screen/upload_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
-// import utils, theme & component
+// import utils, theme
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 
-import 'package:capstone_project/model/category_model.dart';
+// import component
+import 'package:capstone_project/screens/components/button_widget.dart';
+import 'package:capstone_project/screens/components/more_component.dart';
+import 'package:capstone_project/screens/components/thread_component.dart';
+import 'package:capstone_project/screens/components/report_component.dart';
 
+// import provider
+import 'package:capstone_project/modelview/upload_provider.dart';
 import 'package:capstone_project/modelview/category_provider.dart';
-import 'package:share_plus/share_plus.dart';
+
+
 
 class DetailCategoryScreen extends StatefulWidget {
-  final CategoryModel? categoryModel;
-  const DetailCategoryScreen({Key? key, this.categoryModel}) : super(key: key);
+  final int idCategory;
+  const DetailCategoryScreen({Key? key, required this.idCategory})
+      : super(key: key);
 
   @override
   State<DetailCategoryScreen> createState() => _DetailCategoryScreenState();
@@ -28,9 +34,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<CategoryProvider>(context, listen: false)
-          .getCategoryById(widget.categoryModel!.id ?? 0);
-      Provider.of<CategoryProvider>(context, listen: false)
-          .changePage(0, widget.categoryModel!.name!);
+          .getDetailCategory(widget.idCategory);
     });
     super.initState();
   }
@@ -61,59 +65,43 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
             const SizedBox(width: 12),
             IconButton(
               onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(16)),
+                showMoreMenu(
+                  context,
+                  MoreComponent(
+                    myLabels: const <String>[
+                      'Ajukan diri menjadi moderator',
+                      'Bagikan kategori',
+                      'Laporkan',
+                    ],
+                    myFunctions: <void Function()>[
+                      // request moderator
+                      () async {
+                        buildLoading(context);
+                        await provider
+                            .requestModerator(provider.currentCategory)
+                            .then(
+                          (value) {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                            buildToast(value);
+                          },
+                        );
+                      },
+                      // share category
+                      () async {
+                        Navigator.pop(context);
+                        await Share.share('Share');
+                      },
+                      // report thread
+                      () {
+                        Navigator.pop(context);
+                        showMoreMenu(
+                          context,
+                          const ReportComponent(type: "category"),
+                        );
+                      },
+                    ],
                   ),
-                  builder: (context) {
-                    return bottomSheetCard(
-                      context,
-                      // label
-                      [
-                        'Ajukan diri menjadi moderator',
-                        'Bagikan kategori',
-                        'Laporkan',
-                      ],
-                      // functions
-                      [
-                        // request moderator
-                        () async {
-                          buildLoading(context);
-                          await provider
-                              .requestModerator(provider.currentCategory)
-                              .then(
-                            (value) {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                              buildToast(value);
-                            },
-                          );
-                        },
-                        // share category
-                        () async {
-                          Navigator.pop(context);
-                          await Share.share('Share');
-                        },
-                        // report category
-                        () {
-                          Navigator.pop(context);
-                          showModalBottomSheet(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(16)),
-                            ),
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (context) {
-                              return reportCard(context, "category");
-                            },
-                          );
-                        },
-                      ],
-                    );
-                  },
                 );
               },
               icon: const Icon(Icons.more_horiz),
@@ -140,7 +128,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                       child: Column(
                         children: [
                           // Profile
@@ -150,7 +138,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                               // pics
                               circlePic(
                                 100,
-                                value.currentCategory.profileImage!,
+                                value.currentCategory.profileImage ?? '',
                               ),
                               // aktivitas
                               profileDetails(
@@ -274,7 +262,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                           child: InkWell(
                             onTap: () {
                               provider.changePage(
-                                  0, widget.categoryModel!.name!);
+                                  0, value.currentCategory.name!);
                             },
                             child: Container(
                               height: 44,
@@ -312,7 +300,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                           child: InkWell(
                             onTap: () {
                               provider.changePage(
-                                  1, widget.categoryModel!.name!);
+                                  1, value.currentCategory.name!);
                             },
                             child: Container(
                               height: 44,
@@ -378,13 +366,17 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             if (value.currentPage == 0) {
-                              // log('Popular Thread');
-                              return threadCard(context, value.threads[index]);
-                              // return Text('Popular Thread');
+                              // Popular Thread
+                              return ThreadComponent(
+                                threadModel: value.threads[index],
+                                isOpened: false,
+                              );
                             } else {
-                              // log('Newest Thread');
-                              return threadCard(context, value.threads[index]);
-                              // return Text('Newest Thread');
+                              // Newest Thread
+                              return ThreadComponent(
+                                threadModel: value.threads[index],
+                                isOpened: false,
+                              );
                             }
                           },
                         );

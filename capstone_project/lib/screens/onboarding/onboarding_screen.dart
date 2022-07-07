@@ -19,42 +19,37 @@ class OnboardingScreen extends StatelessWidget {
         child: Consumer<OnboardingProvider>(builder: (context, value, _) {
           return Column(
             children: [
-              const SizedBox(height: 20),
-
-              /// Skip button
-              Row(
-                children: [
-                  const Expanded(child: SizedBox(height: 10)),
-                  IgnorePointer(
-                    ignoring: !value.isSkip,
-                    child: Opacity(
-                      opacity: value.isSkip ? 1.0 : 0.0,
-                      child: TextButton(
-                        style: Theme.of(context)
-                            .textButtonTheme
-                            .style
-                            ?.copyWith(
-                              foregroundColor: MaterialStateProperty.all(
-                                NomizoTheme.nomizoRed.shade600,
-                              ),
-                              overlayColor: MaterialStateProperty.all(
-                                NomizoTheme.nomizoRed.shade50,
-                              ),
-                              textStyle: MaterialStateProperty.all(
-                                const TextStyle(fontWeight: FontWeight.w700),
-                              ),
+              const SizedBox(height: 40),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.only(right: 10),
+                alignment: Alignment.centerRight,
+                child: IgnorePointer(
+                  ignoring: !value.isSkip,
+                  child: Opacity(
+                    opacity: value.isSkip ? 1.0 : 0.0,
+                    child: TextButton(
+                      style: Theme.of(context).textButtonTheme.style?.copyWith(
+                            foregroundColor: MaterialStateProperty.all(
+                              NomizoTheme.nomizoRed.shade600,
                             ),
-                        onPressed: () {
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/login', (route) => false);
-                        },
-                        child: const Text('Skip'),
-                      ),
+                            overlayColor: MaterialStateProperty.all(
+                              NomizoTheme.nomizoRed.shade50,
+                            ),
+                            textStyle: MaterialStateProperty.all(
+                              const TextStyle(fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                      onPressed: () {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/login', (route) => false);
+                      },
+                      child: const Text('Skip'),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                ],
+                ),
               ),
+              const SizedBox(height: 22),
 
               /// Pageview
               Expanded(
@@ -75,6 +70,7 @@ class OnboardingScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 22),
 
               /// page indicator
               AnimatedSmoothIndicator(
@@ -92,59 +88,62 @@ class OnboardingScreen extends StatelessWidget {
               const SizedBox(height: 10),
 
               /// Next/Prev Button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  // Previous Button
-                  IgnorePointer(
-                    ignoring: !value.isPrev,
-                    child: Opacity(
-                      opacity: value.isPrev ? 1.0 : 0.0,
-                      child: TextButton(
-                        style:
-                            Theme.of(context).textButtonTheme.style?.copyWith(
-                                  fixedSize: MaterialStateProperty.all(
-                                    const Size(140, 42),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Previous Button
+                    IgnorePointer(
+                      ignoring: !value.isPrev,
+                      child: Opacity(
+                        opacity: value.isPrev ? 1.0 : 0.0,
+                        child: TextButton(
+                          style:
+                              Theme.of(context).textButtonTheme.style?.copyWith(
+                                    fixedSize: MaterialStateProperty.all(
+                                      const Size(140, 42),
+                                    ),
                                   ),
-                                ),
-                        onPressed: () {
-                          controller.previousPage(
+                          onPressed: () {
+                            controller.previousPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.linear,
+                            );
+                          },
+                          child: const Text('Sebelumnya'),
+                        ),
+                      ),
+                    ),
+                    const Expanded(child: SizedBox(width: 32)),
+                    // Next Button
+                    ElevatedButton(
+                      style: Theme.of(context)
+                          .elevatedButtonTheme
+                          .style
+                          ?.copyWith(
+                            fixedSize:
+                                MaterialStateProperty.all(const Size(140, 42)),
+                          ),
+                      onPressed: () {
+                        if (value.currentPage == value.items.length - 1) {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/login', (route) => false);
+                        } else {
+                          controller.nextPage(
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.linear,
                           );
-                        },
-                        child: const Text('Sebelumnya'),
-                      ),
+                        }
+                      },
+                      child: value.isSkip
+                          ? const Text('Berikutnya')
+                          : const Text('Masuk'),
                     ),
-                  ),
-                  const SizedBox(width: 32),
-                  // Next Button
-                  ElevatedButton(
-                    style: Theme.of(context)
-                        .elevatedButtonTheme
-                        .style
-                        ?.copyWith(
-                          fixedSize:
-                              MaterialStateProperty.all(const Size(140, 42)),
-                        ),
-                    onPressed: () {
-                      if (value.currentPage == value.items.length - 1) {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/login', (route) => false);
-                      } else {
-                        controller.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.linear,
-                        );
-                      }
-                    },
-                    child: value.isSkip
-                        ? const Text('Berikutnya')
-                        : const Text('Masuk'),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 32)
+              const SizedBox(height: 32),
             ],
           );
         }),

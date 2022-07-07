@@ -1,13 +1,21 @@
 import 'dart:io';
 
-import 'package:capstone_project/model/category_model.dart';
-import 'package:capstone_project/modelview/category_provider.dart';
-import 'package:capstone_project/modelview/create_category_provider.dart';
-import 'package:capstone_project/screens/components/button_widget.dart';
-import 'package:capstone_project/screens/components/card_widget.dart';
-import 'package:capstone_project/themes/nomizo_theme.dart';
+// import package
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+// import theme
+import 'package:capstone_project/themes/nomizo_theme.dart';
+
+// import component
+import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/screens/components/button_widget.dart';
+
+// import model
+import 'package:capstone_project/model/category_model.dart';
+
+// import provider
+import 'package:capstone_project/modelview/create_category_provider.dart';
 
 class CreateCategoryScreen extends StatefulWidget {
   const CreateCategoryScreen({Key? key}) : super(key: key);
@@ -43,146 +51,156 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
   Widget build(BuildContext context) {
     final provider =
         Provider.of<CreateCategoryProvider>(context, listen: false);
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            provider.resetForm();
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            Icons.keyboard_arrow_left,
-            color: NomizoTheme.nomizoDark.shade900,
-            size: 24,
+    return WillPopScope(
+      onWillPop: () async {
+        provider.resetForm();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {
+              provider.resetForm();
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.keyboard_arrow_left,
+              color: NomizoTheme.nomizoDark.shade900,
+              size: 24,
+            ),
           ),
-        ),
-        actions: [
-          Consumer<CreateCategoryProvider>(builder: (context, value, _) {
-            return Padding(
-              padding: const EdgeInsets.all(15),
-              child: elevatedBtn28(
-                context,
-                () async {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
+          actions: [
+            Consumer<CreateCategoryProvider>(builder: (context, value, _) {
+              return Padding(
+                padding: const EdgeInsets.all(15),
+                child: elevatedBtn28(
+                  context,
+                  () async {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
 
-                    buildLoading(context);
-                    String? msg;
-                    await provider
-                        .createCategory(CategoryModel(
-                      profileImage: value.img?.path,
-                      name: _nameController.text,
-                      description: _bioController.text,
-                      rules: _rulesController.text,
-                      activityCount: 0,
-                      contributorCount: 0,
-                      moderatorCount: 0,
-                    ))
-                        .then((value) {
-                      msg = value;
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    });
-                    buildToast(msg ?? '');
-                  }
-                },
-                'Simpan',
-              ),
-            );
-          }),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // profile pic section
-              Center(
-                child: Stack(
-                  children: [
-                    Consumer<CreateCategoryProvider>(
-                      builder: (context, value, child) {
-                        return pictureSection(value.img);
-                      },
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: cameraBtn(provider),
-                    ),
-                  ],
+                      buildLoading(context);
+                      String? msg;
+                      await provider
+                          .createCategory(CategoryModel(
+                        profileImage: value.img?.path,
+                        name: _nameController.text,
+                        description: _bioController.text,
+                        rules: _rulesController.text,
+                        activityCount: 0,
+                        contributorCount: 0,
+                        moderatorCount: 0,
+                      ))
+                          .then((value) {
+                        if (value) {
+                          msg = 'Kategori berhasil dibuat';
+                          Navigator.pop(context);
+                        } else {
+                          msg = 'Kategori gagal dibuat';
+                        }
+                        Navigator.pop(context);
+                      });
+                      buildToast(msg ?? '');
+                    }
+                  },
+                  'Simpan',
                 ),
-              ),
-              const SizedBox(height: 32),
-              // name section
-              fieldLabel('Nama Kategori'),
-              TextFormField(
-                controller: _nameController,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  isDense: true,
-                  border: const OutlineInputBorder(),
-                  hintText: 'Apa nama kategori yang ingin dibuat?',
-                  hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: NomizoTheme.nomizoDark.shade500,
+              );
+            }),
+          ],
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // profile pic section
+                Center(
+                  child: Stack(
+                    children: [
+                      Consumer<CreateCategoryProvider>(
+                        builder: (context, value, child) {
+                          return pictureSection(value.img);
+                        },
                       ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '* Silahkan memasukkan nama kategori';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              // bio section
-              fieldLabel('Bio'),
-              TextFormField(
-                controller: _bioController,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  isDense: true,
-                  border: const OutlineInputBorder(),
-                  hintText: 'Berikan penjelasan atas kategori yang dibuat',
-                  hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: NomizoTheme.nomizoDark.shade500,
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: cameraBtn(provider),
                       ),
+                    ],
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '* Silahkan memasukkan Bio kategori';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              // rules section
-              fieldLabel('Rules'),
-              TextFormField(
-                controller: _rulesController,
-                minLines: 1,
-                maxLines: 10,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(
-                  isDense: true,
-                  border: const OutlineInputBorder(),
-                  hintText: 'Berikan aturan terhadap kategori ini',
-                  hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: NomizoTheme.nomizoDark.shade500,
-                      ),
+                const SizedBox(height: 32),
+                // name section
+                fieldLabel('Nama Kategori'),
+                TextFormField(
+                  controller: _nameController,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    hintText: 'Apa nama kategori yang ingin dibuat?',
+                    hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: NomizoTheme.nomizoDark.shade500,
+                        ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '* Silahkan memasukkan nama kategori';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '* Silahkan memasukkan aturan kategori';
-                  }
-                  return null;
-                },
-              ),
-            ],
+                const SizedBox(height: 12),
+                // bio section
+                fieldLabel('Bio'),
+                TextFormField(
+                  controller: _bioController,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    hintText: 'Berikan penjelasan atas kategori yang dibuat',
+                    hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: NomizoTheme.nomizoDark.shade500,
+                        ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '* Silahkan memasukkan Bio kategori';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
+                // rules section
+                fieldLabel('Rules'),
+                TextFormField(
+                  controller: _rulesController,
+                  minLines: 1,
+                  maxLines: 10,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    hintText: 'Berikan aturan terhadap kategori ini',
+                    hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: NomizoTheme.nomizoDark.shade500,
+                        ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '* Silahkan memasukkan aturan kategori';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

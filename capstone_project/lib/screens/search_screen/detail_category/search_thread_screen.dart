@@ -1,5 +1,6 @@
 import 'package:capstone_project/modelview/category_provider.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/screens/components/thread_component.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +89,10 @@ class _SearchThreadScreenState extends State<SearchThreadScreen> {
               return ListView.builder(
                 itemCount: value.results!.threads!.length,
                 itemBuilder: (context, index) {
-                  return threadCard(context, value.results!.threads![index]);
+                  return ThreadComponent(
+                    threadModel: value.results!.threads![index],
+                    isOpened: false,
+                  );
                 },
               );
             }

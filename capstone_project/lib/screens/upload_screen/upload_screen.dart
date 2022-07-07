@@ -1,16 +1,25 @@
 import 'dart:io';
 
-import 'package:capstone_project/model/category_model.dart';
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/modelview/profile_provider.dart';
-import 'package:capstone_project/modelview/upload_provider.dart';
-import 'package:capstone_project/screens/components/button_widget.dart';
-import 'package:capstone_project/screens/components/card_widget.dart';
-import 'package:capstone_project/themes/nomizo_theme.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+// import package
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+
+// import theme
+import 'package:capstone_project/themes/nomizo_theme.dart';
+
+// import component
+import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/screens/components/button_widget.dart';
+
+// import model
+import 'package:capstone_project/model/user_model.dart';
+import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/category_model.dart';
+
+// import provider
+import 'package:capstone_project/modelview/upload_provider.dart';
+import 'package:capstone_project/modelview/profile_provider.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({Key? key}) : super(key: key);
@@ -138,7 +147,7 @@ class _UploadScreenState extends State<UploadScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 // image section
                 Consumer<UploadProvider>(
                   builder: (context, value, child) {
@@ -195,9 +204,6 @@ class _UploadScreenState extends State<UploadScreen> {
                       );
                     }
                   },
-                ),
-                const Expanded(
-                  child: SizedBox(width: 10),
                 ),
               ],
             ),

@@ -24,12 +24,12 @@ class CreateCategoryProvider extends ChangeNotifier {
   }
 
   /// Create Category
-  Future createCategory(CategoryModel categoryModel) async {
+  Future<bool> createCategory(CategoryModel categoryModel) async {
     if (await apiServices.createCategory(categoryModel)) {
       resetForm();
-      return 'Kategori berhasil dibuat';
+      return true;
     }
-    return 'Kategori gagal dibuat';
+    return false;
   }
 
   /// Reset form
