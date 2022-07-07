@@ -1,5 +1,6 @@
 // import package
 
+import 'package:capstone_project/screens/profile_screen/edit_profile_screen.dart';
 import 'package:capstone_project/screens/upload_screen/select_category/create_category_screen.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -87,6 +88,9 @@ Route<dynamic>? nomizoRoutes(RouteSettings settings) {
     case '/createCategory':
       return CupertinoPageRoute(
           builder: (_) => const CreateCategoryScreen(), settings: settings);
+    case '/editProfile':
+      return CupertinoPageRoute(
+          builder: (_) => const EditProfileScreen(), settings: settings);
   }
   return null;
 }
