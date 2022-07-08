@@ -13,7 +13,6 @@ import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import model
-import 'package:capstone_project/model/category_model.dart';
 
 // import provider
 import 'package:capstone_project/modelview/profile_provider.dart';

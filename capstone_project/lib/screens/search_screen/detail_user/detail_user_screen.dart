@@ -132,7 +132,7 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                             value.selectedUser!.profileImage!,
                           ),
                           // activities
-                          profileDetails('1,2 K', 'Aktivitas'),
+                          profileDetails('1,2 K', 'Postingan'),
                           // followers
                           profileDetails('987', 'Pengikut'),
                           // following

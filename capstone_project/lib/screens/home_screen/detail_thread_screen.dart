@@ -54,6 +54,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           leading: IconButton(
             onPressed: () {
               provider.reset();
@@ -122,35 +123,6 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
     );
   }
 
-  // reply sections
-  Widget commentSec(DetailThreadProvider provider) {
-    return Column(
-      children: [
-        Container(
-          height: 50,
-          margin: const EdgeInsets.all(8),
-          color: Colors.yellow,
-        ),
-        Consumer<DetailThreadProvider>(builder: (context, value, _) {
-          return commentChildSec(value.expandReply);
-        }),
-        IconButton(
-            onPressed: () {
-              provider.expandReplyParent();
-            },
-            icon: const Icon(Icons.keyboard_arrow_down))
-      ],
-    );
-  }
-
-  Widget commentChildSec(bool isOpened) {
-    return AnimatedContainer(
-      height: isOpened ? 50 : 0,
-      margin: const EdgeInsets.all(8),
-      duration: const Duration(milliseconds: 200),
-    );
-  }
-
   // Comment Field
   Widget commentField(ThreadModel thread) {
     final provider = Provider.of<DetailThreadProvider>(context, listen: false);
@@ -159,7 +131,15 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
       return Container(
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        color: NomizoTheme.nomizoDark.shade50,
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              width: 1,
+              color: NomizoTheme.nomizoDark.shade100,
+            ),
+          ),
+          color: NomizoTheme.nomizoDark.shade50,
+        ),
         child: Form(
           key: _formKey,
           child: Row(
@@ -171,13 +151,38 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
                   children: [
                     TextFormField(
                       controller: _commentController,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
+                      minLines: 1,
+                      maxLines: 5,
                       style: Theme.of(context).textTheme.bodyMedium,
                       decoration: InputDecoration(
                         isDense: true,
-                        contentPadding:
-                            const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                        contentPadding: const EdgeInsets.fromLTRB(6, 12, 12, 4),
+                        // attach file
+                        prefix: InkWell(
+                          onTap: () => provider.pickImage(),
+                          child: Icon(
+                            Icons.attach_file,
+                            color: NomizoTheme.nomizoDark.shade900,
+                            size: 16,
+                          ),
+                        ),
+                        prefixIconConstraints: const BoxConstraints(
+                          maxHeight: 0,
+                          maxWidth: 0,
+                        ),
+                        // clear comment
+                        suffix: InkWell(
+                          onTap: () => _commentController.clear(),
+                          child: Icon(
+                            Icons.close,
+                            color: NomizoTheme.nomizoDark.shade900,
+                            size: 16,
+                          ),
+                        ),
+                        suffixIconConstraints: const BoxConstraints(
+                          maxHeight: 0,
+                          maxWidth: 0,
+                        ),
                         hintText: value.selectedReply == null
                             ? 'Tambahkan Komentar'
                             : '@ ${value.selectedReply!.author!.username} ',
@@ -194,32 +199,6 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
                         return null;
                       },
                     ),
-                    // attach file
-                    Positioned(
-                      bottom: 11,
-                      left: 4,
-                      child: InkWell(
-                        onTap: () => provider.pickImage(),
-                        child: Icon(
-                          Icons.attach_file,
-                          color: NomizoTheme.nomizoDark.shade900,
-                          size: 16,
-                        ),
-                      ),
-                    ),
-                    // clear comment
-                    Positioned(
-                      bottom: 11,
-                      right: 4,
-                      child: InkWell(
-                        onTap: () => _commentController.clear(),
-                        child: Icon(
-                          Icons.close,
-                          color: NomizoTheme.nomizoDark.shade900,
-                          size: 16,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -229,7 +208,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
                   if (_formKey.currentState!.validate()) {
                     log('Komentar dikirim');
                     buildLoading(context);
-
+                    // if reply to reply
                     if (value.selectedReply != null) {
                       await provider
                           .postReplyChild(
@@ -239,6 +218,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
                           )
                           .then((value) => Navigator.pop(context));
                     } else {
+                      // if reply to thread
                       await provider
                           .postReplyThread(
                             author: profile.currentUser!,

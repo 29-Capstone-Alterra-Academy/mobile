@@ -115,8 +115,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // activities
                           profileDetails(
                             context: context,
-                            count: '1,2 K',
-                            label: 'Aktivitas',
+                            count: '1',
+                            label: 'Postingan',
                           ),
                           // followers
                           profileDetails(
@@ -141,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             // full name
                             Text(
-                              'Raymond silapo',
+                              value.currentUser!.username ?? 'Full Name',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge
@@ -151,7 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             // description
                             Text(
-                              'Coba, coba, dan coba lagi. Pantang Menyerah!',
+                              'Deskripsi Bio',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             const SizedBox(height: 4),
