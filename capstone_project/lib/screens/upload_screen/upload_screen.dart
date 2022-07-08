@@ -209,67 +209,76 @@ class _UploadScreenState extends State<UploadScreen> {
             ),
           ),
         ),
-        bottomNavigationBar: Container(
-          height: 58,
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          child: pickSection(provider),
-        ),
+        bottomNavigationBar: pickSection(provider),
       ),
     );
   }
 
   /// Bottom Section to Pick Images & Select Category
   Widget pickSection(UploadProvider provider) {
-    return Row(
-      children: [
-        OutlinedButton(
-          onPressed: () {
-            provider.pickImage();
-          },
-          style: Theme.of(context).outlinedButtonTheme.style?.copyWith(
-                fixedSize: MaterialStateProperty.all(
-                  const Size(40, 40),
-                ),
-                shape: MaterialStateProperty.all(
-                  const CircleBorder(),
-                ),
-              ),
-          child: const Icon(Icons.camera_alt),
-        ),
-        OutlinedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/selectCategory');
-          },
-          style: Theme.of(context).outlinedButtonTheme.style?.copyWith(
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                textStyle: MaterialStateProperty.all(
-                  Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: NomizoTheme.nomizoTosca.shade600,
-                      ),
-                ),
-              ),
-          child: Consumer<UploadProvider>(
-            builder: (context, value, _) {
-              if (value.selectedCategory == null) {
-                return const Text('Pilih Kategori');
-              }
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  circlePic(24, value.selectedCategory!.profileImage!),
-                  const SizedBox(width: 8),
-                  Text(value.selectedCategory!.name!),
-                ],
-              );
-            },
+    return Container(
+      height: 56,
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            width: 1,
+            color: NomizoTheme.nomizoDark.shade100,
           ),
         ),
-      ],
+        color: NomizoTheme.nomizoDark.shade50,
+      ),
+      child: Row(
+        children: [
+          OutlinedButton(
+            onPressed: () {
+              provider.pickImage();
+            },
+            style: Theme.of(context).outlinedButtonTheme.style?.copyWith(
+                  fixedSize: MaterialStateProperty.all(
+                    const Size(40, 40),
+                  ),
+                  shape: MaterialStateProperty.all(
+                    const CircleBorder(),
+                  ),
+                ),
+            child: const Icon(Icons.camera_alt),
+          ),
+          OutlinedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/selectCategory');
+            },
+            style: Theme.of(context).outlinedButtonTheme.style?.copyWith(
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  textStyle: MaterialStateProperty.all(
+                    Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: NomizoTheme.nomizoTosca.shade600,
+                        ),
+                  ),
+                ),
+            child: Consumer<UploadProvider>(
+              builder: (context, value, _) {
+                if (value.selectedCategory == null) {
+                  return const Text('Pilih Kategori');
+                }
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    circlePic(24, value.selectedCategory!.profileImage!),
+                    const SizedBox(width: 8),
+                    Text(value.selectedCategory!.name!),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 

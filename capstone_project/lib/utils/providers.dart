@@ -1,3 +1,4 @@
+import 'package:capstone_project/modelview/edit_profile_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -25,4 +26,5 @@ List<SingleChildWidget> providers = [
   ChangeNotifierProvider(create: (_) => CreateCategoryProvider()),
   ChangeNotifierProvider(create: (_) => DetailThreadProvider()),
   ChangeNotifierProvider(create: (_) => ProfileProvider()),
+  ChangeNotifierProvider(create: (_) => EditProfileProvider()),
 ];

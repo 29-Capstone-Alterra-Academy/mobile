@@ -37,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Provider.of<HomeScreenProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Consumer<HomeScreenProvider>(builder: (context, value, _) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,

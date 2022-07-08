@@ -514,7 +514,7 @@ class APIServices {
     }
   }
 
-  /// GET USER PROFILE
+  /// GET PERSONAL PROFILE
   Future getUserProfile() async {
     try {
       var response = await dio.get('$_baseURL/profile');
@@ -526,4 +526,52 @@ class APIServices {
       log(e.toString());
     }
   }
+
+  /// EDIT PROFILE
+  Future editProfile(UserModel userProfile) async {
+    try {
+      await dio.put(
+        '$_baseURL/profile',
+        data: userProfile.toJson(),
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// EDIT PROFILE IMAGE
+  Future editProfileImage() async {
+    try {
+      await dio.put('$_baseURL/profile/image');
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// CHECK USERNAME AVAILABILITY
+  Future checkUsername({required String username}) async {
+    try {
+      await dio.post(
+        '$_baseURL/user/check',
+        queryParameters: {
+          'username': username,
+        },
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// EDIT PROFILE PASSWORD
+  /// REQUEST EMAIL VERIFICATION CODE
+  /// SUBMIT EMAILVERIFICATION CODE
+  /// CHECK USERNAME AVAILABILITY
+  ///
+
 }

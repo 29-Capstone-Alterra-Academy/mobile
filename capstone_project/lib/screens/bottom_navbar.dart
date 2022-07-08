@@ -30,8 +30,16 @@ class _BottomNavbarState extends State<BottomNavbar> {
           body: value.itemScreen[value.currentIndex],
           bottomNavigationBar: Container(
             width: MediaQuery.of(context).size.width,
-            height: 70,
-            color: NomizoTheme.nomizoDark.shade50,
+            height: 56,
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  width: 1,
+                  color: NomizoTheme.nomizoDark.shade100,
+                ),
+              ),
+              color: NomizoTheme.nomizoDark.shade50,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               mainAxisSize: MainAxisSize.max,

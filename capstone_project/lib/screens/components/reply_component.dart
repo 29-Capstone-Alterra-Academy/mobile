@@ -156,16 +156,13 @@ class _ReplyComponentState extends State<ReplyComponent> {
                     // post time
                     Row(
                       children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            'mengomentari @${reply.thread!.author!.username}',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: NomizoTheme.nomizoDark.shade500,
-                                    ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        Text(
+                          'mengomentari @${reply.thread!.author!.username}',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: NomizoTheme.nomizoDark.shade500,
+                                  ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                         Container(
                           width: 2,

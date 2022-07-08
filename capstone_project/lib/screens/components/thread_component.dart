@@ -93,8 +93,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
                                 ),
                               );
                             },
-                            child: SizedBox(
-                              width: 75,
+                            child: Expanded(
                               child: Text(
                                 threadModel.topic!.name!,
                                 style: Theme.of(context)
