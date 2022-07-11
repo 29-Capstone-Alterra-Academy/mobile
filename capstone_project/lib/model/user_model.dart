@@ -1,37 +1,56 @@
 class UserModel {
-  String? birthDate;
+  int? id;
+  String? username;
   String? email;
   String? gender;
-  int? id;
   String? profileImage;
-  String? username;
+  bool? isVerified;
+  String? birthDate;
+  String? bio;
+  String? createdAt;
+  String? updatedAt;
+  String? deletedAt;
 
-  UserModel({
-    this.birthDate,
-    this.email,
-    this.gender,
-    this.id,
-    this.profileImage,
-    this.username,
-  });
+  UserModel(
+      {this.id,
+      this.username,
+      this.email,
+      this.gender,
+      this.profileImage,
+      this.isVerified,
+      this.birthDate,
+      this.bio,
+      this.createdAt,
+      this.updatedAt,
+      this.deletedAt});
 
   UserModel.fromJson(Map<String, dynamic> json) {
-    birthDate = json['birth_date'];
+    id = json['id'];
+    username = json['username'];
     email = json['email'];
     gender = json['gender'];
-    id = json['id'];
     profileImage = json['profile_image'];
-    username = json['username'];
+    isVerified = json['is_verified'];
+    birthDate = json['birth_date'];
+    bio = json['bio'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    deletedAt = json['deleted_at'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['birth_date'] = birthDate;
+    data['id'] = id;
+    data['username'] = username;
     data['email'] = email;
     data['gender'] = gender;
-    data['id'] = id;
     data['profile_image'] = profileImage;
-    data['username'] = username;
+    data['is_verified'] = isVerified;
+    data['birth_date'] = birthDate;
+    data['bio'] = bio;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['deleted_at'] = deletedAt;
     return data;
   }
 }

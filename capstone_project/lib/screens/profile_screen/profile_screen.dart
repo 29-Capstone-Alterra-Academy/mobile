@@ -1,11 +1,22 @@
+// import package
+import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+//import utils
+import 'package:capstone_project/utils/finite_state.dart';
+
+// import theme
+import 'package:capstone_project/themes/nomizo_theme.dart';
+
+// import provider
 import 'package:capstone_project/modelview/profile_provider.dart';
+import 'package:capstone_project/modelview/bottom_navbar_provider.dart';
+
+// import screen
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/more_component.dart';
 import 'package:capstone_project/screens/components/thread_component.dart';
-import 'package:capstone_project/themes/nomizo_theme.dart';
-import 'package:capstone_project/utils/finite_state.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -64,13 +75,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Navigator.pop(context);
                       Navigator.pushNamed(context, '/editProfile');
                     },
-                    // report thread
-                    () {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/login',
-                        (route) => false,
-                      );
+                    // logout
+                    () async {
+                      buildLoading(context);
+                      await provider.logout().then((value) {
+                        // reset navbar to home screen
+                        Provider.of<BottomNavbarProvider>(
+                          context,
+                          listen: false,
+                        ).changeIndex(0);
+
+                        buildToast('Logout Berhasil');
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/login',
+                          (route) => false,
+                        );
+                      });
                     }
                   ],
                 ),
@@ -94,6 +115,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Text('Something Wrong!!!'),
           );
         } else {
+          var convert = DateTime.parse(value.currentUser!.createdAt!);
+          String createdTime = DateFormat('MMMM yyyy').format(convert);
           return SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -110,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // pics
                           circlePic(
                             100,
-                            value.currentUser!.profileImage!,
+                            value.currentUser!.profileImage ?? '',
                           ),
                           // activities
                           profileDetails(
@@ -141,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             // full name
                             Text(
-                              value.currentUser!.username ?? 'Full Name',
+                              value.currentUser!.email ?? 'Full Name',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge
@@ -151,13 +174,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             // description
                             Text(
-                              'Deskripsi Bio',
+                              value.currentUser!.bio ?? 'Deskripsi Bio',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             const SizedBox(height: 4),
                             // created by
                             Text(
-                              'Created on may 2022',
+                              'Created on $createdTime',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
