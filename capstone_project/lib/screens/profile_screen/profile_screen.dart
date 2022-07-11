@@ -1,10 +1,7 @@
 // import package
-import 'dart:developer';
-
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 //import utils
 import 'package:capstone_project/utils/finite_state.dart';
