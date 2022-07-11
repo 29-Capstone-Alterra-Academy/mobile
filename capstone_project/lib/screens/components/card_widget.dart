@@ -200,7 +200,7 @@ Widget userCard(BuildContext context, UserModel userModel) {
       child: Row(
         children: [
           // image
-          circlePic(52, userModel.profileImage!),
+          circlePic(52, userModel.profileImage ?? ''),
           const SizedBox(width: 8),
           // content
           Expanded(

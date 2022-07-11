@@ -1,3 +1,5 @@
+import 'package:capstone_project/modelview/authentication/login_provider.dart';
+import 'package:capstone_project/modelview/authentication/register_provider.dart';
 import 'package:capstone_project/modelview/edit_profile_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -17,6 +19,8 @@ import 'package:capstone_project/modelview/create_category_provider.dart';
 List<SingleChildWidget> providers = [
   ChangeNotifierProvider(create: (_) => SplashScreenProvider()),
   ChangeNotifierProvider(create: (_) => OnboardingProvider()),
+  ChangeNotifierProvider(create: (_) => LoginProvider()),
+  ChangeNotifierProvider(create: (_) => RegisterProvider()),
   ChangeNotifierProvider(create: (_) => BottomNavbarProvider()),
   ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
   ChangeNotifierProvider(create: (_) => SearchScreenProvider()),

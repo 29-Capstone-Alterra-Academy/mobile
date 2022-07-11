@@ -1,5 +1,4 @@
 // import package
-import 'package:capstone_project/screens/search_screen/detail_user/detail_user_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -23,6 +22,7 @@ import 'package:capstone_project/modelview/detail_thread_provider.dart';
 // import screen
 import 'package:capstone_project/screens/home_screen/detail_image.dart';
 import 'package:capstone_project/screens/home_screen/detail_thread_screen.dart';
+import 'package:capstone_project/screens/search_screen/detail_user/detail_user_screen.dart';
 import 'package:capstone_project/screens/search_screen/detail_category/detail_category_screen.dart';
 
 class ThreadComponent extends StatefulWidget {
@@ -93,17 +93,15 @@ class _ThreadComponentState extends State<ThreadComponent> {
                                 ),
                               );
                             },
-                            child: Expanded(
-                              child: Text(
-                                threadModel.topic!.name!,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            child: Text(
+                              threadModel.topic!.name!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Container(
@@ -250,9 +248,15 @@ class _ThreadComponentState extends State<ThreadComponent> {
             ),
             const SizedBox(height: 12),
             // image
-            if (threadModel.images != null)
-              carouselImage(threadModel.images!, isOpened),
-            if (threadModel.images != null) const SizedBox(height: 12),
+            if (threadModel.image1 != null)
+              carouselImage([
+                threadModel.image1 ?? '',
+                threadModel.image2 ?? '',
+                threadModel.image3 ?? '',
+                threadModel.image4 ?? '',
+                threadModel.image5 ?? '',
+              ], isOpened),
+            if (threadModel.image1 != null) const SizedBox(height: 12),
             // like / dislike / comment / share button section
             Row(
               children: [

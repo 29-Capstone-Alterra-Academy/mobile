@@ -84,6 +84,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
                 return Stack(
                   children: [
                     Container(
+                      height: MediaQuery.of(context).size.height,
                       margin: const EdgeInsets.only(bottom: 70),
                       child: ListView(
                         shrinkWrap: true,
@@ -144,7 +145,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
           key: _formKey,
           child: Row(
             children: [
-              circlePic(42, profile.currentUser!.profileImage!),
+              circlePic(42, profile.currentUser!.profileImage ?? ''),
               const SizedBox(width: 4),
               Expanded(
                 child: Stack(

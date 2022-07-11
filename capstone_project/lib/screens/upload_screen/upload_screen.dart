@@ -289,8 +289,18 @@ class _UploadScreenState extends State<UploadScreen> {
     List<File> imgs,
   ) async {
     List<String> images = [];
-    for (var element in imgs) {
-      images.add(element.path);
+    int index = 0;
+    if (imgs.length < 5) {
+      for (int i = index; i < imgs.length; i++) {
+        images.add(imgs[i].path);
+      }
+    }
+    for (var i = index; i < 5 - index; i++) {
+      if (index > 0) {
+        images.add('');
+      } else {
+        images.add(imgs[i].path);
+      }
     }
     bool result = await provider.uploadThread(
       ThreadModel(
@@ -301,7 +311,11 @@ class _UploadScreenState extends State<UploadScreen> {
         ),
         content: _contentController.text,
         createdAt: DateTime.now().toIso8601String(),
-        images: images,
+        image1: images[0],
+        image2: images[1],
+        image3: images[2],
+        image4: images[3],
+        image5: images[4],
         title: _titleController.text,
         topic: Topic(
           activityCount: categoryModel.activityCount,

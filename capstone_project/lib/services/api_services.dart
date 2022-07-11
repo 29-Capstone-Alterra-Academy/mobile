@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 
 // import model
-import 'package:capstone_project/model/auth_model.dart';
 import 'package:capstone_project/model/user_model.dart';
 import 'package:capstone_project/model/reply_model.dart';
 import 'package:capstone_project/model/thread_model.dart';
@@ -27,19 +26,72 @@ class APIServices {
   final String _baseURL =
       'https://virtserver.swaggerhub.com/etrnal70/nomizo/1.0.0';
 
-  /// LOGIN
-  Future<List<AuthenticationModel>> postLogin() async {
+  /// REGISTER
+  Future<List<String>> registerUser(String email, String password) async {
     try {
-      final request = await Dio().post('$_baseURL/login');
+      final request = await dio.post(
+        'https://staking-spade-production.up.railway.app/register',
+        data: {
+          "email": email,
+          "password": password,
+        },
+      );
 
-      List<AuthenticationModel> auth = (request.data as List)
-          .map((e) => AuthenticationModel.fromJson(e))
-          .toList();
+      Map auth = request.data;
+      var response = auth.values.toList();
 
-      return auth;
-    } on Exception catch (e) {
+      return ['success', ...response];
+    } on DioError catch (e) {
+      log(e.message);
+      return [''];
+    }
+  }
+
+  /// LOGIN
+  Future<List<String>> postLogin(String email, String password) async {
+    try {
+      final request = await dio.post(
+        'https://staking-spade-production.up.railway.app/login',
+        data: {
+          "email": email,
+          "password": password,
+        },
+      );
+
+      Map auth = request.data;
+      var response = auth.values.toList();
+
+      return ['success', ...response];
+    } on DioError catch (e) {
       log(e.toString());
-      return <AuthenticationModel>[];
+      return ['', ''];
+    }
+  }
+
+  /// CHECK EMAIL AVAILABILITY
+  Future checkEmail(String email) async {
+    try {
+      var request = await dio.get(
+        'https://staking-spade-production.up.railway.app/user/check',
+        queryParameters: {'email': email},
+      );
+      log(request.data.toString());
+      return true;
+    } on DioError catch (e) {
+      log(e.message);
+      log(e.response!.statusCode.toString());
+      return false;
+    }
+  }
+
+  /// LOGOUT
+  Future logout() async {
+    try {
+      await dio.post('https://staking-spade-production.up.railway.app/logout');
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
     }
   }
 
@@ -515,9 +567,16 @@ class APIServices {
   }
 
   /// GET PERSONAL PROFILE
-  Future getUserProfile() async {
+  Future getUserProfile({required String token}) async {
     try {
-      var response = await dio.get('$_baseURL/profile');
+      var response = await dio.get(
+        'https://staking-spade-production.up.railway.app/profile',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       var users = UserModel.fromJson(response.data);
 

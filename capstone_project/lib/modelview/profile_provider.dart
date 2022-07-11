@@ -3,6 +3,7 @@ import 'package:capstone_project/model/user_model.dart';
 import 'package:capstone_project/services/api_services.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
@@ -26,7 +27,11 @@ class ProfileProvider extends ChangeNotifier {
   /// GET CURRENT USER PROFILE
   void getProfile() async {
     changeState(FiniteState.loading);
-    currentUser = await _apiServices.getUserProfile();
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if(token != null) {
+      currentUser = await _apiServices.getUserProfile(token: token);
+    }
     changeState(FiniteState.none);
   }
 
@@ -65,5 +70,17 @@ class ProfileProvider extends ChangeNotifier {
       sortby: 'date',
     );
     changeSubState(FiniteState.none);
+  }
+
+  /// Logout
+  Future logout() async {
+    // if (await _apiServices.logout()) {
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.remove('access_token');
+    prefs.remove('refresh_token');
+    // return true;
+    // }
+    // return false;
   }
 }
