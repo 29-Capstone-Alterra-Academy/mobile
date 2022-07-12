@@ -130,7 +130,7 @@ Widget categoryCard(BuildContext context, CategoryModel categoryModel) {
       child: Row(
         children: [
           // image
-          circlePic(52, categoryModel.profileImage!),
+          circlePic(52, categoryModel.profileImage ?? ''),
           const SizedBox(width: 8),
           // content
           Expanded(

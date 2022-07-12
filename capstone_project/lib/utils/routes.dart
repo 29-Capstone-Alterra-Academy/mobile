@@ -1,5 +1,6 @@
 // import package
 
+import 'package:capstone_project/screens/admin/moderator_screen/moderator_search_screen.dart';
 import 'package:capstone_project/screens/profile_screen/edit_profile_screen.dart';
 import 'package:capstone_project/screens/upload_screen/select_category/create_category_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -91,6 +92,9 @@ Route<dynamic>? nomizoRoutes(RouteSettings settings) {
     case '/editProfile':
       return CupertinoPageRoute(
           builder: (_) => const EditProfileScreen(), settings: settings);
+    case '/moderatorSearch':
+      return CupertinoPageRoute(
+          builder: (_) => const ModeratorSearchScreen(), settings: settings);
   }
   return null;
 }
