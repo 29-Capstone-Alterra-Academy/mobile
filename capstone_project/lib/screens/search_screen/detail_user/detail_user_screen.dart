@@ -57,7 +57,11 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
               child: Text('Something Wrong!!!'),
             );
           } else {
-            return Text(value.selectedUser!.username!);
+            if (value.selectedUser == null) {
+              return Container();
+            } else {
+              return Text(value.selectedUser!.username!);
+            }
           }
         }),
         actions: [
@@ -113,216 +117,222 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
             child: Text('Something Wrong!!!'),
           );
         } else {
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Column(
-                    children: [
-                      // Profile
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // pics
-                          circlePic(
-                            100,
-                            value.selectedUser!.profileImage!,
-                          ),
-                          // activities
-                          profileDetails('1,2 K', 'Postingan'),
-                          // followers
-                          profileDetails('987', 'Pengikut'),
-                          // following
-                          profileDetails('2', 'Mengikuti'),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      // Details
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+          if (value.selectedUser == null) {
+            return Container();
+          } else {
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    child: Column(
+                      children: [
+                        // Profile
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // full name
-                            Text(
-                              'Raymond silapo',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                            // pics
+                            circlePic(
+                              100,
+                              value.selectedUser!.profileImage?? '',
                             ),
-                            // description
-                            Text(
-                              'Coba, coba, dan coba lagi. Pantang Menyerah!',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            const SizedBox(height: 4),
-                            // created by
-                            Text(
-                              'Created on may 2022',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: NomizoTheme.nomizoDark.shade500,
-                                  ),
-                            ),
+                            // activities
+                            profileDetails('1,2 K', 'Postingan'),
+                            // followers
+                            profileDetails('987', 'Pengikut'),
+                            // following
+                            profileDetails('2', 'Mengikuti'),
                           ],
                         ),
-                      ),
+                        const SizedBox(height: 12),
+                        // Details
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // full name
+                              Text(
+                                'Raymond silapo',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              // description
+                              Text(
+                                'Coba, coba, dan coba lagi. Pantang Menyerah!',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              const SizedBox(height: 4),
+                              // created by
+                              Text(
+                                'Created on may 2022',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: NomizoTheme.nomizoDark.shade500,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
 
-                      const SizedBox(height: 12),
-                      // follow button
-                      value.isSub
-                          ? outlinedBtn42(context, () async {
-                              buildLoading(context);
-                              await provider
-                                  .unfollowUser(value.selectedUser!.id ?? 9)
-                                  .then((value) => Navigator.pop(context));
-                            }, 'Mengikuti')
-                          : elevatedBtn42(context, () async {
-                              buildLoading(context);
-                              provider
-                                  .followUser(value.selectedUser!.id ?? 9)
-                                  .then((value) => Navigator.pop(context));
-                            }, 'Ikuti'),
+                        const SizedBox(height: 12),
+                        // follow button
+                        value.isSub
+                            ? outlinedBtn42(context, () async {
+                                buildLoading(context);
+                                await provider
+                                    .unfollowUser(value.selectedUser!.id ?? 9)
+                                    .then((value) => Navigator.pop(context));
+                              }, 'Mengikuti')
+                            : elevatedBtn42(context, () async {
+                                buildLoading(context);
+                                provider
+                                    .followUser(value.selectedUser!.id ?? 9)
+                                    .then((value) => Navigator.pop(context));
+                              }, 'Ikuti'),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // button tab
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // popular tab
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            provider.changePage(
+                                0, value.selectedUser!.username!);
+                          },
+                          child: Container(
+                            height: 44,
+                            decoration: BoxDecoration(
+                              border: value.currentPage == 0
+                                  ? Border(
+                                      bottom: BorderSide(
+                                        width: 2,
+                                        color: NomizoTheme.nomizoDark.shade900,
+                                      ),
+                                    )
+                                  : const Border(),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Populer',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: value.currentPage == 0
+                                          ? NomizoTheme.nomizoDark.shade900
+                                          : NomizoTheme.nomizoDark.shade500,
+                                      fontWeight: value.currentPage == 0
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // newest tab
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            provider.changePage(
+                                1, value.selectedUser!.username!);
+                          },
+                          child: Container(
+                            height: 44,
+                            decoration: BoxDecoration(
+                              border: value.currentPage == 1
+                                  ? Border(
+                                      bottom: BorderSide(
+                                        width: 2,
+                                        color: NomizoTheme.nomizoDark.shade900,
+                                      ),
+                                    )
+                                  : const Border(),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Terbaru',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: value.currentPage == 1
+                                          ? NomizoTheme.nomizoDark.shade900
+                                          : NomizoTheme.nomizoDark.shade500,
+                                      fontWeight: value.currentPage == 1
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 12),
-                // button tab
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // popular tab
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          provider.changePage(0, value.selectedUser!.username!);
-                        },
-                        child: Container(
-                          height: 44,
-                          decoration: BoxDecoration(
-                            border: value.currentPage == 0
-                                ? Border(
-                                    bottom: BorderSide(
-                                      width: 2,
-                                      color: NomizoTheme.nomizoDark.shade900,
-                                    ),
-                                  )
-                                : const Border(),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Populer',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: value.currentPage == 0
-                                        ? NomizoTheme.nomizoDark.shade900
-                                        : NomizoTheme.nomizoDark.shade500,
-                                    fontWeight: value.currentPage == 0
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
-                                  ),
-                            ),
+                  Builder(builder: (context) {
+                    if (value.subState == FiniteState.loading) {
+                      return SizedBox(
+                        height: 200,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: NomizoTheme.nomizoTosca.shade600,
                           ),
                         ),
-                      ),
-                    ),
-                    // newest tab
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          provider.changePage(1, value.selectedUser!.username!);
-                        },
-                        child: Container(
-                          height: 44,
-                          decoration: BoxDecoration(
-                            border: value.currentPage == 1
-                                ? Border(
-                                    bottom: BorderSide(
-                                      width: 2,
-                                      color: NomizoTheme.nomizoDark.shade900,
-                                    ),
-                                  )
-                                : const Border(),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Terbaru',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: value.currentPage == 1
-                                        ? NomizoTheme.nomizoDark.shade900
-                                        : NomizoTheme.nomizoDark.shade500,
-                                    fontWeight: value.currentPage == 1
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
-                                  ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Builder(builder: (context) {
-                  if (value.subState == FiniteState.loading) {
-                    return SizedBox(
-                      height: 200,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: NomizoTheme.nomizoTosca.shade600,
-                        ),
-                      ),
-                    );
-                  }
-                  if (value.subState == FiniteState.failed) {
-                    return const SizedBox(
-                      height: 200,
-                      child: Center(
-                        child: Text('Something Wrong!!!'),
-                      ),
-                    );
-                  } else {
-                    if (value.threads.isEmpty) {
-                      return const SizedBox(
-                          height: 200,
-                          child: Center(child: Text('Tidak Ada Thread')));
+                      );
                     }
-                    return ListView.builder(
-                      itemCount: value.threads.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        if (value.currentPage == 0) {
-                          return ThreadComponent(
-                            threadModel: value.threads[index],
-                            isOpened: false,
-                          );
-                        } else {
-                          return ThreadComponent(
-                            threadModel: value.threads[index],
-                            isOpened: false,
-                          );
-                        }
-                      },
-                    );
-                  }
-                }),
-              ],
-            ),
-          );
+                    if (value.subState == FiniteState.failed) {
+                      return const SizedBox(
+                        height: 200,
+                        child: Center(
+                          child: Text('Something Wrong!!!'),
+                        ),
+                      );
+                    } else {
+                      if (value.threads.isEmpty) {
+                        return const SizedBox(
+                            height: 200,
+                            child: Center(child: Text('Tidak Ada Thread')));
+                      }
+                      return ListView.builder(
+                        itemCount: value.threads.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          if (value.currentPage == 0) {
+                            return ThreadComponent(
+                              threadModel: value.threads[index],
+                              isOpened: false,
+                            );
+                          } else {
+                            return ThreadComponent(
+                              threadModel: value.threads[index],
+                              isOpened: false,
+                            );
+                          }
+                        },
+                      );
+                    }
+                  }),
+                ],
+              ),
+            );
+          }
         }
       }),
     );

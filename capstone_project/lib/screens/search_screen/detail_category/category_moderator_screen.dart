@@ -6,14 +6,15 @@ import 'package:capstone_project/utils/finite_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ModeratorScreen extends StatefulWidget {
-  const ModeratorScreen({Key? key}) : super(key: key);
+class CategoryModeratorScreen extends StatefulWidget {
+  const CategoryModeratorScreen({Key? key}) : super(key: key);
 
   @override
-  State<ModeratorScreen> createState() => _ModeratorScreenState();
+  State<CategoryModeratorScreen> createState() =>
+      _CategoryModeratorScreenState();
 }
 
-class _ModeratorScreenState extends State<ModeratorScreen> {
+class _CategoryModeratorScreenState extends State<CategoryModeratorScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

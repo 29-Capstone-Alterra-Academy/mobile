@@ -200,7 +200,7 @@ Widget userCard(BuildContext context, UserModel userModel) {
       child: Row(
         children: [
           // image
-          circlePic(52, userModel.profileImage!),
+          circlePic(52, userModel.profileImage ?? ''),
           const SizedBox(width: 8),
           // content
           Expanded(
@@ -264,6 +264,19 @@ Widget buildDivider() {
     height: 1,
     thickness: 1,
     color: NomizoTheme.nomizoDark.shade100,
+  );
+}
+
+/// DOT DIVIDER
+Widget buildDotDivider() {
+  return Container(
+    width: 2,
+    height: 2,
+    margin: const EdgeInsets.symmetric(horizontal: 4),
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: NomizoTheme.nomizoDark.shade500,
+    ),
   );
 }
 

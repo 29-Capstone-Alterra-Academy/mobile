@@ -110,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // pics
                           circlePic(
                             100,
-                            value.currentUser!.profileImage!,
+                            value.currentUser!.profileImage ?? '',
                           ),
                           // activities
                           profileDetails(

@@ -42,11 +42,20 @@ class _ThreadComponentState extends State<ThreadComponent> {
   late ThreadModel threadModel;
   late bool isOpened;
   late String threadDate;
+  late List<String> images;
 
   @override
   void initState() {
     threadModel = widget.threadModel;
     isOpened = widget.isOpened;
+    // set list of images
+    images = [
+      threadModel.image1 ?? '',
+      threadModel.image2 ?? '',
+      threadModel.image3 ?? '',
+      threadModel.image4 ?? '',
+      threadModel.image5 ?? '',
+    ];
     // convert thread date to time ago format
     var convert = DateTime.parse(threadModel.createdAt!);
     var difference = DateTime.now().difference(convert);
@@ -93,29 +102,19 @@ class _ThreadComponentState extends State<ThreadComponent> {
                                 ),
                               );
                             },
-                            child: Expanded(
-                              child: Text(
-                                threadModel.topic!.name!,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            child: Text(
+                              threadModel.topic!.name!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Container(
-                            width: 2,
-                            height: 2,
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: NomizoTheme.nomizoDark.shade500,
-                            ),
-                          ),
-                          Expanded(
+                          buildDotDivider(),
+                          Flexible(
                             child: InkWell(
                               onTap: () {
                                 Navigator.push(
@@ -153,15 +152,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
                                     ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          Container(
-                            width: 2,
-                            height: 2,
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: NomizoTheme.nomizoDark.shade500,
-                            ),
-                          ),
+                          buildDotDivider(),
                           Text(
                             'diposting',
                             style:
@@ -250,9 +241,9 @@ class _ThreadComponentState extends State<ThreadComponent> {
             ),
             const SizedBox(height: 12),
             // image
-            if (threadModel.images != null)
-              carouselImage(threadModel.images!, isOpened),
-            if (threadModel.images != null) const SizedBox(height: 12),
+            if (images.isNotEmpty)
+              carouselImage(images, isOpened),
+            if (threadModel.image1 != null) const SizedBox(height: 12),
             // like / dislike / comment / share button section
             Row(
               children: [
@@ -356,7 +347,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
     String? label,
     void Function()? function,
   }) {
-    return Expanded(
+    return Flexible(
       child: Container(
         alignment: Alignment.centerLeft,
         child: InkWell(

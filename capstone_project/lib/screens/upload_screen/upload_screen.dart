@@ -301,7 +301,11 @@ class _UploadScreenState extends State<UploadScreen> {
         ),
         content: _contentController.text,
         createdAt: DateTime.now().toIso8601String(),
-        images: images,
+        image1: images[0],
+        image2: images[1],
+        image3: images[2],
+        image4: images[3],
+        image5: images[4],
         title: _titleController.text,
         topic: Topic(
           activityCount: categoryModel.activityCount,

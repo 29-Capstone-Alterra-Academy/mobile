@@ -25,7 +25,8 @@ class ReplyModel {
       this.updatedAt});
 
   ReplyModel.fromJson(Map<String, dynamic> json) {
-    author = json['author'] != null ? Author.fromJson(json['author']) : null;
+    author =
+        json['author'] != null ? Author.fromJson(json['author']) : null;
     childCount = json['child_count'];
     childExist = json['child_exist'];
     content = json['content'];
@@ -34,7 +35,8 @@ class ReplyModel {
     id = json['id'];
     like = json['like'];
     parentExist = json['parent_exist'];
-    thread = json['thread'] != null ? Thread.fromJson(json['thread']) : null;
+    thread =
+        json['thread'] != null ? Thread.fromJson(json['thread']) : null;
     updatedAt = json['updated_at'];
   }
 
@@ -86,7 +88,11 @@ class Thread {
   String? content;
   String? createdAt;
   int? id;
-  List<String>? images;
+  String? image1;
+  String? image2;
+  String? image3;
+  String? image4;
+  String? image5;
   String? title;
   Topic? topic;
   String? updatedAt;
@@ -96,17 +102,26 @@ class Thread {
       this.content,
       this.createdAt,
       this.id,
-      this.images,
+      this.image1,
+      this.image2,
+      this.image3,
+      this.image4,
+      this.image5,
       this.title,
       this.topic,
       this.updatedAt});
 
   Thread.fromJson(Map<String, dynamic> json) {
-    author = json['author'] != null ? Author.fromJson(json['author']) : null;
+    author =
+        json['author'] != null ? Author.fromJson(json['author']) : null;
     content = json['content'];
     createdAt = json['created_at'];
     id = json['id'];
-    images = json['images'].cast<String>();
+    image1 = json['image_1'];
+    image2 = json['image_2'];
+    image3 = json['image_3'];
+    image4 = json['image_4'];
+    image5 = json['image_5'];
     title = json['title'];
     topic = json['topic'] != null ? Topic.fromJson(json['topic']) : null;
     updatedAt = json['updated_at'];
@@ -120,7 +135,11 @@ class Thread {
     data['content'] = content;
     data['created_at'] = createdAt;
     data['id'] = id;
-    data['images'] = images;
+    data['image_1'] = image1;
+    data['image_2'] = image2;
+    data['image_3'] = image3;
+    data['image_4'] = image4;
+    data['image_5'] = image5;
     data['title'] = title;
     if (topic != null) {
       data['topic'] = topic!.toJson();

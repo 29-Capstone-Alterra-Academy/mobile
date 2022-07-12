@@ -13,7 +13,7 @@ import 'package:capstone_project/screens/auth_screen/register_screen.dart';
 import 'package:capstone_project/screens/onboarding/onboarding_screen.dart';
 import 'package:capstone_project/screens/search_screen/focused_search_screen.dart';
 import 'package:capstone_project/screens/search_screen/popular_user/search_user_screen.dart';
-import 'package:capstone_project/screens/search_screen/detail_category/moderator_screen.dart';
+import 'package:capstone_project/screens/search_screen/detail_category/category_moderator_screen.dart';
 import 'package:capstone_project/screens/search_screen/popular_user/popular_user_screen.dart';
 import 'package:capstone_project/screens/search_screen/detail_category/contibutor_screen.dart';
 import 'package:capstone_project/screens/auth_screen/reset_password/reset_password_screen.dart';
@@ -65,7 +65,7 @@ Route<dynamic>? nomizoRoutes(RouteSettings settings) {
           builder: (_) => const PopularUserScreen(), settings: settings);
     case '/moderator':
       return CupertinoPageRoute(
-          builder: (_) => const ModeratorScreen(), settings: settings);
+          builder: (_) => const CategoryModeratorScreen(), settings: settings);
     case '/contributor':
       return CupertinoPageRoute(
           builder: (_) => const ContributorScreen(), settings: settings);
