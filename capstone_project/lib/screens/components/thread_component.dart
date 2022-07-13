@@ -1,4 +1,7 @@
 // import package
+
+import 'dart:developer';
+
 import 'package:capstone_project/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -250,7 +253,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
                 children: [
                   // title
                   Text(
-                    threadModel.title!,
+                    threadModel.title ?? '',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
@@ -266,8 +269,8 @@ class _ThreadComponentState extends State<ThreadComponent> {
             ),
             const SizedBox(height: 12),
             // image
-            if (images.first != '') carouselImage(images, isOpened),
-            if (images.first.isNotEmpty) const SizedBox(height: 12),
+            if (images.isNotEmpty) carouselImage(images, isOpened),
+            if (images.isNotEmpty) const SizedBox(height: 12),
             // like / dislike / comment / share button section
             Row(
               children: [

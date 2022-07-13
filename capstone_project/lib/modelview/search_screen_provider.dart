@@ -43,7 +43,7 @@ class SearchScreenProvider extends ChangeNotifier {
   /// GET MOST POPULAR USER
   void getPopularUser() async {
     changeState(FiniteState.loading);
-    popularUser = await _apiServices.getUsers();
+    // popularUser = await _apiServices.getUsers();
     changeState(FiniteState.none);
   }
 

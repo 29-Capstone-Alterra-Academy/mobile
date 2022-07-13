@@ -27,27 +27,6 @@ class APIServices {
   // final String _baseURL = 'https://virtserver.swaggerhub.com/etrnal70/nomizo/1.0.0';
   final String _baseURL = 'https://staking-spade-production.up.railway.app';
 
-  /// REGISTER
-  Future<List<String>> registerUser(String email, String password) async {
-    try {
-      final request = await dio.post(
-        '$_baseURL/register',
-        data: {
-          "email": email,
-          "password": password,
-        },
-      );
-
-      Map auth = request.data;
-      var response = auth.values.toList();
-
-      return ['success', ...response];
-    } on DioError catch (e) {
-      log(e.message);
-      return [''];
-    }
-  }
-
   /// LOGIN
   Future<List<String>> postLogin(String email, String password) async {
     try {
@@ -69,22 +48,6 @@ class APIServices {
     }
   }
 
-  /// CHECK EMAIL AVAILABILITY
-  Future checkEmail(String email) async {
-    try {
-      var request = await dio.get(
-        '$_baseURL/user/check',
-        queryParameters: {'email': email},
-      );
-      log(request.data.toString());
-      return true;
-    } on DioError catch (e) {
-      log(e.message);
-      log(e.response!.statusCode.toString());
-      return false;
-    }
-  }
-
   /// LOGOUT
   // Future logout() async {
   //   try {
@@ -96,487 +59,34 @@ class APIServices {
   //   }
   // }
 
-  /// POST | CREATE CATEGORY
-  Future createCategory(CategoryModel categoryModel) async {
+  /// REFRESH TOKEN
+
+  /// REGISTER
+  Future<List<String>> registerUser(String email, String password) async {
     try {
-      await dio.post('$_baseURL/topic', data: categoryModel.toJson());
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// GET POPULAR | Newest CATEGORY
-  Future getCategory({int? limit, String? sortby}) async {
-    try {
-      var response = await dio.get(
-        '$_baseURL/topic',
-        queryParameters: {
-          'limit': limit,
-          'offset': 0,
-          'sort_by': sortby ?? 'activity_count',
-        },
-      );
-
-      List<CategoryModel> topics = (response.data as List)
-          .map((e) => CategoryModel.fromJson(e))
-          .toList();
-
-      return topics;
-    } on Exception catch (e) {
-      log(e.toString());
-      return <CategoryModel>[];
-    }
-  }
-
-  /// GET CATEGORY BY ID
-  Future getCategroyById(
-      {required String token, required int idCategory}) async {
-    try {
-      var response = await dio.get(
-        '$_baseURL/topic/$idCategory',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
-
-      CategoryModel topics = CategoryModel.fromJson(response.data);
-
-      return topics;
-    } on Exception catch (e) {
-      log(e.toString());
-      return CategoryModel();
-    }
-  }
-
-  /// Get Moderator
-  Future getModerator(int idCategory) async {
-    try {
-      var response = await dio.get('$_baseURL/topic/$idCategory/moderator');
-
-      List<ModeratorModel> moderator = (response.data as List)
-          .map((e) => ModeratorModel.fromJson(e))
-          .toList();
-
-      return moderator;
-    } on Exception catch (e) {
-      log(e.toString());
-      return <ModeratorModel>[];
-    }
-  }
-
-  /// Get Contributor
-
-  /// GET POPULAR USER
-  Future getUsers() async {
-    // try {
-    //   var response = await dio.get('$_baseURL/profile');
-
-    //   // List<UserModel> topics = (response.data as List)
-    //   //     .map((e) => UserModel.fromJson(e))
-    //   //     .toList();
-
-    //   var users = UserModel.fromJson(response.data);
-
-    //   return [users];
-    // } on Exception catch (e) {
-    //   log(e.toString());
-    //   return <UserModel>[];
-    // }
-  }
-
-  /// GET USER BY ID
-  Future getUsersById(int idUser) async {
-    try {
-      var response = await dio.get('$_baseURL/user/$idUser');
-
-      var users = UserModel.fromJson(response.data);
-
-      return users;
-    } on Exception catch (e) {
-      log(e.toString());
-    }
-  }
-
-  /// GET SEARCH RESULT
-  Future getSearchResult({String? category}) async {
-    try {
-      var response = await dio.get(
-        '$_baseURL/search',
-        queryParameters: {
-          'sort_thread': 'best',
-          'order': 'asc',
-          'topic': category ?? '',
-          'limit': '10',
-          'offset': '5',
-        },
-      );
-
-      SearchModel searchResult = SearchModel.fromJson(response.data);
-
-      return searchResult;
-    } on Exception catch (e) {
-      log(e.toString());
-      return SearchModel();
-    }
-  }
-
-  /// GET THREAD
-  Future getThread({int? userId, int? categoryId, String? sortby}) async {
-    try {
-      var response = await dio.get(
-        '$_baseURL/thread',
-        queryParameters: {
-          'userId': userId,
-          'topicId': categoryId,
-          'sort_by': sortby ?? 'like',
-          'limit': 5,
-        },
-      );
-
-      List<ThreadModel> category =
-          (response.data as List).map((e) => ThreadModel.fromJson(e)).toList();
-
-      return category;
-    } on Exception catch (e) {
-      log(e.toString());
-      return <ThreadModel>[];
-    }
-  }
-
-  /// DELETE THREAD
-  /// UPDATE THREAD
-  /// DELETE LIKE THREAD
-  Future<bool> deleteLikeThread(int idThread) async {
-    try {
-      await dio.delete('$_baseURL/thread/$idThread/like');
-
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// LIKE THREAD
-  Future<bool> likeThread(int idThread) async {
-    try {
-      await dio.post('$_baseURL/thread/$idThread/like');
-
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// POST REPLY THREAD
-  Future replyThread(ReplyModel replyModel) async {
-    try {
-      await dio.post(
-        '$_baseURL/thread/${replyModel.thread!.id}/reply',
-        data: replyModel.toJson(),
-      );
-    } catch (e) {
-      log(e.toString());
-    }
-  }
-
-  /// DELETE UNLIKE THREAD
-  Future<bool> deleteDislikeThread(int idThread) async {
-    try {
-      await dio.delete('$_baseURL/thread/$idThread/unlike');
-
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// DISLIKE THREAD
-  Future<bool> dislikeThread(int idThread) async {
-    try {
-      await dio.post('$_baseURL/thread/$idThread/unlike');
-
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// GET THREAD BY ID
-  Future getThreadById(int idThread) async {
-    try {
-      var response = await dio.get('$_baseURL/thread');
-
-      List<ThreadModel> category =
-          (response.data as List).map((e) => ThreadModel.fromJson(e)).toList();
-
-      return category.first;
-    } on Exception catch (e) {
-      log(e.toString());
-      return ThreadModel();
-    }
-  }
-
-  /// DELETE REPLY
-
-  /// GET REPLY By ID
-  Future getReply({required int replyId, required String relation}) async {
-    try {
-      var response = await dio.get(
-        '$_baseURL/reply/$replyId',
-        queryParameters: {
-          'relation': relation,
-          'max_depth': '',
-        },
-      );
-
-      ReplyModel reply = ReplyModel.fromJson(response.data);
-
-      return [reply];
-    } catch (e) {
-      log(e.toString());
-      return null;
-    }
-  }
-
-  /// EDIT REPLY
-  /// DELETE LIKE REPLY
-  Future<bool> deleteLikeReply(int idThread) async {
-    try {
-      await dio.delete('$_baseURL/reply/$idThread/like');
-
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// LIKE REPLY
-  Future<bool> likeReply(int idThread) async {
-    try {
-      await dio.post('$_baseURL/reply/$idThread/like');
-
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// DELETE DISLIKE REPLY
-  Future<bool> deleteDisikeReply(int idThread) async {
-    try {
-      await dio.delete('$_baseURL/reply/$idThread/unlike');
-
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// DISLIKE REPLY
-  Future<bool> dislikeReply(int idThread) async {
-    try {
-      await dio.post('$_baseURL/reply/$idThread/unlike');
-
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// POST REPLY CHILD ? REPLY TO REPLY
-  Future replyChild({
-    required ProfileModel author,
-    required ReplyModel replyParent,
-    required String content,
-  }) async {
-    try {
-      await dio.post(
-        '$_baseURL/reply/${replyParent.thread!.id}/reply',
+      final request = await dio.post(
+        '$_baseURL/register',
         data: {
-          "author": {
-            "id": author.id,
-            "profile_image": author.profileImage,
-            "username": author.username
-          },
-          "content": content,
-          "parent": replyParent.toJson(),
-          "thread": replyParent.thread!.toJson()
+          "email": email,
+          "password": password,
         },
       );
-    } catch (e) {
-      log(e.toString());
+
+      Map auth = request.data;
+      var response = auth.values.toList();
+
+      return ['success', ...response];
+    } on DioError catch (e) {
+      log(e.message);
+      return [''];
     }
   }
 
-  /// REQUEST MODERATOR CATEGORY
-  Future requestModerator(CategoryModel categoryModel) async {
-    try {
-      await dio.post('$_baseURL/topic/${categoryModel.id}/modrequest');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
+  /// REQUEST FOR RESET PASSWORD
+  /// INPUT RESET CODE
+  /// SET NEW PASSWORD
 
-  /// SUBSCRIBE TO CATEGORY
-  Future subscribeCategory(int idCategory) async {
-    try {
-      await dio.get('$_baseURL/topic/$idCategory/subscribe');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// UNSUBSCRIBE TO CATEGORY
-  Future unsubscribeCategory(int idCategory) async {
-    try {
-      await dio.get('$_baseURL/topic/$idCategory/unsubscribe');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// FOLLOW USER
-  Future followUser(int idUser) async {
-    try {
-      await dio.get('$_baseURL/user/$idUser/follow');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// UNFOLLOW USER
-  Future unfollowUser(int idUser) async {
-    try {
-      await dio.get('$_baseURL/topic/$idUser/unfollow');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// REPORT USER
-  Future reportUser(
-      ProfileModel reporter, UserModel userModel, String reason) async {
-    try {
-      await dio.put(
-        '$_baseURL/user/${userModel.iD}/report',
-        data: {
-          "created_at": DateTime.now().toString(),
-          "id": 3,
-          "reason": reason,
-          "reporter": {
-            "id": "${reporter.id}",
-            "profile_image": "${reporter.profileImage}",
-            "username": "${reporter.username}"
-          },
-          "reviewed": false,
-          "suspect": {
-            "id": "${userModel.iD}",
-            "profile_image": "${userModel.profileImage}",
-            "username": "${userModel.username}"
-          }
-        },
-      );
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// REPORT CATEGORY
-  Future reportCategory(CategoryModel categoryModel, String reason) async {
-    try {
-      await dio.put(
-        '$_baseURL/topic/${categoryModel.id}/report',
-        data: {},
-      );
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// REPORT THREAD
-  Future reportThread(ThreadModel threadModel, String reason) async {
-    try {
-      await dio.put(
-        '$_baseURL/thread/${threadModel.id}/report',
-        data: threadModel.toJson(),
-      );
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// REPORT REPLY
-  Future reportReply(
-      ReplyModel replyModel, String reason, ProfileModel reporter) async {
-    try {
-      await dio.put(
-        '$_baseURL/reply/${replyModel.id}/report',
-        data: {
-          "created_at": DateTime.now().toIso8601String(),
-          "id": replyModel.id,
-          "reason": reason,
-          "reply": replyModel.toJson(),
-          "reporter": {
-            "id": reporter.id,
-            "profile_image": reporter.profileImage,
-            "username": reporter.username
-          },
-          "reviewed": false,
-          "thread": replyModel.thread!.toJson(),
-          "topic": replyModel.thread!.topic!.toJson()
-        },
-      );
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// POST | UPLOAD THREAD
-  Future uploadThread(ThreadModel threadModel) async {
-    try {
-      await dio.post(
-        '$_baseURL/topic/${threadModel.topic!.id}/thread',
-        data: threadModel.toJson(),
-      );
-
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return true;
-    }
-  }
-
-  /// GET PERSONAL PROFILE
+  /// PROFILE
   Future getUserProfile({required String token}) async {
     try {
       var response = await dio.get(
@@ -634,7 +144,27 @@ class APIServices {
     }
   }
 
-  /// CHECK USERNAME AVAILABILITY
+  /// EDIT CURRENT PASSWORD
+  /// REQUEST EMAIL VERIFICARION CODE
+  /// SUBMIT EMAIL VERIFICATION CODE
+
+  /// CHECK EMAIL AVAILABILITY
+  Future checkEmail(String email) async {
+    try {
+      var request = await dio.get(
+        '$_baseURL/user/check',
+        queryParameters: {'email': email},
+      );
+      log(request.data.toString());
+      return true;
+    } on DioError catch (e) {
+      log(e.message);
+      log(e.response!.statusCode.toString());
+      return false;
+    }
+  }
+
+  /// CHECK USERNAME AVAILIBILITY
   Future checkUsername({required String username}) async {
     try {
       await dio.get(
@@ -650,10 +180,502 @@ class APIServices {
     }
   }
 
-  /// EDIT PROFILE PASSWORD
-  /// REQUEST EMAIL VERIFICATION CODE
-  /// SUBMIT EMAILVERIFICATION CODE
-  /// CHECK USERNAME AVAILABILITY
-  ///
+  /// GET USER PROFILE BY ID
+  Future getUsersById(int idUser) async {
+    try {
+      var response = await dio.get('$_baseURL/user/$idUser');
+
+      var users = UserModel.fromJson(response.data);
+
+      return users;
+    } on Exception catch (e) {
+      log(e.toString());
+    }
+  }
+
+  /// FOLLOW USER
+  Future followUser(int idUser) async {
+    try {
+      await dio.get('$_baseURL/user/$idUser/follow');
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// UNFOLLOW USER
+  Future unfollowUser(int idUser) async {
+    try {
+      await dio.get('$_baseURL/topic/$idUser/unfollow');
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// GET LIST OF TOPICS
+  Future getCategory({int? limit, String? sortby}) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/topic',
+        queryParameters: {
+          'limit': limit,
+          'offset': 0,
+          'sort_by': sortby ?? 'activity_count',
+        },
+      );
+
+      List<CategoryModel> topics = (response.data as List)
+          .map((e) => CategoryModel.fromJson(e))
+          .toList();
+
+      return topics;
+    } on Exception catch (e) {
+      log(e.toString());
+      return <CategoryModel>[];
+    }
+  }
+
+  /// CREATE NEW TOPIC
+  Future createCategory(CategoryModel categoryModel) async {
+    try {
+      await dio.post('$_baseURL/topic', data: categoryModel.toJson());
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// CHECK TOPIC NAME AVAILIBILITY
+
+  /// GET TOPIC BY ID
+  Future getCategroyById(
+      {required String token, required int idCategory}) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/topic/$idCategory',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      CategoryModel topics = CategoryModel.fromJson(response.data);
+
+      return topics;
+    } on Exception catch (e) {
+      log(e.toString());
+      return CategoryModel();
+    }
+  }
+
+  /// GET TOPIC MODERATOR
+  Future getModerator(int idCategory) async {
+    try {
+      var response = await dio.get('$_baseURL/topic/$idCategory/moderator');
+
+      List<ModeratorModel> moderator = (response.data as List)
+          .map((e) => ModeratorModel.fromJson(e))
+          .toList();
+
+      return moderator;
+    } on Exception catch (e) {
+      log(e.toString());
+      return <ModeratorModel>[];
+    }
+  }
+
+  /// REQUEST TO BE MODERATOR
+  Future requestModerator(CategoryModel categoryModel) async {
+    try {
+      await dio.post('$_baseURL/topic/${categoryModel.id}/modrequest');
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// SUBSCRIBE TO TOPIC
+  Future subscribeCategory(int idCategory) async {
+    try {
+      await dio.get('$_baseURL/topic/$idCategory/subscribe');
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// CRETAE NEW THREAD
+  Future uploadThread(ThreadModel threadModel) async {
+    try {
+      await dio.post(
+        '$_baseURL/topic/${threadModel.topic!.id}/thread',
+        data: threadModel.toJson(),
+      );
+
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return true;
+    }
+  }
+
+  /// UNSUBSCRIBE TO TOPIC
+  Future unsubscribeCategory(int idCategory) async {
+    try {
+      await dio.get('$_baseURL/topic/$idCategory/unsubscribe');
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// GET THREAD
+  Future getThread({int? userId, int? categoryId, String? sortby}) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/thread',
+        queryParameters: {
+          'userId': userId,
+          'topicId': categoryId,
+          'sort_by': sortby ?? 'like',
+          'limit': 5,
+        },
+      );
+
+      List<ThreadModel> category =
+          (response.data as List).map((e) => ThreadModel.fromJson(e)).toList();
+
+      return category;
+    } on Exception catch (e) {
+      log(e.toString());
+      return <ThreadModel>[];
+    }
+  }
+
+  /// DELETE THREAD
+  /// UPDATE THREAD
+
+  /// DELETE LIKE THREAD
+  Future<bool> deleteLikeThread(int idThread) async {
+    try {
+      await dio.delete('$_baseURL/thread/$idThread/like');
+
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// LIKE THREAD THREAD
+  Future<bool> likeThread(int idThread) async {
+    try {
+      await dio.post('$_baseURL/thread/$idThread/like');
+
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// REPLY TO A THREAD
+  Future replyThread(ReplyModel replyModel) async {
+    try {
+      await dio.post(
+        '$_baseURL/thread/${replyModel.thread!.id}/reply',
+        data: replyModel.toJson(),
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  /// DELETE DISLIKE THREAD
+  Future<bool> deleteDislikeThread(int idThread) async {
+    try {
+      await dio.delete('$_baseURL/thread/$idThread/unlike');
+
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// DISLIKE THREAD
+  Future<bool> dislikeThread(int idThread) async {
+    try {
+      await dio.post('$_baseURL/thread/$idThread/unlike');
+
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// GET LIST OF PERSONAL NOTIFICATION
+  /// GET NOTIFICATION CONTEXT
+  /// UNREAD ALL NOTIF
+
+  /// GET LIST OF MODERATOR REQUEST
+  /// REJECT MODERATOR REQUEST
+  /// GET LIST OF REPORTS
+  /// TAKE ACTION OF A REPORT
+
+  /// UPDATE EXISTING TOPIC
+  /// GET BAN REQUEST
+  /// MARK REVIEWED BAN REQUEST
+  /// REJECT BAN REQUEST
+  /// QUIT MODERATOR
+
+  /// GET LIST OF REPORT REASON
+  /// CREATE REPORT REASON
+  /// DELETE REPORT REASON
+
+  /// REPLY
+  /// DELETE REPLY
+
+  /// GET REPLY'S CHILD BY REPLY ID
+  Future getReply({required int replyId, required String relation}) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/reply/$replyId',
+        queryParameters: {
+          'relation': relation,
+          'max_depth': '',
+        },
+      );
+
+      ReplyModel reply = ReplyModel.fromJson(response.data);
+
+      return [reply];
+    } catch (e) {
+      log(e.toString());
+      return null;
+    }
+  }
+
+  /// EDIT REPLY
+  /// GET REPLYS CHILDS
+
+  /// DELETE LIKE FROM REPLY
+  Future<bool> deleteLikeReply(int idThread) async {
+    try {
+      await dio.delete('$_baseURL/reply/$idThread/like');
+
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// LIKE REPLY
+  Future<bool> likeReply(int idThread) async {
+    try {
+      await dio.post('$_baseURL/reply/$idThread/like');
+
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// DELETE DISLIKE FROM REPLY
+  Future<bool> deleteDisikeReply(int idThread) async {
+    try {
+      await dio.delete('$_baseURL/reply/$idThread/unlike');
+
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// DISLIKe REPLY
+  Future<bool> dislikeReply(int idThread) async {
+    try {
+      await dio.post('$_baseURL/reply/$idThread/unlike');
+
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// REPLY TO A REPLY
+  Future replyChild({
+    required ProfileModel author,
+    required ReplyModel replyParent,
+    required String content,
+  }) async {
+    try {
+      await dio.post(
+        '$_baseURL/reply/${replyParent.thread!.id}/reply',
+        data: {
+          "author": {
+            "id": author.id,
+            "profile_image": author.profileImage,
+            "username": author.username
+          },
+          "content": content,
+          "parent": replyParent.toJson(),
+          "thread": replyParent.thread!.toJson()
+        },
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  /// REPORT REPLY
+  Future reportReply(
+      ReplyModel replyModel, String reason, ProfileModel reporter) async {
+    try {
+      await dio.put(
+        '$_baseURL/reply/${replyModel.id}/report',
+        data: {
+          "created_at": DateTime.now().toIso8601String(),
+          "id": replyModel.id,
+          "reason": reason,
+          "reply": replyModel.toJson(),
+          "reporter": {
+            "id": reporter.id,
+            "profile_image": reporter.profileImage,
+            "username": reporter.username
+          },
+          "reviewed": false,
+          "thread": replyModel.thread!.toJson(),
+          "topic": replyModel.thread!.topic!.toJson()
+        },
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// REPORT THREAD
+  Future reportThread(ThreadModel threadModel, String reason) async {
+    try {
+      await dio.put(
+        '$_baseURL/thread/${threadModel.id}/report',
+        data: threadModel.toJson(),
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// REPORT TOPIC
+  Future reportCategory(CategoryModel categoryModel, String reason) async {
+    try {
+      await dio.put(
+        '$_baseURL/topic/${categoryModel.id}/report',
+        data: {},
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// REPORT USER
+  Future reportUser(
+      ProfileModel reporter, UserModel userModel, String reason) async {
+    try {
+      await dio.put(
+        '$_baseURL/user/${userModel.iD}/report',
+        data: {
+          "created_at": DateTime.now().toString(),
+          "id": 3,
+          "reason": reason,
+          "reporter": {
+            "id": "${reporter.id}",
+            "profile_image": "${reporter.profileImage}",
+            "username": "${reporter.username}"
+          },
+          "reviewed": false,
+          "suspect": {
+            "id": "${userModel.iD}",
+            "profile_image": "${userModel.profileImage}",
+            "username": "${userModel.username}"
+          }
+        },
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// SEARCH
+  Future getSearchResult({String? category}) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/search',
+        queryParameters: {
+          'sort_thread': 'best',
+          'order': 'asc',
+          'topic': category ?? '',
+          'limit': '10',
+          'offset': '5',
+        },
+      );
+
+      SearchModel searchResult = SearchModel.fromJson(response.data);
+
+      return searchResult;
+    } on Exception catch (e) {
+      log(e.toString());
+      return SearchModel();
+    }
+  }
+
+  /// GET POPULAR USER
+  // Future getUsers() async {
+  //   try {
+  //     var response = await dio.get('$_baseURL/profile');
+  //     // List<UserModel> topics = (response.data as List)
+  //     //     .map((e) => UserModel.fromJson(e))
+  //     //     .toList();
+  //     var users = UserModel.fromJson(response.data);
+  //     return [users];
+  //   } on Exception catch (e) {
+  //     log(e.toString());
+  //     return <UserModel>[];
+  //   }
+  // }
+
+  /// GET THREAD BY ID
+  // Future getThreadById(int idThread) async {
+  //   try {
+  //     var response = await dio.get('$_baseURL/thread');
+  //     List<ThreadModel> category =
+  //         (response.data as List).map((e) => ThreadModel.fromJson(e)).toList();
+  //     return category.first;
+  //   } on Exception catch (e) {
+  //     log(e.toString());
+  //     return ThreadModel();
+  //   }
+  // }
 
 }
