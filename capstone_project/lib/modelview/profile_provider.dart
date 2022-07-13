@@ -1,9 +1,13 @@
-import 'package:capstone_project/model/thread_model.dart';
 import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/services/api_services.dart';
-import 'package:capstone_project/utils/finite_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:capstone_project/utils/finite_state.dart';
+
+import 'package:capstone_project/services/api_services.dart';
+
+import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/profile_model.dart';
 
 class ProfileProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
@@ -12,7 +16,10 @@ class ProfileProvider extends ChangeNotifier {
 
   List<ThreadModel> threads = [];
 
-  UserModel? currentUser;
+  ProfileModel? currentUser;
+
+  /// for details (post, followers, following)
+  UserModel? selectedUser;
 
   int currentPage = 0;
 
@@ -29,8 +36,9 @@ class ProfileProvider extends ChangeNotifier {
     changeState(FiniteState.loading);
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('access_token');
-    if(token != null) {
+    if (token != null) {
       currentUser = await _apiServices.getUserProfile(token: token);
+      selectedUser = await _apiServices.getUsersById(currentUser!.id!);
     }
     changeState(FiniteState.none);
   }
@@ -56,7 +64,7 @@ class ProfileProvider extends ChangeNotifier {
   void getPopularThread() async {
     changeSubState(FiniteState.loading);
     threads = await _apiServices.getThread(
-      username: currentUser!.username,
+      userId: currentUser!.id,
       sortby: 'like',
     );
     changeSubState(FiniteState.none);
@@ -66,7 +74,7 @@ class ProfileProvider extends ChangeNotifier {
   void getNewestThread() async {
     changeSubState(FiniteState.loading);
     threads = await _apiServices.getThread(
-      username: currentUser!.username,
+      userId: currentUser!.id,
       sortby: 'date',
     );
     changeSubState(FiniteState.none);
@@ -79,7 +87,7 @@ class ProfileProvider extends ChangeNotifier {
 
     prefs.remove('access_token');
     prefs.remove('refresh_token');
-    // return true;
+    return true;
     // }
     // return false;
   }

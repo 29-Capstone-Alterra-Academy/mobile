@@ -1,9 +1,11 @@
 import 'dart:io';
 
 // import package
-import 'package:capstone_project/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+// import utils
+import 'package:capstone_project/utils/url.dart';
 
 // import theme
 import 'package:capstone_project/themes/nomizo_theme.dart';
@@ -13,6 +15,7 @@ import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import model
+import 'package:capstone_project/model/profile_model.dart';
 
 // import provider
 import 'package:capstone_project/modelview/profile_provider.dart';
@@ -84,30 +87,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       buildLoading(context);
 
                       String? msg;
-                      bool isValid = false;
-                      await provider
-                          .checkUsername(_usernameController.text)
-                          .then((value) {
-                        isValid = value;
-                        if (!value) {
-                          Navigator.pop(context);
-                        }
-                      });
+                      bool isValid = true;
+                      if (profile.currentUser!.username! !=
+                          _usernameController.text) {
+                        await provider
+                            .checkUsername(_usernameController.text)
+                            .then((value) {
+                          isValid = value;
+                          if (!value) {
+                            Navigator.pop(context);
+                          }
+                        });
+                      }
                       if (!isValid) {
                         buildToast('Username telah digunakan');
                       } else {
                         await provider
-                            .editProfile(UserModel(
-                          birthDate: profile.currentUser!.birthDate,
-                          email: profile.currentUser!.email,
-                          gender: profile.currentUser!.gender,
-                          id: profile.currentUser!.id,
-                          profileImage: value.profilePic,
-                          username: _usernameController.text,
-                        ))
+                            .editProfile(
+                          ProfileModel(
+                            birthDate: profile.currentUser!.birthDate,
+                            email: profile.currentUser!.email,
+                            gender: profile.currentUser!.gender,
+                            id: profile.currentUser!.id,
+                            isVerified: profile.currentUser!.isVerified,
+                            profileImage: profile.currentUser!.profileImage,
+                            username: _usernameController.text,
+                            bio: _bioController.text,
+                            createdAt: profile.currentUser!.createdAt,
+                            updatedAt: profile.currentUser!.updatedAt,
+                            deletedAt: profile.currentUser!.deletedAt,
+                          ),
+                        )
                             .then((value) {
                           if (value) {
                             msg = 'Profil berhasil diubah';
+                            profile.getProfile();
                             Navigator.pop(context);
                             Navigator.pop(context);
                           } else {
@@ -128,7 +142,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         body: Consumer<ProfileProvider>(builder: (context, value, child) {
           _usernameController.text = value.currentUser!.username!;
           // _fullnameController.text = '';
-          // _bioController.text = '';
+          _bioController.text = value.currentUser!.bio ?? '';
           return SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: Form(
@@ -142,7 +156,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       children: [
                         Consumer<EditProfileProvider>(
                             builder: (context, value, child) {
-                          return pictureSection(value.img);
+                          return pictureSection(
+                            value.img,
+                            profile.currentUser!.profileImage ?? '',
+                          );
                         }),
                         Positioned(
                           bottom: 0,
@@ -232,7 +249,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget pictureSection(File? img) {
+  Widget pictureSection(File? img, String url) {
     return Container(
       width: 120,
       height: 120,
@@ -243,15 +260,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       clipBehavior: Clip.antiAlias,
       child: img == null
-          ? Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
-              child: Image.asset(
-                'assets/img/app_logo.png',
-                fit: BoxFit.contain,
-              ),
-            )
-          : Image.file(
-              img,
+          ? Image.network(
+              '$baseURL$url',
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              },
               errorBuilder: (context, error, stackTrace) => Padding(
                 padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
                 child: Image.asset(
@@ -259,7 +279,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   fit: BoxFit.contain,
                 ),
               ),
+            )
+          : Image.file(
+              img,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
+                child: Image.asset(
+                  'assets/img/app_logo.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
     );
   }

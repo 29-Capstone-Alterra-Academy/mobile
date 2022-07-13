@@ -1,4 +1,5 @@
 // import package
+import 'package:capstone_project/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -42,11 +43,28 @@ class _ThreadComponentState extends State<ThreadComponent> {
   late ThreadModel threadModel;
   late bool isOpened;
   late String threadDate;
+  List<String> images = <String>[];
 
   @override
   void initState() {
     threadModel = widget.threadModel;
     isOpened = widget.isOpened;
+    // set image list
+    if (threadModel.image1 != '') {
+      images.add('$baseURL${threadModel.image1}');
+    }
+    if (threadModel.image2 != '') {
+      images.add('$baseURL${threadModel.image2}');
+    }
+    if (threadModel.image3 != '') {
+      images.add('$baseURL${threadModel.image3}');
+    }
+    if (threadModel.image4 != '') {
+      images.add('$baseURL${threadModel.image4}');
+    }
+    if (threadModel.image5 != '') {
+      images.add('$baseURL${threadModel.image5}');
+    }
     // convert thread date to time ago format
     var convert = DateTime.parse(threadModel.createdAt!);
     var difference = DateTime.now().difference(convert);
@@ -61,7 +79,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
     return InkWell(
       onTap: isOpened
           ? null
-          : () => openDetail(context: context, idThread: threadModel.id ?? 0),
+          : () => openDetail(context: context, threadModel: threadModel),
       child: Container(
         padding: const EdgeInsets.all(16),
         color: NomizoTheme.nomizoDark.shade50,
@@ -72,7 +90,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
             Row(
               children: [
                 // profile pic
-                circlePic(42, threadModel.author!.profileImage!),
+                circlePic(42, threadModel.topic!.profileImage ?? ''),
                 const SizedBox(width: 7),
                 // title
                 Expanded(
@@ -248,33 +266,26 @@ class _ThreadComponentState extends State<ThreadComponent> {
             ),
             const SizedBox(height: 12),
             // image
-            if (threadModel.image1 != null)
-              carouselImage([
-                threadModel.image1 ?? '',
-                threadModel.image2 ?? '',
-                threadModel.image3 ?? '',
-                threadModel.image4 ?? '',
-                threadModel.image5 ?? '',
-              ], isOpened),
-            if (threadModel.image1 != null) const SizedBox(height: 12),
+            if (images.first != '') carouselImage(images, isOpened),
+            if (images.first.isNotEmpty) const SizedBox(height: 12),
             // like / dislike / comment / share button section
             Row(
               children: [
                 // comment
                 feedbackButton(
                   iconData: Icons.comment_outlined,
-                  label: '2',
+                  label: '${threadModel.replyCount}',
                   function: isOpened
                       ? () => provider.changeSelectedReply(replyModel: null)
                       : () => openDetail(
                             context: context,
-                            idThread: threadModel.id ?? 0,
+                            threadModel: threadModel,
                           ),
                 ),
                 // like
                 feedbackButton(
                   iconData: Icons.thumb_up_outlined,
-                  label: '123',
+                  label: '${threadModel.likedCount}',
                   function: () => provider.likeThread(threadModel),
                 ),
                 // dislike
@@ -298,12 +309,13 @@ class _ThreadComponentState extends State<ThreadComponent> {
   }
 
   // function openDetail
-  void openDetail({required BuildContext context, required int idThread}) {
+  void openDetail(
+      {required BuildContext context, required ThreadModel threadModel}) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => DetailThreadScreen(
-          idThread: idThread,
+          threadModel: threadModel,
         ),
       ),
     );

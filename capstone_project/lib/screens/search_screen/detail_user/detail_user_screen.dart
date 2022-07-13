@@ -1,5 +1,6 @@
 // import package
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -60,7 +61,7 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
             if (value.selectedUser == null) {
               return Container();
             } else {
-              return Text(value.selectedUser!.username!);
+              return Text(value.selectedUser!.username ?? '');
             }
           }
         }),
@@ -120,6 +121,9 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
           if (value.selectedUser == null) {
             return Container();
           } else {
+            var convert = DateTime.parse(value.selectedUser!.createdAt ??
+                DateTime.now().toIso8601String());
+            String createdTime = DateFormat('MMMM yyyy').format(convert);
             return SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -139,11 +143,20 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                               value.selectedUser?.profileImage ?? '',
                             ),
                             // activities
-                            profileDetails('1,2 K', 'Postingan'),
+                            profileDetails(
+                              '${value.selectedUser?.threadCount!}',
+                              'Postingan',
+                            ),
                             // followers
-                            profileDetails('987', 'Pengikut'),
+                            profileDetails(
+                              '${value.selectedUser?.followersCount!}',
+                              'Pengikut',
+                            ),
                             // following
-                            profileDetails('2', 'Mengikuti'),
+                            profileDetails(
+                              '${value.selectedUser?.followingCount!}',
+                              'Mengikuti',
+                            ),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -171,7 +184,7 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                               const SizedBox(height: 4),
                               // created by
                               Text(
-                                'Created on may 2022',
+                                'Created on $createdTime',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
@@ -189,13 +202,13 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                             ? outlinedBtn42(context, () async {
                                 buildLoading(context);
                                 await provider
-                                    .unfollowUser(value.selectedUser!.id ?? 9)
+                                    .unfollowUser(value.selectedUser!.iD!)
                                     .then((value) => Navigator.pop(context));
                               }, 'Mengikuti')
                             : elevatedBtn42(context, () async {
                                 buildLoading(context);
                                 provider
-                                    .followUser(value.selectedUser!.id ?? 9)
+                                    .followUser(value.selectedUser!.iD!)
                                     .then((value) => Navigator.pop(context));
                               }, 'Ikuti'),
                       ],
@@ -211,8 +224,7 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                            provider.changePage(
-                                0, value.selectedUser!.username!);
+                            provider.changePage(0, value.selectedUser!.iD!);
                           },
                           child: Container(
                             height: 44,
@@ -249,8 +261,7 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                            provider.changePage(
-                                1, value.selectedUser!.username!);
+                            provider.changePage(1, value.selectedUser!.iD!);
                           },
                           child: Container(
                             height: 44,

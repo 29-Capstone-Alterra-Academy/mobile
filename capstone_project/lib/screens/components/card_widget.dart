@@ -1,5 +1,6 @@
 // import package
 import 'package:capstone_project/modelview/upload_provider.dart';
+import 'package:capstone_project/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -32,12 +33,21 @@ Widget circlePic(double size, String img) {
     ),
     clipBehavior: Clip.antiAlias,
     child: Image.network(
-      img,
+      '$baseURL$img',
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
       errorBuilder: (context, error, stackTrace) => Padding(
         padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
         child: Image.asset('assets/img/app_logo.png', fit: BoxFit.contain),
       ),
-      fit: BoxFit.cover,
     ),
   );
 }
@@ -189,7 +199,7 @@ Widget userCard(BuildContext context, UserModel userModel) {
         context,
         MaterialPageRoute(
           builder: (_) => DetailUserScreen(
-            idUser: userModel.id ?? 1,
+            idUser: userModel.iD ?? 1,
           ),
         ),
       );
@@ -241,14 +251,14 @@ Widget userCard(BuildContext context, UserModel userModel) {
               return outlinedBtn28(context, () async {
                 buildLoading(context);
                 await provider
-                    .unfollowUser(value.selectedUser!.id ?? 9)
+                    .unfollowUser(value.selectedUser!.iD!)
                     .then((value) => Navigator.pop(context));
               }, 'Mengikuti');
             }
             return elevatedBtn28(context, () async {
               buildLoading(context);
               provider
-                  .followUser(value.selectedUser!.id ?? 9)
+                  .followUser(value.selectedUser!.iD!)
                   .then((value) => Navigator.pop(context));
             }, 'Ikuti');
           }),
