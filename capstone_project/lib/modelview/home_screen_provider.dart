@@ -31,9 +31,12 @@ class HomeScreenProvider extends ChangeNotifier {
   }
 
   /// Get Thread (Recomended | Followed)
-  void getThread(String sortby) async {
+  void getThread(int categoryId, String sortby) async {
     changeState(FiniteState.loading);
-    threads = await apiServices.getThread(sortby: sortby);
+    threads = await apiServices.getThread(
+      categoryId: categoryId,
+      sortby: sortby,
+    );
     changeState(FiniteState.none);
   }
 }

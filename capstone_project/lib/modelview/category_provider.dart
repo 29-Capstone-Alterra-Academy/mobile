@@ -13,6 +13,7 @@ import 'package:capstone_project/model/search_model.dart';
 import 'package:capstone_project/model/thread_model.dart';
 import 'package:capstone_project/model/category_model.dart';
 import 'package:capstone_project/model/moderator_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
@@ -37,6 +38,12 @@ class CategoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void resetPage() {
+    currentPage = 0;
+    currentCategory = CategoryModel();
+    notifyListeners();
+  }
+
   // CHANGE MAIN STATE
   void changeState(FiniteState s) {
     state = s;
@@ -50,12 +57,12 @@ class CategoryProvider extends ChangeNotifier {
   }
 
   // CHANGE TAB FOR POPULAR || NEWEST THREAD
-  void changePage(int index, String categoryName) {
+  void changePage(int index, int categoryId) {
     currentPage = index;
     if (index == 0) {
-      getPopularThread(categoryName);
+      getPopularThread(categoryId);
     } else if (index == 1) {
-      getNewestThread(categoryName);
+      getNewestThread(categoryId);
     }
     notifyListeners();
   }
@@ -63,16 +70,21 @@ class CategoryProvider extends ChangeNotifier {
   /// Get All Category
   void getCategory() async {
     changeState(FiniteState.loading);
-    category = await _apiServices.getCategroy();
+    category = await _apiServices.getCategory();
     changeState(FiniteState.none);
   }
 
   /// Get Category By ID
   void getDetailCategory(int idCategory) async {
     changeState(FiniteState.loading);
-    currentCategory = await _apiServices.getCategroyById(idCategory);
-    threads = await _apiServices.getThread(
-        categoryName: currentCategory.name, sortby: 'like');
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    currentCategory = await _apiServices.getCategroyById(
+      token: token ?? '',
+      idCategory: idCategory,
+    );
+    threads =
+        await _apiServices.getThread(categoryId: idCategory, sortby: 'like');
     changeState(FiniteState.none);
   }
 
@@ -84,18 +96,18 @@ class CategoryProvider extends ChangeNotifier {
   }
 
   /// Get Popular Thread From This Category
-  void getPopularThread(String categoryName) async {
+  void getPopularThread(int categoryId) async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(
-        categoryName: categoryName, sortby: 'like');
+    threads =
+        await _apiServices.getThread(categoryId: categoryId, sortby: 'like');
     changeSubState(FiniteState.none);
   }
 
   /// Get Newest Thread From This Category
-  void getNewestThread(String categoryName) async {
+  void getNewestThread(int categoryId) async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(
-        categoryName: categoryName, sortby: 'date');
+    threads =
+        await _apiServices.getThread(categoryId: categoryId, sortby: 'date');
     changeSubState(FiniteState.none);
   }
 

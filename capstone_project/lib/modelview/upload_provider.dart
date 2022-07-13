@@ -63,8 +63,8 @@ class UploadProvider extends ChangeNotifier {
   /// Get ALl Category
   void getAllCategory() async {
     changeState(FiniteState.loading);
-    popularCategory = await apiServices.getCategroy(sortby: 'activity_count');
-    newestCategory = await apiServices.getCategroy(sortby: 'date');
+    popularCategory = await apiServices.getCategory(sortby: 'activity_count');
+    newestCategory = await apiServices.getCategory(sortby: 'date');
     changeState(FiniteState.none);
   }
 

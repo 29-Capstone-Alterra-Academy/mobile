@@ -13,8 +13,8 @@ import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
 import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/profile_model.dart';
 import 'package:capstone_project/model/category_model.dart';
 
 // import provider
@@ -33,7 +33,7 @@ class _UploadScreenState extends State<UploadScreen> {
   late final TextEditingController _titleController;
   late final TextEditingController _contentController;
 
-  UserModel? userModel;
+  ProfileModel? profileModel;
   List<String>? images;
 
   @override
@@ -43,7 +43,7 @@ class _UploadScreenState extends State<UploadScreen> {
     _contentController = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      userModel =
+      profileModel =
           Provider.of<ProfileProvider>(context, listen: false).currentUser;
     });
     super.initState();
@@ -305,9 +305,9 @@ class _UploadScreenState extends State<UploadScreen> {
     bool result = await provider.uploadThread(
       ThreadModel(
         author: Author(
-          id: userModel!.id,
-          profileImage: userModel!.profileImage,
-          username: userModel!.username,
+          id: profileModel!.id,
+          username: profileModel!.username,
+          deletedAt: null,
         ),
         content: _contentController.text,
         createdAt: DateTime.now().toIso8601String(),
@@ -318,14 +318,9 @@ class _UploadScreenState extends State<UploadScreen> {
         image5: images[4],
         title: _titleController.text,
         topic: Topic(
-          activityCount: categoryModel.activityCount,
-          contributorCount: categoryModel.contributorCount,
-          description: categoryModel.description,
           id: categoryModel.id,
-          moderatorCount: categoryModel.moderatorCount,
           name: categoryModel.name,
           profileImage: categoryModel.profileImage,
-          rules: categoryModel.rules,
         ),
       ),
     );

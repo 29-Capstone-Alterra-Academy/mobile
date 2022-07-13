@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 // import package
+import 'package:capstone_project/model/profile_model.dart';
 import 'package:dio/dio.dart';
 
 // import model
@@ -23,14 +24,14 @@ class APIServices {
     );
   }
 
-  final String _baseURL =
-      'https://virtserver.swaggerhub.com/etrnal70/nomizo/1.0.0';
+  // final String _baseURL = 'https://virtserver.swaggerhub.com/etrnal70/nomizo/1.0.0';
+  final String _baseURL = 'https://staking-spade-production.up.railway.app';
 
   /// REGISTER
   Future<List<String>> registerUser(String email, String password) async {
     try {
       final request = await dio.post(
-        'https://staking-spade-production.up.railway.app/register',
+        '$_baseURL/register',
         data: {
           "email": email,
           "password": password,
@@ -51,7 +52,7 @@ class APIServices {
   Future<List<String>> postLogin(String email, String password) async {
     try {
       final request = await dio.post(
-        'https://staking-spade-production.up.railway.app/login',
+        '$_baseURL/login',
         data: {
           "email": email,
           "password": password,
@@ -72,7 +73,7 @@ class APIServices {
   Future checkEmail(String email) async {
     try {
       var request = await dio.get(
-        'https://staking-spade-production.up.railway.app/user/check',
+        '$_baseURL/user/check',
         queryParameters: {'email': email},
       );
       log(request.data.toString());
@@ -85,15 +86,15 @@ class APIServices {
   }
 
   /// LOGOUT
-  Future logout() async {
-    try {
-      await dio.post('https://staking-spade-production.up.railway.app/logout');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
+  // Future logout() async {
+  //   try {
+  //     await dio.post('$_baseURL/logout');
+  //     return true;
+  //   } catch (e) {
+  //     log(e.toString());
+  //     return false;
+  //   }
+  // }
 
   /// POST | CREATE CATEGORY
   Future createCategory(CategoryModel categoryModel) async {
@@ -107,11 +108,15 @@ class APIServices {
   }
 
   /// GET POPULAR | Newest CATEGORY
-  Future getCategroy({String? sortby}) async {
+  Future getCategory({int? limit, String? sortby}) async {
     try {
       var response = await dio.get(
         '$_baseURL/topic',
-        queryParameters: {'sort_by': sortby ?? 'activity_count'},
+        queryParameters: {
+          'limit': limit,
+          'offset': 0,
+          'sort_by': sortby ?? 'activity_count',
+        },
       );
 
       List<CategoryModel> topics = (response.data as List)
@@ -126,16 +131,21 @@ class APIServices {
   }
 
   /// GET CATEGORY BY ID
-  Future getCategroyById(int idCategory) async {
+  Future getCategroyById(
+      {required String token, required int idCategory}) async {
     try {
-      var response = await dio.get('$_baseURL/topic/$idCategory');
+      var response = await dio.get(
+        '$_baseURL/topic/$idCategory',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
-      // CategoryModel category = CategoryModel.fromJson(response.data);
-      List<CategoryModel> topics = (response.data as List)
-          .map((e) => CategoryModel.fromJson(e))
-          .toList();
+      CategoryModel topics = CategoryModel.fromJson(response.data);
 
-      return topics.first;
+      return topics;
     } on Exception catch (e) {
       log(e.toString());
       return CategoryModel();
@@ -162,20 +172,20 @@ class APIServices {
 
   /// GET POPULAR USER
   Future getUsers() async {
-    try {
-      var response = await dio.get('$_baseURL/profile');
+    // try {
+    //   var response = await dio.get('$_baseURL/profile');
 
-      // List<UserModel> topics = (response.data as List)
-      //     .map((e) => UserModel.fromJson(e))
-      //     .toList();
+    //   // List<UserModel> topics = (response.data as List)
+    //   //     .map((e) => UserModel.fromJson(e))
+    //   //     .toList();
 
-      var users = UserModel.fromJson(response.data);
+    //   var users = UserModel.fromJson(response.data);
 
-      return [users];
-    } on Exception catch (e) {
-      log(e.toString());
-      return <UserModel>[];
-    }
+    //   return [users];
+    // } on Exception catch (e) {
+    //   log(e.toString());
+    //   return <UserModel>[];
+    // }
   }
 
   /// GET USER BY ID
@@ -214,16 +224,16 @@ class APIServices {
     }
   }
 
-  /// GET THREAD BY CATEGORY NAME
-  Future getThread(
-      {String? username, String? categoryName, String? sortby}) async {
+  /// GET THREAD
+  Future getThread({int? userId, int? categoryId, String? sortby}) async {
     try {
       var response = await dio.get(
         '$_baseURL/thread',
         queryParameters: {
-          'username': username ?? '',
-          'topic': categoryName ?? '',
+          'userId': userId,
+          'topicId': categoryId,
           'sort_by': sortby ?? 'like',
+          'limit': 5,
         },
       );
 
@@ -387,7 +397,7 @@ class APIServices {
 
   /// POST REPLY CHILD ? REPLY TO REPLY
   Future replyChild({
-    required UserModel author,
+    required ProfileModel author,
     required ReplyModel replyParent,
     required String content,
   }) async {
@@ -467,22 +477,22 @@ class APIServices {
 
   /// REPORT USER
   Future reportUser(
-      UserModel currentUserModel, UserModel userModel, String reason) async {
+      ProfileModel reporter, UserModel userModel, String reason) async {
     try {
       await dio.put(
-        '$_baseURL/user/${userModel.id}/report',
+        '$_baseURL/user/${userModel.iD}/report',
         data: {
           "created_at": DateTime.now().toString(),
           "id": 3,
           "reason": reason,
           "reporter": {
-            "id": "${currentUserModel.id}",
-            "profile_image": "${currentUserModel.profileImage}",
-            "username": "${currentUserModel.username}"
+            "id": "${reporter.id}",
+            "profile_image": "${reporter.profileImage}",
+            "username": "${reporter.username}"
           },
           "reviewed": false,
           "suspect": {
-            "id": "${userModel.id}",
+            "id": "${userModel.iD}",
             "profile_image": "${userModel.profileImage}",
             "username": "${userModel.username}"
           }
@@ -525,7 +535,7 @@ class APIServices {
 
   /// REPORT REPLY
   Future reportReply(
-      ReplyModel replyModel, String reason, UserModel reporter) async {
+      ReplyModel replyModel, String reason, ProfileModel reporter) async {
     try {
       await dio.put(
         '$_baseURL/reply/${replyModel.id}/report',
@@ -570,7 +580,7 @@ class APIServices {
   Future getUserProfile({required String token}) async {
     try {
       var response = await dio.get(
-        'https://staking-spade-production.up.railway.app/profile',
+        '$_baseURL/profile',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -578,7 +588,7 @@ class APIServices {
         ),
       );
 
-      var users = UserModel.fromJson(response.data);
+      var users = ProfileModel.fromJson(response.data);
 
       return users;
     } on Exception catch (e) {
@@ -587,23 +597,36 @@ class APIServices {
   }
 
   /// EDIT PROFILE
-  Future editProfile(UserModel userProfile) async {
+  Future editProfile({
+    required ProfileModel userProfile,
+    required String token,
+    String? imgPath,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "id": userProfile.id,
+      "username": userProfile.username,
+      "email": userProfile.email,
+      "gender": "",
+      "profile_image": imgPath == null
+          ? userProfile.profileImage
+          : await MultipartFile.fromFile(imgPath),
+      "is_verified": userProfile.isVerified,
+      "birth_date": "2007-03-02",
+      "bio": userProfile.bio,
+      "created_at": userProfile.createdAt,
+      "updated_at": DateTime.now().toIso8601String(),
+      "deleted_at": null
+    });
     try {
       await dio.put(
         '$_baseURL/profile',
-        data: userProfile.toJson(),
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// EDIT PROFILE IMAGE
-  Future editProfileImage() async {
-    try {
-      await dio.put('$_baseURL/profile/image');
       return true;
     } catch (e) {
       log(e.toString());
@@ -614,7 +637,7 @@ class APIServices {
   /// CHECK USERNAME AVAILABILITY
   Future checkUsername({required String username}) async {
     try {
-      await dio.post(
+      await dio.get(
         '$_baseURL/user/check',
         queryParameters: {
           'username': username,

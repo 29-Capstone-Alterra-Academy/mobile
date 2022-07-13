@@ -64,7 +64,7 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
                   return userCard(
                     context,
                     UserModel(
-                      id: 0,
+                      iD: 0,
                       profileImage: value.moderators[index].profileImage,
                       username: value.moderators[index].username,
                     ),

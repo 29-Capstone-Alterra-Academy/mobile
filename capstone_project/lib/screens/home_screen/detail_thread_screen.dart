@@ -16,8 +16,9 @@ import 'package:capstone_project/modelview/profile_provider.dart';
 import 'package:capstone_project/modelview/detail_thread_provider.dart';
 
 class DetailThreadScreen extends StatefulWidget {
-  final int? idThread;
-  const DetailThreadScreen({Key? key, this.idThread}) : super(key: key);
+  final ThreadModel threadModel;
+  const DetailThreadScreen({Key? key, required this.threadModel})
+      : super(key: key);
 
   @override
   State<DetailThreadScreen> createState() => _DetailThreadScreenState();
@@ -33,7 +34,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
     _commentController = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<DetailThreadProvider>(context, listen: false)
-          .loadDetailThread(widget.idThread!);
+          .loadDetailThread(widget.threadModel);
     });
     super.initState();
   }

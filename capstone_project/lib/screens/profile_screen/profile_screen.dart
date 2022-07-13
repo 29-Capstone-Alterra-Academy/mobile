@@ -29,6 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<ProfileProvider>(context, listen: false).getProfile();
       Provider.of<ProfileProvider>(context, listen: false).changePage(0);
     });
     super.initState();
@@ -49,6 +50,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Text('Something Wrong!!!'),
             );
           } else {
+            if (value.currentUser == null) {
+              return Container();
+            }
             return Text(value.currentUser!.username!);
           }
         }),
@@ -115,7 +119,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Text('Something Wrong!!!'),
           );
         } else {
-          var convert = DateTime.parse(value.currentUser!.createdAt!);
+          if (value.currentUser == null) {
+            return Container();
+          }
+          var convert = DateTime.parse(
+              value.currentUser!.createdAt ?? DateTime.now().toIso8601String());
           String createdTime = DateFormat('MMMM yyyy').format(convert);
           return SingleChildScrollView(
             child: Column(
@@ -138,19 +146,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // activities
                           profileDetails(
                             context: context,
-                            count: '1',
+                            count: value.selectedUser!.threadCount.toString(),
                             label: 'Postingan',
                           ),
                           // followers
                           profileDetails(
                             context: context,
-                            count: '987',
-                            label: 'Aktivitas',
+                            count: value.selectedUser!.followersCount.toString(),
+                            label: 'Pengikut',
                           ),
                           // following
                           profileDetails(
                             context: context,
-                            count: '2',
+                            count: value.selectedUser!.followingCount.toString(),
                             label: 'Mengikuti',
                           ),
                         ],
@@ -164,7 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             // full name
                             Text(
-                              value.currentUser!.email ?? 'Full Name',
+                              value.currentUser!.email ?? '',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge
@@ -174,7 +182,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             // description
                             Text(
-                              value.currentUser!.bio ?? 'Deskripsi Bio',
+                              value.currentUser!.bio ?? '',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             const SizedBox(height: 4),

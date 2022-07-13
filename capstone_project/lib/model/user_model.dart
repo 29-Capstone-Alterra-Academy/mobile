@@ -1,38 +1,37 @@
+// ignore_for_file: unnecessary_new
+
 class UserModel {
-  int? id;
+  int? iD;
   String? username;
-  String? email;
-  String? gender;
   String? profileImage;
-  bool? isVerified;
-  String? birthDate;
   String? bio;
+  int? threadCount;
+  int? followingCount;
+  int? followersCount;
   String? createdAt;
   String? updatedAt;
   String? deletedAt;
 
   UserModel(
-      {this.id,
+      {this.iD,
       this.username,
-      this.email,
-      this.gender,
       this.profileImage,
-      this.isVerified,
-      this.birthDate,
       this.bio,
+      this.threadCount,
+      this.followingCount,
+      this.followersCount,
       this.createdAt,
       this.updatedAt,
       this.deletedAt});
 
   UserModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    username = json['username'];
-    email = json['email'];
-    gender = json['gender'];
-    profileImage = json['profile_image'];
-    isVerified = json['is_verified'];
-    birthDate = json['birth_date'];
-    bio = json['bio'];
+    iD = json['ID'];
+    username = json['Username'];
+    profileImage = json['ProfileImage'];
+    bio = json['Bio'];
+    threadCount = json['ThreadCount'];
+    followingCount = json['FollowingCount'];
+    followersCount = json['FollowersCount'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
@@ -40,14 +39,13 @@ class UserModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['username'] = username;
-    data['email'] = email;
-    data['gender'] = gender;
-    data['profile_image'] = profileImage;
-    data['is_verified'] = isVerified;
-    data['birth_date'] = birthDate;
-    data['bio'] = bio;
+    data['ID'] = iD;
+    data['Username'] = username;
+    data['ProfileImage'] = profileImage;
+    data['Bio'] = bio;
+    data['ThreadCount'] = threadCount;
+    data['FollowingCount'] = followingCount;
+    data['FollowersCount'] = followersCount;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['deleted_at'] = deletedAt;

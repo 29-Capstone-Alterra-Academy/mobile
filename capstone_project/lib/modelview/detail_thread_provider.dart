@@ -1,5 +1,6 @@
 import 'dart:io';
 // import package
+import 'package:capstone_project/model/profile_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -10,7 +11,6 @@ import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/services/api_services.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
 import 'package:capstone_project/model/thread_model.dart';
 import 'package:capstone_project/model/reply_model.dart' as reply;
 
@@ -49,6 +49,7 @@ class DetailThreadProvider extends ChangeNotifier {
   void reset() {
     expandReply = false;
     image = null;
+    currentThread = null;
     notifyListeners();
   }
 
@@ -66,10 +67,10 @@ class DetailThreadProvider extends ChangeNotifier {
   }
 
   /// Get Thread, Reply parent, & currentUser
-  void loadDetailThread(int idThread) async {
+  void loadDetailThread(ThreadModel threadModel) async {
     changeState(FiniteState.loading);
-    currentThread = await _apiServices.getThreadById(idThread);
-    repliesThread = await _apiServices.getReply(replyId: 9, relation: 'parent');
+    currentThread = threadModel;
+    // repliesThread = await _apiServices.getReply(replyId: 9, relation: 'parent');
     changeState(FiniteState.none);
   }
 
@@ -95,7 +96,7 @@ class DetailThreadProvider extends ChangeNotifier {
 
   /// Post Comment | Reply
   Future postReplyThread({
-    required UserModel author,
+    required ProfileModel author,
     required ThreadModel thread,
     required String content,
   }) async {
@@ -134,7 +135,7 @@ class DetailThreadProvider extends ChangeNotifier {
 
   /// Post Reply Child / Reply from reply
   Future postReplyChild({
-    required UserModel author,
+    required ProfileModel author,
     required reply.ReplyModel replyParent,
     required String content,
   }) async {
@@ -173,7 +174,7 @@ class DetailThreadProvider extends ChangeNotifier {
   Future<String> reportReply(
     reply.ReplyModel replyModel,
     String reason,
-    UserModel reporter,
+    ProfileModel reporter,
   ) async {
     if (await _apiServices.reportReply(replyModel, reason, reporter)) {
       return "Laporan Anda sudah dikirim. Terima kasih.";

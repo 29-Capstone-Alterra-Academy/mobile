@@ -1,4 +1,5 @@
 // import package
+import 'package:capstone_project/model/profile_model.dart';
 import 'package:flutter/cupertino.dart';
 
 // import utils
@@ -48,12 +49,12 @@ class UserProvider extends ChangeNotifier {
   }
 
   // CHANGE TAB FOR POPULAR || NEWEST THREAD
-  void changePage(int index, String categoryName) {
+  void changePage(int index, int idUser) {
     currentPage = index;
     if (index == 0) {
-      getPopularThread(categoryName);
+      getPopularThread(idUser);
     } else if (index == 1) {
-      getNewestThread(categoryName);
+      getNewestThread(idUser);
     }
     notifyListeners();
   }
@@ -63,23 +64,23 @@ class UserProvider extends ChangeNotifier {
     changeState(FiniteState.loading);
     selectedUser = await _apiServices.getUsersById(idUser);
     threads = await _apiServices.getThread(
-      username: selectedUser!.username,
+      userId: idUser,
       sortby: 'like',
     );
     changeState(FiniteState.none);
   }
 
   /// Get Popular Thread From This User
-  void getPopularThread(String username) async {
+  void getPopularThread(int idUser) async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(username: username, sortby: 'like');
+    threads = await _apiServices.getThread(userId: idUser, sortby: 'like');
     changeSubState(FiniteState.none);
   }
 
   /// Get Newest Thread From This User
-  void getNewestThread(String username) async {
+  void getNewestThread(int idUser) async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(username: username, sortby: 'date');
+    threads = await _apiServices.getThread(userId: idUser, sortby: 'date');
     changeSubState(FiniteState.none);
   }
 
@@ -99,8 +100,8 @@ class UserProvider extends ChangeNotifier {
 
   /// Report User
   Future<String> reportUser(
-      UserModel currentUser, UserModel targetUser, String reason) async {
-    if (await _apiServices.reportUser(currentUser, targetUser, reason)) {
+      ProfileModel reporter, UserModel targetUser, String reason) async {
+    if (await _apiServices.reportUser(reporter, targetUser, reason)) {
       return "Laporan Anda sudah dikirim. Terima kasih.";
     }
     return "Laporan Anda gagal dikirim";
