@@ -1,15 +1,12 @@
 // import package
-
-import 'dart:developer';
-
-import 'package:capstone_project/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:carousel_slider/carousel_slider.dart';
 
-// import theme
+// import utils & theme
+import 'package:capstone_project/utils/url.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 
 // import component
