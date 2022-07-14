@@ -160,8 +160,8 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                                 // kontibutor
                                 InkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context, '/contributor');
+                                    // Navigator.pushNamed(
+                                    //     context, '/contributor');
                                   },
                                   child: profileDetails(
                                     '${value.currentCategory.contributorCount}',

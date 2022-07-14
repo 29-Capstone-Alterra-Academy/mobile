@@ -233,16 +233,27 @@ class DetailThreadProvider extends ChangeNotifier {
 
   /// Follow User
   Future<bool> followUser(int idUser) async {
-    if (await _apiServices.followUser(idUser)) {
-      return true;
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.followUser(token: token, idUser: idUser)) {
+        return true;
+      }
     }
     return false;
   }
 
   /// Follow Category
   Future<bool> followCategory(int idCategory) async {
-    if (await _apiServices.subscribeCategory(idCategory)) {
-      return true;
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.subscribeCategory(
+        token: token,
+        idCategory: idCategory,
+      )) {
+        return true;
+      }
     }
     return false;
   }

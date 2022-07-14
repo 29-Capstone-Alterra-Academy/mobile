@@ -1,4 +1,6 @@
 // import package
+import 'package:capstone_project/model/search_user_model.dart';
+import 'package:capstone_project/model/thread_model.dart';
 import 'package:flutter/material.dart';
 
 // import utils
@@ -8,7 +10,6 @@ import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/services/api_services.dart';
 
 // import model
-import 'package:capstone_project/model/search_model.dart';
 import 'package:capstone_project/model/user_model.dart';
 import 'package:capstone_project/model/category_model.dart';
 
@@ -21,7 +22,10 @@ class SearchScreenProvider extends ChangeNotifier {
   List<CategoryModel> popularCategory = [];
   List<CategoryModel> allCategory = [];
   List<UserModel> popularUser = [];
-  SearchModel searchResult = SearchModel();
+
+  List<ThreadModel> searchThread = [];
+  List<CategoryModel> searchCategory = [];
+  List<SearchUserModel> searchUser = [];
 
   void changeCategoryState(FiniteState s) {
     categoryState = s;
@@ -56,12 +60,21 @@ class SearchScreenProvider extends ChangeNotifier {
   void getPopularUser() async {
     changeUserState(FiniteState.loading);
     // popularUser = await _apiServices.getUsers();
+    searchUser = await _apiServices.getSearchResult(
+        limit: 100, offset: 0, keyword: 'user', scope: 'user');
+    searchUser.sort((a, b) => a.followersCount!.compareTo(b.followersCount!));
+    searchUser = searchUser.reversed.toList();
     changeUserState(FiniteState.none);
   }
 
-  void getSearchResult(String keywoard) async {
+  void getSearchResult(String keyword) async {
     changeState(FiniteState.loading);
-    searchResult = await _apiServices.getSearchResult();
+    searchThread = await _apiServices.getSearchResult(
+        limit: 100, offset: 0, keyword: keyword, scope: 'thread');
+    searchCategory = await _apiServices.getSearchResult(
+        limit: 100, offset: 0, keyword: keyword, scope: 'topic');
+    searchUser = await _apiServices.getSearchResult(
+        limit: 100, offset: 0, keyword: keyword, scope: 'user');
     changeState(FiniteState.none);
   }
 }

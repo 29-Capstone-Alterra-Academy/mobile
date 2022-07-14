@@ -219,23 +219,24 @@ Widget userCard(BuildContext context, UserModel userModel) {
               children: [
                 // title
                 Text(
-                  '@${userModel.username!}',
+                  '@${userModel.username}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
                 ),
                 const SizedBox(height: 2),
                 // subtitle
-                Text(
-                  'Nama Moderator',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: NomizoTheme.nomizoDark.shade500,
-                      ),
-                ),
+                if (userModel.threadCount != null)
+                  Text(
+                    '${userModel.threadCount} Postingan',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: NomizoTheme.nomizoDark.shade500,
+                        ),
+                  ),
                 const SizedBox(height: 2),
                 // subtitle2
                 Text(
-                  'Jumlah Folower',
+                  '${userModel.followersCount} Pengikut',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: NomizoTheme.nomizoDark.shade500,
                       ),

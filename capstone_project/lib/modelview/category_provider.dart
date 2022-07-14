@@ -1,4 +1,5 @@
 // import package
+import 'package:capstone_project/model/search_user_model.dart';
 import 'package:flutter/cupertino.dart';
 
 // import utils
@@ -9,7 +10,6 @@ import 'package:capstone_project/services/api_services.dart';
 
 // import model
 import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/search_model.dart';
 import 'package:capstone_project/model/thread_model.dart';
 import 'package:capstone_project/model/category_model.dart';
 import 'package:capstone_project/model/moderator_model.dart';
@@ -23,7 +23,10 @@ class CategoryProvider extends ChangeNotifier {
   List<CategoryModel> category = [];
   List<ModeratorModel> moderators = [];
   List<ThreadModel> threads = [];
-  SearchModel? results;
+
+  List<ThreadModel> searchThread = [];
+  List<CategoryModel> searchCategory = [];
+  List<SearchUserModel> searchUser = [];
 
   CategoryModel currentCategory = CategoryModel();
   UserModel selectedModerator = UserModel();
@@ -40,6 +43,7 @@ class CategoryProvider extends ChangeNotifier {
 
   void resetPage() {
     currentPage = 0;
+    isSub = false;
     currentCategory = CategoryModel();
     notifyListeners();
   }
@@ -122,15 +126,29 @@ class CategoryProvider extends ChangeNotifier {
 
   /// SUBSCRIBE TO CATEGORY
   Future subscribeCategory(int idCategory) async {
-    if (await _apiServices.subscribeCategory(idCategory)) {
-      changeSub(true);
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.subscribeCategory(
+        token: token,
+        idCategory: idCategory,
+      )) {
+        changeSub(true);
+      }
     }
   }
 
   /// UNSUBSCRIBE TO CATEGORY
   Future unsubscribeCategory(int idCategory) async {
-    if (await _apiServices.subscribeCategory(idCategory)) {
-      changeSub(false);
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.unsubscribeCategory(
+        token: token,
+        idCategory: idCategory,
+      )) {
+        changeSub(false);
+      }
     }
   }
 
@@ -145,16 +163,28 @@ class CategoryProvider extends ChangeNotifier {
 
   /// Request Moderator
   Future<String> requestModerator(CategoryModel categoryModel) async {
-    if (await _apiServices.requestModerator(categoryModel)) {
-      return "Pengajuan Anda menjadi moderator terkirim";
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.requestModerator(
+        token: token,
+        idCategory: categoryModel.id!,
+      )) {
+        return "Pengajuan Anda menjadi moderator terkirim";
+      }
     }
     return "Pengajuan Anda menjadi moderator gagal terkirim";
   }
 
   /// Search  On Category
-  void getSearchResult({String? category}) async {
+  void getSearchResult({required String keyword}) async {
     changeState(FiniteState.loading);
-    results = await _apiServices.getSearchResult(category: category);
+    searchThread = await _apiServices.getSearchResult(
+        limit: 100, offset: 0, keyword: keyword, scope: 'thread');
+    searchCategory = await _apiServices.getSearchResult(
+        limit: 100, offset: 0, keyword: keyword, scope: 'topic');
+    searchUser = await _apiServices.getSearchResult(
+        limit: 100, offset: 0, keyword: keyword, scope: 'user');
     isSearched = true;
     changeState(FiniteState.none);
   }
@@ -162,7 +192,9 @@ class CategoryProvider extends ChangeNotifier {
   /// Reset search result
   void resetSearchResult() {
     isSearched = false;
-    results = null;
+    searchThread = [];
+    searchCategory = [];
+    searchUser = [];
     notifyListeners();
   }
 }

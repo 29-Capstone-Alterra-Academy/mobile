@@ -1,6 +1,7 @@
 import 'dart:io';
 
 // import package
+import 'package:capstone_project/modelview/upload_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -51,8 +52,10 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
   Widget build(BuildContext context) {
     final provider =
         Provider.of<CreateCategoryProvider>(context, listen: false);
+    final category = Provider.of<UploadProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: () async {
+        category.getAllCategory();
         provider.resetForm();
         return true;
       },
@@ -61,6 +64,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
           automaticallyImplyLeading: false,
           leading: IconButton(
             onPressed: () {
+              category.getAllCategory();
               provider.resetForm();
               Navigator.pop(context);
             },
@@ -81,27 +85,34 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                       _formKey.currentState!.save();
 
                       buildLoading(context);
-                      String? msg;
-                      await provider
-                          .createCategory(CategoryModel(
-                        profileImage: value.img?.path,
-                        name: _nameController.text,
-                        description: _bioController.text,
-                        rules: _rulesController.text,
-                        activityCount: 0,
-                        contributorCount: 0,
-                        moderatorCount: 0,
-                      ))
-                          .then((value) {
-                        if (value) {
-                          msg = 'Kategori berhasil dibuat';
+                      if (await provider.checkCategoryName(
+                          name: _nameController.text)) {
+                        String? msg;
+                        await provider
+                            .createCategory(CategoryModel(
+                          profileImage: value.img?.path ?? '',
+                          name: _nameController.text,
+                          description: _bioController.text,
+                          rules: _rulesController.text,
+                          activityCount: 0,
+                          contributorCount: 0,
+                          moderatorCount: 0,
+                        ))
+                            .then((value) {
+                          if (value) {
+                            msg = 'Kategori berhasil dibuat';
+                            category.getAllCategory();
+                            Navigator.pop(context);
+                          } else {
+                            msg = 'Kategori gagal dibuat';
+                          }
                           Navigator.pop(context);
-                        } else {
-                          msg = 'Kategori gagal dibuat';
-                        }
+                        });
+                        buildToast(msg ?? '');
+                      } else {
                         Navigator.pop(context);
-                      });
-                      buildToast(msg ?? '');
+                        buildToast('Nama kategori sudah dipakai.');
+                      }
                     }
                   },
                   'Simpan',

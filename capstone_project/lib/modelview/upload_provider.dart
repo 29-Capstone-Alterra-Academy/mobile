@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:capstone_project/model/category_model.dart';
-import 'package:capstone_project/model/search_model.dart';
 import 'package:capstone_project/model/thread_model.dart';
 import 'package:capstone_project/services/api_services.dart';
 import 'package:capstone_project/utils/finite_state.dart';
@@ -10,13 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UploadProvider extends ChangeNotifier {
-  final APIServices apiServices = APIServices();
+  final APIServices _apiServices = APIServices();
 
   ThreadModel? thread;
-  List<CategoryModel>? popularCategory;
-  List<CategoryModel>? newestCategory;
+  List<CategoryModel> popularCategory = [];
+  List<CategoryModel> newestCategory = [];
   CategoryModel? selectedCategory;
-  SearchModel? results;
+  List<CategoryModel> results = [];
   List<File> files = [];
 
   FiniteState state = FiniteState.none;
@@ -56,7 +55,7 @@ class UploadProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('access_token');
     if (token != null) {
-      if (await apiServices.uploadThread(threadModel, token)) {
+      if (await _apiServices.uploadThread(threadModel, token)) {
         resetForm();
         return true;
       }
@@ -68,15 +67,24 @@ class UploadProvider extends ChangeNotifier {
   /// Get ALl Category
   void getAllCategory() async {
     changeState(FiniteState.loading);
-    popularCategory = await apiServices.getCategory(limit: 20, sortby: 'activity_count');
-    newestCategory = await apiServices.getCategory(limit: 20, sortby: 'date');
+    // get popular category
+    popularCategory =
+        await _apiServices.getCategory(limit: 20, sortby: 'activity_count');
+    popularCategory
+        .sort((a, b) => a.activityCount!.compareTo(b.activityCount!));
+    popularCategory = popularCategory.reversed.toList();
+    // get newest category
+    newestCategory = await _apiServices.getCategory(limit: 20, sortby: 'date');
+    newestCategory.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
+    newestCategory = newestCategory.reversed.toList();
     changeState(FiniteState.none);
   }
 
   /// Search ALl Category
-  void searchCategory(String category) async {
+  void searchCategory(String keyword) async {
     changeState(FiniteState.loading);
-    results = await apiServices.getSearchResult(category: category);
+    results = await _apiServices.getSearchResult(
+        limit: 100, offset: 0, keyword: keyword, scope: 'topic');
     changeState(FiniteState.none);
   }
 
@@ -102,7 +110,7 @@ class UploadProvider extends ChangeNotifier {
   /// Reset search result
   void resetSearchResult() {
     isSearched = false;
-    results = null;
+    results.clear();
     notifyListeners();
   }
 }

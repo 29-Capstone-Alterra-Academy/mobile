@@ -88,19 +88,19 @@ class _SearchSelectCategoryScreenState
               child: Text('Something Wrong!!!'),
             );
           } else {
-            if (value.results == null || value.results!.topics == null) {
+            if (value.results.isEmpty) {
               if (value.isSearched) {
                 return notFound(context);
               }
               return Container();
             } else {
               return ListView.builder(
-                itemCount: value.results!.threads!.length,
+                itemCount: value.results.length,
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                 itemBuilder: (context, index) {
                   return selectCategory(
                     context,
-                    value.results!.topics![index],
+                    value.results[index],
                     provider,
                   );
                 },

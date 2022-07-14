@@ -97,8 +97,8 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                 child: Text('Something Wrong!!!'),
               );
             } else {
-              if (value.popularCategory == null &&
-                  value.newestCategory == null) {
+              if (value.popularCategory.isEmpty ||
+                  value.newestCategory.isEmpty) {
                 return const Center(
                   child: Text('Kategori tidak ada'),
                 );
@@ -106,23 +106,23 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
               return TabBarView(
                 children: [
                   ListView.builder(
-                    itemCount: value.popularCategory!.length,
+                    itemCount: value.popularCategory.length,
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                     itemBuilder: (context, index) {
                       return selectCategory(
                         context,
-                        value.popularCategory![index],
+                        value.popularCategory[index],
                         provider,
                       );
                     },
                   ),
                   ListView.builder(
-                    itemCount: value.newestCategory!.length,
+                    itemCount: value.newestCategory.length,
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                     itemBuilder: (context, index) {
                       return selectCategory(
                         context,
-                        value.popularCategory![index],
+                        value.newestCategory[index],
                         provider,
                       );
                     },
