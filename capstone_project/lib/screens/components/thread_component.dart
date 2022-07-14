@@ -331,7 +331,11 @@ class _ThreadComponentState extends State<ThreadComponent> {
               ? () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const DetailImage()),
+                    MaterialPageRoute(
+                      builder: (_) => DetailImage(
+                        imageUrl: imgUrl[itemIndex],
+                      ),
+                    ),
                   );
                 }
               : null,

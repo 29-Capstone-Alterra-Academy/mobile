@@ -216,7 +216,7 @@ class APIServices {
   }
 
   /// GET LIST OF TOPICS
-  Future getCategory({int? limit, String? sortby}) async {
+  Future<List<CategoryModel>> getCategory({int? limit, String? sortby}) async {
     try {
       var response = await dio.get(
         '$_baseURL/topic',
@@ -312,17 +312,37 @@ class APIServices {
   }
 
   /// CRETAE NEW THREAD
-  Future uploadThread(ThreadModel threadModel) async {
+  Future<bool> uploadThread(ThreadModel threadModel, String token) async {
+    FormData formData = FormData.fromMap({
+      "title": threadModel.title,
+      "content": threadModel.content,
+      if (threadModel.image1 != '')
+        "image_1": await MultipartFile.fromFile(threadModel.image1!),
+      if (threadModel.image2 != '')
+        "image_2": await MultipartFile.fromFile(threadModel.image2!),
+      if (threadModel.image3 != '')
+        "image_3": await MultipartFile.fromFile(threadModel.image3!),
+      if (threadModel.image4 != '')
+        "image_4": await MultipartFile.fromFile(threadModel.image4!),
+      if (threadModel.image5 != '')
+        "image_5": await MultipartFile.fromFile(threadModel.image5!),
+    });
+
     try {
       await dio.post(
         '$_baseURL/topic/${threadModel.topic!.id}/thread',
-        data: threadModel.toJson(),
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
 
       return true;
     } catch (e) {
       log(e.toString());
-      return true;
+      return false;
     }
   }
 
@@ -338,7 +358,8 @@ class APIServices {
   }
 
   /// GET THREAD
-  Future getThread({int? userId, int? categoryId, String? sortby}) async {
+  Future<List<ThreadModel>> getThread(
+      {int? userId, int? categoryId, String? sortby}) async {
     try {
       var response = await dio.get(
         '$_baseURL/thread',
@@ -346,7 +367,8 @@ class APIServices {
           'userId': userId,
           'topicId': categoryId,
           'sort_by': sortby ?? 'like',
-          'limit': 5,
+          'limit': 100,
+          'offset': 0,
         },
       );
 

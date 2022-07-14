@@ -7,6 +7,7 @@ import 'package:capstone_project/services/api_services.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UploadProvider extends ChangeNotifier {
   final APIServices apiServices = APIServices();
@@ -52,9 +53,13 @@ class UploadProvider extends ChangeNotifier {
   /// Upload Post
   Future<bool> uploadThread(ThreadModel threadModel) async {
     changeState(FiniteState.loading);
-    if (await apiServices.uploadThread(threadModel)) {
-      resetForm();
-      return true;
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await apiServices.uploadThread(threadModel, token)) {
+        resetForm();
+        return true;
+      }
     }
     changeState(FiniteState.none);
     return false;
@@ -63,8 +68,8 @@ class UploadProvider extends ChangeNotifier {
   /// Get ALl Category
   void getAllCategory() async {
     changeState(FiniteState.loading);
-    popularCategory = await apiServices.getCategory(sortby: 'activity_count');
-    newestCategory = await apiServices.getCategory(sortby: 'date');
+    popularCategory = await apiServices.getCategory(limit: 20, sortby: 'activity_count');
+    newestCategory = await apiServices.getCategory(limit: 20, sortby: 'date');
     changeState(FiniteState.none);
   }
 
