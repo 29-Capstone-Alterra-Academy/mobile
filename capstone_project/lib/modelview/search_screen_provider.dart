@@ -15,11 +15,23 @@ import 'package:capstone_project/model/category_model.dart';
 class SearchScreenProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
   FiniteState state = FiniteState.none;
+  FiniteState categoryState = FiniteState.none;
+  FiniteState userState = FiniteState.none;
 
   List<CategoryModel> popularCategory = [];
   List<CategoryModel> allCategory = [];
   List<UserModel> popularUser = [];
   SearchModel searchResult = SearchModel();
+
+  void changeCategoryState(FiniteState s) {
+    categoryState = s;
+    notifyListeners();
+  }
+
+  void changeUserState(FiniteState s) {
+    userState = s;
+    notifyListeners();
+  }
 
   void changeState(FiniteState s) {
     state = s;
@@ -28,23 +40,23 @@ class SearchScreenProvider extends ChangeNotifier {
 
   /// GET 3 POPULAR TOPICS
   void getPopularCategory() async {
-    changeState(FiniteState.loading);
+    changeCategoryState(FiniteState.loading);
     popularCategory = await _apiServices.getCategory(limit: 3);
-    changeState(FiniteState.none);
+    changeCategoryState(FiniteState.none);
   }
 
   /// GET MOST POPULAR TOPICS
   void getAllPopularCategory(int limit) async {
-    changeState(FiniteState.loading);
+    changeCategoryState(FiniteState.loading);
     allCategory = await _apiServices.getCategory(limit: limit);
-    changeState(FiniteState.none);
+    changeCategoryState(FiniteState.none);
   }
 
   /// GET MOST POPULAR USER
   void getPopularUser() async {
-    changeState(FiniteState.loading);
+    changeUserState(FiniteState.loading);
     // popularUser = await _apiServices.getUsers();
-    changeState(FiniteState.none);
+    changeUserState(FiniteState.none);
   }
 
   void getSearchResult(String keywoard) async {

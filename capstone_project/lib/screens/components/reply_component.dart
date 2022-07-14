@@ -1,4 +1,6 @@
 // import package
+import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -23,8 +25,10 @@ import 'package:capstone_project/modelview/detail_thread_provider.dart';
 import 'package:capstone_project/screens/search_screen/detail_user/detail_user_screen.dart';
 
 class ReplyComponent extends StatefulWidget {
+  final ThreadModel? threadModel;
   final ReplyModel replyModel;
-  const ReplyComponent({Key? key, required this.replyModel}) : super(key: key);
+  const ReplyComponent({Key? key, required this.replyModel, this.threadModel})
+      : super(key: key);
 
   @override
   State<ReplyComponent> createState() => _ReplyComponentState();
@@ -48,8 +52,7 @@ class _ReplyComponentState extends State<ReplyComponent> {
           children: [
             // reply parent
             replyCard(parentReply, provider),
-            // if (true)
-            if (parentReply.childCount! > 0)
+            if (parentReply.replyCount! > 0)
               Column(
                 children: [
                   // reply child section
@@ -58,25 +61,32 @@ class _ReplyComponentState extends State<ReplyComponent> {
                     duration: const Duration(milliseconds: 300),
                     child: SizedBox(
                       height: value.expandReply ? null : 0,
-                      child: ListView.builder(
-                        itemCount: value.repliesChild!.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 50),
-                            child:
-                                replyCard(value.repliesChild![index], provider),
-                          );
-                        },
-                      ),
+                      child: value.repliesChild.isEmpty
+                          ? Container()
+                          : ListView.builder(
+                              itemCount: value.repliesChild.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 50),
+                                  child: replyCard(
+                                      value.repliesChild[index], provider),
+                                );
+                              },
+                            ),
                     ),
                   ),
                   // see more reply button
                   buildMoreReply(
                     isExpanded: value.expandReply,
-                    label: 'Lihat Balasan (${parentReply.childCount})',
-                    function: () => provider.expandReplyParent(),
+                    label: 'Lihat Balasan (${parentReply.replyCount})',
+                    function: () async {
+                      if (!value.expandReply) {
+                        await provider.getReplyChild(parentReply.id!);
+                      }
+                      provider.expandReplyParent();
+                    },
                   ),
                 ],
               ),
@@ -157,7 +167,7 @@ class _ReplyComponentState extends State<ReplyComponent> {
                     Row(
                       children: [
                         Text(
-                          'mengomentari @${reply.thread!.author!.username}',
+                          'mengomentari @${widget.threadModel!.author!.username}',
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: NomizoTheme.nomizoDark.shade500,
@@ -247,13 +257,13 @@ class _ReplyComponentState extends State<ReplyComponent> {
               // comment
               feedbackButton(
                 iconData: Icons.comment_outlined,
-                label: parentReply.childCount.toString(),
+                label: reply.replyCount.toString(),
                 function: () => provider.changeSelectedReply(replyModel: reply),
               ),
               // like
               feedbackButton(
                 iconData: Icons.thumb_up_outlined,
-                label: parentReply.like.toString(),
+                label: reply.likedCount.toString(),
                 function: () => provider.likeReply(reply),
               ),
               // dislike
@@ -265,7 +275,8 @@ class _ReplyComponentState extends State<ReplyComponent> {
               feedbackButton(
                 iconData: Icons.share,
                 function: () async {
-                  await Share.share('Share');
+                  await Share.share(
+                      '$baseURL/reply?scope=thread&limit=100&offset=0&threadId=${reply.id}');
                 },
               ),
             ],

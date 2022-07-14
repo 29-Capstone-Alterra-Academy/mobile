@@ -1,6 +1,5 @@
 // import package
 import 'package:capstone_project/modelview/upload_provider.dart';
-import 'package:capstone_project/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -33,7 +32,7 @@ Widget circlePic(double size, String img) {
     ),
     clipBehavior: Clip.antiAlias,
     child: Image.network(
-      '$baseURL$img',
+      img,
       fit: BoxFit.cover,
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) return child;

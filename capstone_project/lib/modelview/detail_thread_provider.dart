@@ -13,6 +13,7 @@ import 'package:capstone_project/services/api_services.dart';
 // import model
 import 'package:capstone_project/model/thread_model.dart';
 import 'package:capstone_project/model/reply_model.dart' as reply;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailThreadProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
@@ -21,7 +22,7 @@ class DetailThreadProvider extends ChangeNotifier {
   reply.ReplyModel? selectedReply;
 
   List<reply.ReplyModel>? repliesThread;
-  List<reply.ReplyModel>? repliesChild;
+  List<reply.ReplyModel> repliesChild = [];
 
   FiniteState state = FiniteState.none;
   bool expandReply = false;
@@ -70,16 +71,18 @@ class DetailThreadProvider extends ChangeNotifier {
   void loadDetailThread(ThreadModel threadModel) async {
     changeState(FiniteState.loading);
     currentThread = threadModel;
-    // repliesThread = await _apiServices.getReply(replyId: 9, relation: 'parent');
+    repliesThread = await _apiServices.getReply(
+      scope: 'thread',
+      idThread: threadModel.id!,
+      limit: 30,
+    );
     changeState(FiniteState.none);
   }
 
   /// Get Reply Child
-  void getReplyChild() async {
-    changeState(FiniteState.loading);
-    repliesThread = await _apiServices.getReply(replyId: 9, relation: 'child');
-    // repliesChild = repliesThread;
-    changeState(FiniteState.none);
+  Future getReplyChild(int replyParentId) async {
+    repliesChild = await _apiServices.getReplyChild(replyId: replyParentId);
+    notifyListeners();
   }
 
   /// Like | Delete Like Thread
@@ -95,30 +98,26 @@ class DetailThreadProvider extends ChangeNotifier {
   }
 
   /// Post Comment | Reply
-  Future postReplyThread({
-    required ProfileModel author,
-    required ThreadModel thread,
+  Future<bool> postReplyThread({
+    required int idThread,
     required String content,
   }) async {
-    await _apiServices.replyThread(
-      reply.ReplyModel(
-        author: reply.Author(
-          id: author.id,
-          profileImage: author.profileImage,
-          username: author.username,
-        ),
-        childCount: 0,
-        childExist: true,
-        content: content,
-        createdAt: DateTime.now().toIso8601String(),
-        dislike: 0,
-        id: 9,
-        like: 0,
-        parentExist: true,
-        thread: reply.Thread.fromJson(thread.toJson()),
-        updatedAt: DateTime.now().toIso8601String(),
-      ),
-    );
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (await _apiServices.replyThread(
+      token: token!,
+      idThread: idThread,
+      content: content,
+    )) {
+      repliesThread = await _apiServices.getReply(
+        scope: 'thread',
+        idThread: idThread,
+        limit: 30,
+      );
+      notifyListeners();
+      return true;
+    }
+    return false;
   }
 
   /// Like | Delete Like Thread
@@ -135,15 +134,25 @@ class DetailThreadProvider extends ChangeNotifier {
 
   /// Post Reply Child / Reply from reply
   Future postReplyChild({
-    required ProfileModel author,
-    required reply.ReplyModel replyParent,
+    required int idReplyParent,
     required String content,
   }) async {
-    await _apiServices.replyChild(
-      author: author,
-      replyParent: replyParent,
-      content: content,
-    );
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.replyChild(
+        token: token,
+        idReplyParent: idReplyParent,
+        content: content,
+      )) {
+        repliesChild = await _apiServices.getReplyChild(
+          replyId: idReplyParent,
+        );
+        notifyListeners();
+        return true;
+      }
+    }
+    return false;
   }
 
   /// Follow User

@@ -83,8 +83,7 @@ class CategoryProvider extends ChangeNotifier {
       token: token ?? '',
       idCategory: idCategory,
     );
-    threads =
-        await _apiServices.getThread(categoryId: idCategory, sortby: 'like');
+    getPopularThread(idCategory);
     changeState(FiniteState.none);
   }
 
@@ -98,16 +97,22 @@ class CategoryProvider extends ChangeNotifier {
   /// Get Popular Thread From This Category
   void getPopularThread(int categoryId) async {
     changeSubState(FiniteState.loading);
-    threads =
-        await _apiServices.getThread(categoryId: categoryId, sortby: 'like');
+    threads = await _apiServices.getThread(categoryId: categoryId);
+    // sort by reply count
+    threads.sort(
+      (a, b) => a.replyCount!.compareTo(b.replyCount!),
+    );
+    // reverse list
+    threads = threads.reversed.toList();
     changeSubState(FiniteState.none);
   }
 
   /// Get Newest Thread From This Category
   void getNewestThread(int categoryId) async {
     changeSubState(FiniteState.loading);
-    threads =
-        await _apiServices.getThread(categoryId: categoryId, sortby: 'date');
+    threads = await _apiServices.getThread(categoryId: categoryId);
+    // reverse list
+    threads = threads.reversed.toList();
     changeSubState(FiniteState.none);
   }
 

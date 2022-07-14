@@ -59,28 +59,44 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // reset tab page
+  void resetPage() {
+    currentPage = 0;
+    notifyListeners();
+  }
+
   /// Get User By ID
   void getDetailUser(int idUser) async {
     changeState(FiniteState.loading);
     selectedUser = await _apiServices.getUsersById(idUser);
-    threads = await _apiServices.getThread(
-      userId: idUser,
-      sortby: 'like',
+    threads = await _apiServices.getThread(userId: idUser);
+    // sort by reply count
+    threads.sort(
+      (a, b) => a.replyCount!.compareTo(b.replyCount!),
     );
+    // reverse list
+    threads = threads.reversed.toList();
     changeState(FiniteState.none);
   }
 
   /// Get Popular Thread From This User
   void getPopularThread(int idUser) async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(userId: idUser, sortby: 'like');
+    threads = await _apiServices.getThread(userId: idUser);
+    // sort by reply count
+    threads.sort(
+      (a, b) => a.replyCount!.compareTo(b.replyCount!),
+    );
+    // reverse list
+    threads = threads.reversed.toList();
     changeSubState(FiniteState.none);
   }
 
   /// Get Newest Thread From This User
   void getNewestThread(int idUser) async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(userId: idUser, sortby: 'date');
+    threads = await _apiServices.getThread(userId: idUser);
+    threads = threads.reversed.toList();
     changeSubState(FiniteState.none);
   }
 

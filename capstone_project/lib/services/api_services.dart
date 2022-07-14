@@ -366,7 +366,6 @@ class APIServices {
         queryParameters: {
           'userId': userId,
           'topicId': categoryId,
-          'sort_by': sortby ?? 'like',
           'limit': 100,
           'offset': 0,
         },
@@ -410,14 +409,27 @@ class APIServices {
   }
 
   /// REPLY TO A THREAD
-  Future replyThread(ReplyModel replyModel) async {
+  Future<bool> replyThread({
+    required String token,
+    required int idThread,
+    required String content,
+  }) async {
     try {
       await dio.post(
-        '$_baseURL/thread/${replyModel.thread!.id}/reply',
-        data: replyModel.toJson(),
+        '$_baseURL/thread/$idThread/reply',
+        data: FormData.fromMap({
+          'content': content,
+        }),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
+      return true;
     } catch (e) {
       log(e.toString());
+      return false;
     }
   }
 
@@ -465,22 +477,50 @@ class APIServices {
   /// DELETE REPORT REASON
 
   /// REPLY
-  /// DELETE REPLY
-
-  /// GET REPLY'S CHILD BY REPLY ID
-  Future getReply({required int replyId, required String relation}) async {
+  Future getReply({
+    required String scope,
+    required int idThread,
+    required int limit,
+    int? offset,
+  }) async {
     try {
       var response = await dio.get(
-        '$_baseURL/reply/$replyId',
+        '$_baseURL/reply',
         queryParameters: {
-          'relation': relation,
-          'max_depth': '',
+          'scope': scope,
+          'threadId': idThread,
+          'limit': limit,
+          'offset': offset ?? 0,
         },
       );
 
-      ReplyModel reply = ReplyModel.fromJson(response.data);
+      List<ReplyModel> reply =
+          (response.data as List).map((e) => ReplyModel.fromJson(e)).toList();
 
-      return [reply];
+      return reply;
+    } catch (e) {
+      log(e.toString());
+      return null;
+    }
+  }
+
+  /// DELETE REPLY
+
+  /// GET REPLY'S CHILD BY REPLY ID
+  Future getReplyChild({required int replyId}) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/reply/$replyId/childs',
+        queryParameters: {
+          'limit': 20,
+          'offset': 0,
+        },
+      );
+
+      List<ReplyModel> reply =
+          (response.data as List).map((e) => ReplyModel.fromJson(e)).toList();
+
+      return reply;
     } catch (e) {
       log(e.toString());
       return null;
@@ -540,26 +580,26 @@ class APIServices {
 
   /// REPLY TO A REPLY
   Future replyChild({
-    required ProfileModel author,
-    required ReplyModel replyParent,
+    required String token,
+    required int idReplyParent,
     required String content,
   }) async {
     try {
       await dio.post(
-        '$_baseURL/reply/${replyParent.thread!.id}/reply',
-        data: {
-          "author": {
-            "id": author.id,
-            "profile_image": author.profileImage,
-            "username": author.username
-          },
+        '$_baseURL/reply/$idReplyParent/reply',
+        data: FormData.fromMap({
           "content": content,
-          "parent": replyParent.toJson(),
-          "thread": replyParent.thread!.toJson()
-        },
+        }),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
+      return true;
     } catch (e) {
       log(e.toString());
+      return false;
     }
   }
 
@@ -580,8 +620,8 @@ class APIServices {
             "username": reporter.username
           },
           "reviewed": false,
-          "thread": replyModel.thread!.toJson(),
-          "topic": replyModel.thread!.topic!.toJson()
+          // "thread": replyModel.thread!.toJson(),
+          // "topic": replyModel.thread!.topic!.toJson()
         },
       );
       return true;

@@ -1,4 +1,8 @@
 // import package
+import 'dart:developer';
+
+import 'package:capstone_project/modelview/profile_provider.dart';
+import 'package:capstone_project/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -6,7 +10,6 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:carousel_slider/carousel_slider.dart';
 
 // import utils & theme
-import 'package:capstone_project/utils/url.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 
 // import component
@@ -51,19 +54,19 @@ class _ThreadComponentState extends State<ThreadComponent> {
     isOpened = widget.isOpened;
     // set image list
     if (threadModel.image1 != '') {
-      images.add('$baseURL${threadModel.image1}');
+      images.add(threadModel.image1!);
     }
     if (threadModel.image2 != '') {
-      images.add('$baseURL${threadModel.image2}');
+      images.add(threadModel.image2!);
     }
     if (threadModel.image3 != '') {
-      images.add('$baseURL${threadModel.image3}');
+      images.add(threadModel.image3!);
     }
     if (threadModel.image4 != '') {
-      images.add('$baseURL${threadModel.image4}');
+      images.add(threadModel.image4!);
     }
     if (threadModel.image5 != '') {
-      images.add('$baseURL${threadModel.image5}');
+      images.add(threadModel.image5!);
     }
     // convert thread date to time ago format
     var convert = DateTime.parse(threadModel.createdAt!);
@@ -76,6 +79,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<DetailThreadProvider>(context, listen: false);
+    final profile = Provider.of<ProfileProvider>(context, listen: false);
     return InkWell(
       onTap: isOpened
           ? null
@@ -134,14 +138,17 @@ class _ThreadComponentState extends State<ThreadComponent> {
                           Expanded(
                             child: InkWell(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => DetailUserScreen(
-                                      idUser: threadModel.author!.id ?? 1,
+                                if (threadModel.author!.id !=
+                                    profile.currentUser!.id) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => DetailUserScreen(
+                                        idUser: threadModel.author!.id ?? 1,
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                }
                               },
                               child: Text(
                                 'diposting oleh @${threadModel.author!.username}',
@@ -297,7 +304,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
                 feedbackButton(
                   iconData: Icons.share,
                   function: () async {
-                    await Share.share('Share');
+                    await Share.share('$baseURL/thread?userId&topicId=1&limit=100&offset=0');
                   },
                 ),
               ],
@@ -326,6 +333,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
     return CarouselSlider.builder(
       itemCount: imgUrl.length,
       itemBuilder: (context, itemIndex, pageViewIndex) {
+        log(imgUrl[itemIndex]);
         return InkWell(
           onTap: isOpened
               ? () {

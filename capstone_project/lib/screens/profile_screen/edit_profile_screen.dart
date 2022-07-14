@@ -4,9 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// import utils
-import 'package:capstone_project/utils/url.dart';
-
 // import theme
 import 'package:capstone_project/themes/nomizo_theme.dart';
 
@@ -261,7 +258,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       clipBehavior: Clip.antiAlias,
       child: img == null
           ? Image.network(
-              '$baseURL$url',
+              url,
               fit: BoxFit.cover,
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;

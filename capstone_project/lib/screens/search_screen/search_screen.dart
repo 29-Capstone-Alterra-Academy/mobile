@@ -61,14 +61,14 @@ class _SearchScreenState extends State<SearchScreen> {
               // Popular Category
               Consumer<SearchScreenProvider>(
                 builder: (context, value, _) {
-                  if (value.state == FiniteState.loading) {
+                  if (value.categoryState == FiniteState.loading) {
                     return Center(
                       child: CircularProgressIndicator(
                         color: NomizoTheme.nomizoTosca.shade600,
                       ),
                     );
                   }
-                  if (value.state == FiniteState.failed) {
+                  if (value.categoryState == FiniteState.failed) {
                     return const Center(
                       child: Text('Something Wrong!!!'),
                     );
@@ -106,14 +106,14 @@ class _SearchScreenState extends State<SearchScreen> {
               const SizedBox(height: 8),
               Consumer<SearchScreenProvider>(
                 builder: (context, value, _) {
-                  if (value.state == FiniteState.loading) {
+                  if (value.userState == FiniteState.loading) {
                     return Center(
                       child: CircularProgressIndicator(
                         color: NomizoTheme.nomizoTosca.shade600,
                       ),
                     );
                   }
-                  if (value.state == FiniteState.failed) {
+                  if (value.userState == FiniteState.failed) {
                     return const Center(
                       child: Text('Something Wrong!!!'),
                     );

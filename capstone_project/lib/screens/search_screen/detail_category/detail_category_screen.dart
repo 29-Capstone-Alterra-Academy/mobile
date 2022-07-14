@@ -416,10 +416,11 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
         return const SizedBox(
             height: 200, child: Center(child: Text('Tidak Ada Thread')));
       }
-      return ListView.builder(
+      return ListView.separated(
         itemCount: threads.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
+        separatorBuilder: (context, index) => buildDivider(),
         itemBuilder: (context, index) {
           if (page == 0) {
             // Popular Thread
