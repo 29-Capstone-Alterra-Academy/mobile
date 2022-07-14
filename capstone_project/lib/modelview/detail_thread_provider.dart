@@ -26,6 +26,10 @@ class DetailThreadProvider extends ChangeNotifier {
 
   FiniteState state = FiniteState.none;
   bool expandReply = false;
+  bool isLikeThread = false;
+  bool isDislikeThread = false;
+  bool isLikeReply = false;
+  bool isDislikeReply = false;
 
   File? image;
 
@@ -51,6 +55,10 @@ class DetailThreadProvider extends ChangeNotifier {
     expandReply = false;
     image = null;
     currentThread = null;
+    isLikeThread = false;
+    isDislikeThread = false;
+    isLikeReply = false;
+    isDislikeReply = false;
     notifyListeners();
   }
 
@@ -87,14 +95,46 @@ class DetailThreadProvider extends ChangeNotifier {
 
   /// Like | Delete Like Thread
   void likeThread(ThreadModel threadModel) async {
-    await _apiServices.likeThread(threadModel.id ?? 1);
-    // await _apiServices.deleteLikeThread(threadModel.id ?? 1);
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (isLikeThread) {
+        if (await _apiServices.deleteLikeThread(
+            token: token, idThread: threadModel.id!)) {
+          isLikeThread = false;
+        }
+      } else {
+        if (await _apiServices.likeThread(
+          token: token,
+          idThread: threadModel.id!,
+        )) {
+          isLikeThread = true;
+        }
+      }
+      loadDetailThread(currentThread!);
+    }
   }
 
   /// Dislike | Delete Dislike Thread
   void dislikeThread(ThreadModel threadModel) async {
-    await _apiServices.dislikeThread(threadModel.id ?? 1);
-    // await _apiServices.deleteunLikeThread(threadModel.id ?? 1);
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (isLikeThread) {
+        if (await _apiServices.deleteDislikeThread(
+            token: token, idThread: threadModel.id!)) {
+          isLikeThread = false;
+        }
+      } else {
+        if (await _apiServices.dislikeThread(
+          token: token,
+          idThread: threadModel.id!,
+        )) {
+          isLikeThread = true;
+        }
+      }
+      loadDetailThread(currentThread!);
+    }
   }
 
   /// Post Comment | Reply
@@ -121,15 +161,51 @@ class DetailThreadProvider extends ChangeNotifier {
   }
 
   /// Like | Delete Like Thread
-  void likeReply(reply.ReplyModel replyModel) async {
-    await _apiServices.likeReply(replyModel.id ?? 1);
-    // await _apiServices.deleteLikeThread(threadModel.id ?? 1);
+  void likeReply(reply.ReplyModel replyModel, int idThread) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (isLikeReply) {
+        if (await _apiServices.deleteLikeReply(
+          token: token,
+          idReply: replyModel.id!,
+        )) {
+          isLikeReply = false;
+        }
+      } else {
+        if (await _apiServices.likeReply(
+          token: token,
+          idReply: replyModel.id!,
+        )) {
+          isLikeReply = true;
+        }
+      }
+      loadDetailThread(currentThread!);
+    }
   }
 
   /// Dislike | Delete Dislike Thread
-  void dislikeReply(reply.ReplyModel replyModel) async {
-    await _apiServices.dislikeThread(replyModel.id ?? 1);
-    // await _apiServices.deleteunLikeThread(threadModel.id ?? 1);
+  void dislikeReply(reply.ReplyModel replyModel, int idThread) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (isLikeReply) {
+        if (await _apiServices.deleteDislikeReply(
+          token: token,
+          idReply: replyModel.id!,
+        )) {
+          isLikeReply = false;
+        }
+      } else {
+        if (await _apiServices.dislikeReply(
+          token: token,
+          idReply: replyModel.id!,
+        )) {
+          isLikeReply = true;
+        }
+      }
+      loadDetailThread(currentThread!);
+    }
   }
 
   /// Post Reply Child / Reply from reply

@@ -385,9 +385,19 @@ class APIServices {
   /// UPDATE THREAD
 
   /// DELETE LIKE THREAD
-  Future<bool> deleteLikeThread(int idThread) async {
+  Future<bool> deleteLikeThread({
+    required String token,
+    required int idThread,
+  }) async {
     try {
-      await dio.delete('$_baseURL/thread/$idThread/like');
+      await dio.delete(
+        '$_baseURL/thread/$idThread/like',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -397,9 +407,19 @@ class APIServices {
   }
 
   /// LIKE THREAD THREAD
-  Future<bool> likeThread(int idThread) async {
+  Future<bool> likeThread({
+    required String token,
+    required int idThread,
+  }) async {
     try {
-      await dio.post('$_baseURL/thread/$idThread/like');
+      await dio.post(
+        '$_baseURL/thread/$idThread/like',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -434,9 +454,19 @@ class APIServices {
   }
 
   /// DELETE DISLIKE THREAD
-  Future<bool> deleteDislikeThread(int idThread) async {
+  Future<bool> deleteDislikeThread({
+    required String token,
+    required int idThread,
+  }) async {
     try {
-      await dio.delete('$_baseURL/thread/$idThread/unlike');
+      await dio.delete(
+        '$_baseURL/thread/$idThread/unlike',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -446,9 +476,19 @@ class APIServices {
   }
 
   /// DISLIKE THREAD
-  Future<bool> dislikeThread(int idThread) async {
+  Future<bool> dislikeThread({
+    required String token,
+    required int idThread,
+  }) async {
     try {
-      await dio.post('$_baseURL/thread/$idThread/unlike');
+      await dio.post(
+        '$_baseURL/thread/$idThread/unlike',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -531,9 +571,19 @@ class APIServices {
   /// GET REPLYS CHILDS
 
   /// DELETE LIKE FROM REPLY
-  Future<bool> deleteLikeReply(int idThread) async {
+  Future<bool> deleteLikeReply({
+    required String token,
+    required int idReply,
+  }) async {
     try {
-      await dio.delete('$_baseURL/reply/$idThread/like');
+      await dio.delete(
+        '$_baseURL/reply/$idReply/like',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -543,9 +593,16 @@ class APIServices {
   }
 
   /// LIKE REPLY
-  Future<bool> likeReply(int idThread) async {
+  Future<bool> likeReply({required String token, required int idReply}) async {
     try {
-      await dio.post('$_baseURL/reply/$idThread/like');
+      await dio.post(
+        '$_baseURL/reply/$idReply/like',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -555,9 +612,17 @@ class APIServices {
   }
 
   /// DELETE DISLIKE FROM REPLY
-  Future<bool> deleteDisikeReply(int idThread) async {
+  Future<bool> deleteDislikeReply(
+      {required String token, required int idReply}) async {
     try {
-      await dio.delete('$_baseURL/reply/$idThread/unlike');
+      await dio.delete(
+        '$_baseURL/reply/$idReply/unlike',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -567,9 +632,17 @@ class APIServices {
   }
 
   /// DISLIKe REPLY
-  Future<bool> dislikeReply(int idThread) async {
+  Future<bool> dislikeReply(
+      {required String token, required int idReply}) async {
     try {
-      await dio.post('$_baseURL/reply/$idThread/unlike');
+      await dio.post(
+        '$_baseURL/reply/$idReply/unlike',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {

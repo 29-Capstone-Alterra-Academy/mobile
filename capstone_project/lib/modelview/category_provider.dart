@@ -111,6 +111,10 @@ class CategoryProvider extends ChangeNotifier {
   void getNewestThread(int categoryId) async {
     changeSubState(FiniteState.loading);
     threads = await _apiServices.getThread(categoryId: categoryId);
+    // sort by id
+    threads.sort(
+      (a, b) => a.id!.compareTo(b.id!),
+    );
     // reverse list
     threads = threads.reversed.toList();
     changeSubState(FiniteState.none);

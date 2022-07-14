@@ -264,12 +264,14 @@ class _ReplyComponentState extends State<ReplyComponent> {
               feedbackButton(
                 iconData: Icons.thumb_up_outlined,
                 label: reply.likedCount.toString(),
-                function: () => provider.likeReply(reply),
+                function: () =>
+                    provider.likeReply(reply, provider.currentThread!.id!),
               ),
               // dislike
               feedbackButton(
                 iconData: Icons.thumb_down_outlined,
-                function: () => provider.dislikeReply(reply),
+                function: () =>
+                    provider.dislikeReply(reply, provider.currentThread!.id!),
               ),
               // share
               feedbackButton(

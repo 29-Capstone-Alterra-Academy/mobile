@@ -1,5 +1,4 @@
 // import package
-import 'dart:developer';
 
 import 'package:capstone_project/modelview/profile_provider.dart';
 import 'package:capstone_project/utils/url.dart';
@@ -304,7 +303,8 @@ class _ThreadComponentState extends State<ThreadComponent> {
                 feedbackButton(
                   iconData: Icons.share,
                   function: () async {
-                    await Share.share('$baseURL/thread?userId&topicId=1&limit=100&offset=0');
+                    await Share.share(
+                        '$baseURL/thread?userId&topicId=1&limit=100&offset=0');
                   },
                 ),
               ],
@@ -333,7 +333,6 @@ class _ThreadComponentState extends State<ThreadComponent> {
     return CarouselSlider.builder(
       itemCount: imgUrl.length,
       itemBuilder: (context, itemIndex, pageViewIndex) {
-        log(imgUrl[itemIndex]);
         return InkWell(
           onTap: isOpened
               ? () {

@@ -96,6 +96,11 @@ class UserProvider extends ChangeNotifier {
   void getNewestThread(int idUser) async {
     changeSubState(FiniteState.loading);
     threads = await _apiServices.getThread(userId: idUser);
+    // sort by id
+    threads.sort(
+      (a, b) => a.id!.compareTo(b.id!),
+    );
+    // reverse list
     threads = threads.reversed.toList();
     changeSubState(FiniteState.none);
   }
