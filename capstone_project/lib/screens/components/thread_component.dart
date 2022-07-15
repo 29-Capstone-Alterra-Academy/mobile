@@ -125,16 +125,8 @@ class _ThreadComponentState extends State<ThreadComponent> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Container(
-                            width: 2,
-                            height: 2,
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: NomizoTheme.nomizoDark.shade500,
-                            ),
-                          ),
-                          Expanded(
+                          buildDotDivider(),
+                          Flexible(
                             child: InkWell(
                               onTap: () {
                                 if (threadModel.author!.id !=
@@ -175,15 +167,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
                                     ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          Container(
-                            width: 2,
-                            height: 2,
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: NomizoTheme.nomizoDark.shade500,
-                            ),
-                          ),
+                          buildDotDivider(),
                           Text(
                             'diposting',
                             style:
@@ -383,7 +367,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
     String? label,
     void Function()? function,
   }) {
-    return Expanded(
+    return Flexible(
       child: Container(
         alignment: Alignment.centerLeft,
         child: InkWell(
