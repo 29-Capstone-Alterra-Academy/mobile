@@ -26,10 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<HomeScreenProvider>(context, listen: false).getThread(
-        1,
-        'like',
-      );
+      Provider.of<HomeScreenProvider>(context, listen: false).getThread();
     });
     super.initState();
   }
@@ -50,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () {
                     homeProvider.changePage(0);
                     pageController.jumpTo(0);
-                    homeProvider.getThread(1, 'like');
+                    homeProvider.getThread();
                   },
                   child: Container(
                     height: 58,
@@ -84,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () {
                     homeProvider.changePage(1);
                     pageController.jumpTo(1);
-                    homeProvider.getThread(1, 'like');
+                    homeProvider.getThread();
                   },
                   child: Container(
                     height: 58,

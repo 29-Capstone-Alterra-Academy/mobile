@@ -109,7 +109,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => DetailCategoryScreen(
-                                    idCategory: threadModel.id ?? 1,
+                                    idCategory: threadModel.topic!.id!,
                                   ),
                                 ),
                               );
@@ -143,7 +143,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (_) => DetailUserScreen(
-                                        idUser: threadModel.author!.id ?? 1,
+                                        idUser: threadModel.author!.id!,
                                       ),
                                     ),
                                   );

@@ -218,7 +218,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                             Row(
                               children: [
                                 Text(
-                                  'Created by ',
+                                  'Created ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall
@@ -226,16 +226,16 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                                         color: NomizoTheme.nomizoDark.shade500,
                                       ),
                                 ),
-                                Text(
-                                  '@robert',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        color: NomizoTheme.nomizoDark.shade500,
-                                      ),
-                                ),
+                                // Text(
+                                //   '@robert',
+                                //   style: Theme.of(context)
+                                //       .textTheme
+                                //       .bodySmall
+                                //       ?.copyWith(
+                                //         fontWeight: FontWeight.w600,
+                                //         color: NomizoTheme.nomizoDark.shade500,
+                                //       ),
+                                // ),
                                 Text(
                                   ' on $createdTime',
                                   style: Theme.of(context)
