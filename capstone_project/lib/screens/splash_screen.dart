@@ -18,6 +18,9 @@ class _SplashScreenState extends State<SplashScreen> {
         if (provider.isOnboard!) {
           Navigator.pushNamedAndRemoveUntil(
               context, '/onboard', (route) => false);
+        } else if (provider.isLogin) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/navbar', (route) => false);
         } else {
           Navigator.pushNamedAndRemoveUntil(
               context, '/login', (route) => false);

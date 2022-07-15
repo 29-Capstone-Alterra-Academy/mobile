@@ -1,4 +1,5 @@
 // import package
+import 'package:capstone_project/model/profile_model.dart';
 import 'package:flutter/cupertino.dart';
 
 // import utils
@@ -9,9 +10,9 @@ import 'package:capstone_project/services/api_services.dart';
 
 // import model
 import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/search_model.dart';
 import 'package:capstone_project/model/thread_model.dart';
 import 'package:capstone_project/model/moderator_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
@@ -21,7 +22,7 @@ class UserProvider extends ChangeNotifier {
   List<UserModel> users = [];
   List<ModeratorModel> moderators = [];
   List<ThreadModel> threads = [];
-  SearchModel? results;
+  List<ThreadModel> results = [];
 
   UserModel? selectedUser;
 
@@ -48,13 +49,20 @@ class UserProvider extends ChangeNotifier {
   }
 
   // CHANGE TAB FOR POPULAR || NEWEST THREAD
-  void changePage(int index, String categoryName) {
+  void changePage(int index, int idUser) {
     currentPage = index;
     if (index == 0) {
-      getPopularThread(categoryName);
+      getPopularThread(idUser);
     } else if (index == 1) {
-      getNewestThread(categoryName);
+      getNewestThread(idUser);
     }
+    notifyListeners();
+  }
+
+  // reset tab page
+  void resetPage() {
+    currentPage = 0;
+    isSub = false;
     notifyListeners();
   }
 
@@ -62,54 +70,80 @@ class UserProvider extends ChangeNotifier {
   void getDetailUser(int idUser) async {
     changeState(FiniteState.loading);
     selectedUser = await _apiServices.getUsersById(idUser);
-    threads = await _apiServices.getThread(
-      username: selectedUser!.username,
-      sortby: 'like',
+    threads = await _apiServices.getThread(userId: idUser);
+    // sort by reply count
+    threads.sort(
+      (a, b) => a.replyCount!.compareTo(b.replyCount!),
     );
+    // reverse list
+    threads = threads.reversed.toList();
     changeState(FiniteState.none);
   }
 
   /// Get Popular Thread From This User
-  void getPopularThread(String username) async {
+  void getPopularThread(int idUser) async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(username: username, sortby: 'like');
+    threads = await _apiServices.getThread(userId: idUser);
+    // sort by reply count
+    threads.sort(
+      (a, b) => a.replyCount!.compareTo(b.replyCount!),
+    );
+    // reverse list
+    threads = threads.reversed.toList();
     changeSubState(FiniteState.none);
   }
 
   /// Get Newest Thread From This User
-  void getNewestThread(String username) async {
+  void getNewestThread(int idUser) async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(username: username, sortby: 'date');
+    threads = await _apiServices.getThread(userId: idUser);
+    // sort by id
+    threads.sort(
+      (a, b) => a.id!.compareTo(b.id!),
+    );
+    // reverse list
+    threads = threads.reversed.toList();
     changeSubState(FiniteState.none);
   }
 
   /// Follow User
   Future followUser(int idUser) async {
-    if (await _apiServices.followUser(idUser)) {
-      changeSub(true);
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.followUser(token: token, idUser: idUser)) {
+        getDetailUser(idUser);
+        changeSub(true);
+      }
     }
   }
 
   /// Unfollow User
   Future unfollowUser(int idUser) async {
-    if (await _apiServices.unfollowUser(idUser)) {
-      changeSub(false);
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.unfollowUser(token: token, idUser: idUser)) {
+        getDetailUser(idUser);
+        changeSub(false);
+      }
     }
   }
 
   /// Report User
   Future<String> reportUser(
-      UserModel currentUser, UserModel targetUser, String reason) async {
-    if (await _apiServices.reportUser(currentUser, targetUser, reason)) {
+      ProfileModel reporter, UserModel targetUser, String reason) async {
+    if (await _apiServices.reportUser(reporter, targetUser, reason)) {
       return "Laporan Anda sudah dikirim. Terima kasih.";
     }
     return "Laporan Anda gagal dikirim";
   }
 
   /// Search  On User
-  void getSearchResult({String? category}) async {
+  void getSearchResult(String keyword) async {
     changeState(FiniteState.loading);
-    results = await _apiServices.getSearchResult(category: category);
+    results = await _apiServices.getSearchResult(
+        limit: 100, offset: 0, keyword: keyword, scope: 'thread');
     isSearched = true;
     changeState(FiniteState.none);
   }
@@ -117,7 +151,7 @@ class UserProvider extends ChangeNotifier {
   /// Reset search result
   void resetSearchResult() {
     isSearched = false;
-    results = null;
+    results.clear();
     notifyListeners();
   }
 }

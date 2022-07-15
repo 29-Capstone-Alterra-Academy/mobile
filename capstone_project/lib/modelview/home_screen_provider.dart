@@ -1,4 +1,6 @@
 // import package
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 
 // import package
@@ -31,9 +33,21 @@ class HomeScreenProvider extends ChangeNotifier {
   }
 
   /// Get Thread (Recomended | Followed)
-  void getThread(String sortby) async {
+  void getThread() async {
     changeState(FiniteState.loading);
-    threads = await apiServices.getThread(sortby: sortby);
+    // get random topic
+    var topics = await apiServices.getCategory(limit: 20);
+    List<int> allCategoryId = [];
+    for (var element in topics) {
+      allCategoryId.add(element.id!);
+    }
+    int randomIndex = Random().nextInt(allCategoryId.length - 1);
+
+    // get threads from random topic id
+    threads = await apiServices.getThread(
+      categoryId: allCategoryId[randomIndex],
+      sortby: 'like',
+    );
     changeState(FiniteState.none);
   }
 }

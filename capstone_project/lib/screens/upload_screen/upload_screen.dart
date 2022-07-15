@@ -13,8 +13,8 @@ import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
 import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/profile_model.dart';
 import 'package:capstone_project/model/category_model.dart';
 
 // import provider
@@ -33,7 +33,7 @@ class _UploadScreenState extends State<UploadScreen> {
   late final TextEditingController _titleController;
   late final TextEditingController _contentController;
 
-  UserModel? userModel;
+  ProfileModel? profileModel;
   List<String>? images;
 
   @override
@@ -43,7 +43,7 @@ class _UploadScreenState extends State<UploadScreen> {
     _contentController = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      userModel =
+      profileModel =
           Provider.of<ProfileProvider>(context, listen: false).currentUser;
     });
     super.initState();
@@ -119,10 +119,15 @@ class _UploadScreenState extends State<UploadScreen> {
                 // title textfield section
                 TextFormField(
                   controller: _titleController,
+                  minLines: 1,
+                  maxLines: 3,
                   decoration: const InputDecoration(
                     hintText: 'Apa judul dari diskusi kamu?',
                     border: InputBorder.none,
                   ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Judul Tidak Boleh Kosong';
@@ -134,12 +139,13 @@ class _UploadScreenState extends State<UploadScreen> {
                 TextFormField(
                   controller: _contentController,
                   minLines: 1,
-                  maxLines: 10,
+                  maxLines: null,
                   keyboardType: TextInputType.multiline,
                   decoration: const InputDecoration(
                     hintText: 'Apa yang ingin kamu diskusikan?',
                     border: InputBorder.none,
                   ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Deskripsi Tidak Boleh Kosong';
@@ -289,29 +295,44 @@ class _UploadScreenState extends State<UploadScreen> {
     List<File> imgs,
   ) async {
     List<String> images = [];
-    for (var element in imgs) {
-      images.add(element.path);
+    int index = 0;
+    // if images thread < 5 add image path
+    if (imgs.isNotEmpty) {
+      if (imgs.length < 5) {
+        // add image path to list images
+        for (int i = index; i < imgs.length; i++) {
+          images.add(imgs[i].path);
+          index++;
+        }
+      }
+      for (var i = index; i < 5; i++) {
+        if (index > 0) {
+          images.add('');
+        } else {
+          // add 5 images
+          images.add(imgs[i].path);
+        }
+      }
+    } else if (imgs.isEmpty) {
+      for (var i = 0; i < 5; i++) {
+        images.add('');
+      }
     }
+
     bool result = await provider.uploadThread(
       ThreadModel(
-        author: Author(
-          id: userModel!.id,
-          profileImage: userModel!.profileImage,
-          username: userModel!.username,
-        ),
+        title: _titleController.text,
         content: _contentController.text,
         createdAt: DateTime.now().toIso8601String(),
-        images: images,
-        title: _titleController.text,
+        image1: images[0],
+        image2: images[1],
+        image3: images[2],
+        image4: images[3],
+        image5: images[4],
         topic: Topic(
-          activityCount: categoryModel.activityCount,
-          contributorCount: categoryModel.contributorCount,
-          description: categoryModel.description,
           id: categoryModel.id,
-          moderatorCount: categoryModel.moderatorCount,
           name: categoryModel.name,
           profileImage: categoryModel.profileImage,
-          rules: categoryModel.rules,
         ),
       ),
     );

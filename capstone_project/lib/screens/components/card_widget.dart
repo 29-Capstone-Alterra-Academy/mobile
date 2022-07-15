@@ -33,11 +33,20 @@ Widget circlePic(double size, String img) {
     clipBehavior: Clip.antiAlias,
     child: Image.network(
       img,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
       errorBuilder: (context, error, stackTrace) => Padding(
         padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
         child: Image.asset('assets/img/app_logo.png', fit: BoxFit.contain),
       ),
-      fit: BoxFit.cover,
     ),
   );
 }
@@ -130,7 +139,7 @@ Widget categoryCard(BuildContext context, CategoryModel categoryModel) {
       child: Row(
         children: [
           // image
-          circlePic(52, categoryModel.profileImage!),
+          circlePic(52, categoryModel.profileImage ?? ''),
           const SizedBox(width: 8),
           // content
           Expanded(
@@ -189,7 +198,7 @@ Widget userCard(BuildContext context, UserModel userModel) {
         context,
         MaterialPageRoute(
           builder: (_) => DetailUserScreen(
-            idUser: userModel.id ?? 1,
+            idUser: userModel.iD ?? 1,
           ),
         ),
       );
@@ -200,7 +209,7 @@ Widget userCard(BuildContext context, UserModel userModel) {
       child: Row(
         children: [
           // image
-          circlePic(52, userModel.profileImage!),
+          circlePic(52, userModel.profileImage ?? ''),
           const SizedBox(width: 8),
           // content
           Expanded(
@@ -210,23 +219,24 @@ Widget userCard(BuildContext context, UserModel userModel) {
               children: [
                 // title
                 Text(
-                  '@${userModel.username!}',
+                  '@${userModel.username}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
                 ),
                 const SizedBox(height: 2),
                 // subtitle
-                Text(
-                  'Nama Moderator',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: NomizoTheme.nomizoDark.shade500,
-                      ),
-                ),
+                if (userModel.threadCount != null)
+                  Text(
+                    '${userModel.threadCount} Postingan',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: NomizoTheme.nomizoDark.shade500,
+                        ),
+                  ),
                 const SizedBox(height: 2),
                 // subtitle2
                 Text(
-                  'Jumlah Folower',
+                  '${userModel.followersCount} Pengikut',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: NomizoTheme.nomizoDark.shade500,
                       ),
@@ -241,14 +251,14 @@ Widget userCard(BuildContext context, UserModel userModel) {
               return outlinedBtn28(context, () async {
                 buildLoading(context);
                 await provider
-                    .unfollowUser(value.selectedUser!.id ?? 9)
+                    .unfollowUser(value.selectedUser!.iD!)
                     .then((value) => Navigator.pop(context));
               }, 'Mengikuti');
             }
             return elevatedBtn28(context, () async {
               buildLoading(context);
               provider
-                  .followUser(value.selectedUser!.id ?? 9)
+                  .followUser(value.selectedUser!.iD!)
                   .then((value) => Navigator.pop(context));
             }, 'Ikuti');
           }),
@@ -264,6 +274,19 @@ Widget buildDivider() {
     height: 1,
     thickness: 1,
     color: NomizoTheme.nomizoDark.shade100,
+  );
+}
+
+/// DOT DIVIDER
+Widget buildDotDivider() {
+  return Container(
+    width: 2,
+    height: 2,
+    margin: const EdgeInsets.symmetric(horizontal: 4),
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: NomizoTheme.nomizoDark.shade500,
+    ),
   );
 }
 

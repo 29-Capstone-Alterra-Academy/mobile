@@ -1,8 +1,13 @@
-import 'package:capstone_project/model/thread_model.dart';
 import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/services/api_services.dart';
-import 'package:capstone_project/utils/finite_state.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:capstone_project/utils/finite_state.dart';
+
+import 'package:capstone_project/services/api_services.dart';
+
+import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/profile_model.dart';
 
 class ProfileProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
@@ -11,7 +16,10 @@ class ProfileProvider extends ChangeNotifier {
 
   List<ThreadModel> threads = [];
 
-  UserModel? currentUser;
+  ProfileModel? currentUser;
+
+  /// for details (post, followers, following)
+  UserModel? selectedUser;
 
   int currentPage = 0;
 
@@ -26,7 +34,12 @@ class ProfileProvider extends ChangeNotifier {
   /// GET CURRENT USER PROFILE
   void getProfile() async {
     changeState(FiniteState.loading);
-    currentUser = await _apiServices.getUserProfile();
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      currentUser = await _apiServices.getUserProfile(token: token);
+      selectedUser = await _apiServices.getUsersById(currentUser!.id!);
+    }
     changeState(FiniteState.none);
   }
 
@@ -50,20 +63,38 @@ class ProfileProvider extends ChangeNotifier {
   /// Get Popular Thread From This User
   void getPopularThread() async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(
-      username: currentUser!.username,
-      sortby: 'like',
+    threads = await _apiServices.getThread(userId: currentUser!.id);
+    // sort by reply count
+    threads.sort(
+      (a, b) => a.replyCount!.compareTo(b.replyCount!),
     );
+    // reverse list
+    threads = threads.reversed.toList();
     changeSubState(FiniteState.none);
   }
 
   /// Get Newest Thread From This User
   void getNewestThread() async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(
-      username: currentUser!.username,
-      sortby: 'date',
+    threads = await _apiServices.getThread(userId: currentUser!.id);
+    // sort by id
+    threads.sort(
+      (a, b) => a.id!.compareTo(b.id!),
     );
+    // reverse list
+    threads = threads.reversed.toList();
     changeSubState(FiniteState.none);
+  }
+
+  /// Logout
+  Future logout() async {
+    // if (await _apiServices.logout()) {
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.remove('access_token');
+    prefs.remove('refresh_token');
+    return true;
+    // }
+    // return false;
   }
 }

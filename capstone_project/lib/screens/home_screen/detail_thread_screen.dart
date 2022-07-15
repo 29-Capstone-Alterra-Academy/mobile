@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,8 +14,9 @@ import 'package:capstone_project/modelview/profile_provider.dart';
 import 'package:capstone_project/modelview/detail_thread_provider.dart';
 
 class DetailThreadScreen extends StatefulWidget {
-  final int? idThread;
-  const DetailThreadScreen({Key? key, this.idThread}) : super(key: key);
+  final ThreadModel threadModel;
+  const DetailThreadScreen({Key? key, required this.threadModel})
+      : super(key: key);
 
   @override
   State<DetailThreadScreen> createState() => _DetailThreadScreenState();
@@ -33,7 +32,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
     _commentController = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<DetailThreadProvider>(context, listen: false)
-          .loadDetailThread(widget.idThread!);
+          .loadDetailThread(widget.threadModel);
     });
     super.initState();
   }
@@ -84,6 +83,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
                 return Stack(
                   children: [
                     Container(
+                      height: MediaQuery.of(context).size.height,
                       margin: const EdgeInsets.only(bottom: 70),
                       child: ListView(
                         shrinkWrap: true,
@@ -103,7 +103,9 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
                               separatorBuilder: (context, index) =>
                                   buildDivider(),
                               itemBuilder: (context, index) => ReplyComponent(
-                                  replyModel: value.repliesThread![index]),
+                                replyModel: value.repliesThread![index],
+                                threadModel: value.currentThread!,
+                              ),
                             ),
                         ],
                       ),
@@ -144,7 +146,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
           key: _formKey,
           child: Row(
             children: [
-              circlePic(42, profile.currentUser!.profileImage!),
+              circlePic(42, profile.currentUser!.profileImage ?? ''),
               const SizedBox(width: 4),
               Expanded(
                 child: Stack(
@@ -156,7 +158,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
                       style: Theme.of(context).textTheme.bodyMedium,
                       decoration: InputDecoration(
                         isDense: true,
-                        contentPadding: const EdgeInsets.fromLTRB(6, 12, 12, 4),
+                        // contentPadding: const EdgeInsets.fromLTRB(6, 12, 12, 4),
                         // attach file
                         prefix: InkWell(
                           onTap: () => provider.pickImage(),
@@ -206,26 +208,37 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
               IconButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    log('Komentar dikirim');
                     buildLoading(context);
                     // if reply to reply
                     if (value.selectedReply != null) {
                       await provider
                           .postReplyChild(
-                            author: profile.currentUser!,
-                            replyParent: value.selectedReply!,
-                            content: _commentController.text,
-                          )
-                          .then((value) => Navigator.pop(context));
+                        idReplyParent: value.selectedReply!.id!,
+                        content: _commentController.text,
+                      )
+                          .then((value) {
+                        Navigator.pop(context);
+                        if (value) {
+                          buildToast('Komentar berhasil dikirim');
+                        } else {
+                          buildToast('Komentar gagal dikirim');
+                        }
+                      });
                     } else {
                       // if reply to thread
                       await provider
                           .postReplyThread(
-                            author: profile.currentUser!,
-                            thread: value.currentThread!,
-                            content: _commentController.text,
-                          )
-                          .then((value) => Navigator.pop(context));
+                        idThread: value.currentThread!.id!,
+                        content: _commentController.text,
+                      )
+                          .then((value) {
+                        Navigator.pop(context);
+                        if (value) {
+                          buildToast('Komentar berhasil dikirim');
+                        } else {
+                          buildToast('Komentar gagal dikirim');
+                        }
+                      });
                     }
                     _commentController.clear();
                   }

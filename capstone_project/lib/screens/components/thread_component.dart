@@ -1,12 +1,14 @@
 // import package
-import 'package:capstone_project/screens/search_screen/detail_user/detail_user_screen.dart';
+
+import 'package:capstone_project/modelview/profile_provider.dart';
+import 'package:capstone_project/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:carousel_slider/carousel_slider.dart';
 
-// import theme
+// import utils & theme
 import 'package:capstone_project/themes/nomizo_theme.dart';
 
 // import component
@@ -23,6 +25,7 @@ import 'package:capstone_project/modelview/detail_thread_provider.dart';
 // import screen
 import 'package:capstone_project/screens/home_screen/detail_image.dart';
 import 'package:capstone_project/screens/home_screen/detail_thread_screen.dart';
+import 'package:capstone_project/screens/search_screen/detail_user/detail_user_screen.dart';
 import 'package:capstone_project/screens/search_screen/detail_category/detail_category_screen.dart';
 
 class ThreadComponent extends StatefulWidget {
@@ -42,11 +45,28 @@ class _ThreadComponentState extends State<ThreadComponent> {
   late ThreadModel threadModel;
   late bool isOpened;
   late String threadDate;
+  List<String> images = <String>[];
 
   @override
   void initState() {
     threadModel = widget.threadModel;
     isOpened = widget.isOpened;
+    // set image list
+    if (threadModel.image1 != '') {
+      images.add(threadModel.image1!);
+    }
+    if (threadModel.image2 != '') {
+      images.add(threadModel.image2!);
+    }
+    if (threadModel.image3 != '') {
+      images.add(threadModel.image3!);
+    }
+    if (threadModel.image4 != '') {
+      images.add(threadModel.image4!);
+    }
+    if (threadModel.image5 != '') {
+      images.add(threadModel.image5!);
+    }
     // convert thread date to time ago format
     var convert = DateTime.parse(threadModel.createdAt!);
     var difference = DateTime.now().difference(convert);
@@ -58,10 +78,11 @@ class _ThreadComponentState extends State<ThreadComponent> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<DetailThreadProvider>(context, listen: false);
+    final profile = Provider.of<ProfileProvider>(context, listen: false);
     return InkWell(
       onTap: isOpened
           ? null
-          : () => openDetail(context: context, idThread: threadModel.id ?? 0),
+          : () => openDetail(context: context, threadModel: threadModel),
       child: Container(
         padding: const EdgeInsets.all(16),
         color: NomizoTheme.nomizoDark.shade50,
@@ -72,7 +93,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
             Row(
               children: [
                 // profile pic
-                circlePic(42, threadModel.author!.profileImage!),
+                circlePic(42, threadModel.topic!.profileImage ?? ''),
                 const SizedBox(width: 7),
                 // title
                 Expanded(
@@ -88,44 +109,37 @@ class _ThreadComponentState extends State<ThreadComponent> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => DetailCategoryScreen(
-                                    idCategory: threadModel.id ?? 1,
+                                    idCategory: threadModel.topic!.id!,
                                   ),
                                 ),
                               );
                             },
-                            child: Expanded(
-                              child: Text(
-                                threadModel.topic!.name!,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            child: Text(
+                              threadModel.topic!.name!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Container(
-                            width: 2,
-                            height: 2,
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: NomizoTheme.nomizoDark.shade500,
-                            ),
-                          ),
-                          Expanded(
+                          buildDotDivider(),
+                          Flexible(
                             child: InkWell(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => DetailUserScreen(
-                                      idUser: threadModel.author!.id ?? 1,
+                                if (threadModel.author!.id !=
+                                    profile.currentUser!.id) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => DetailUserScreen(
+                                        idUser: threadModel.author!.id!,
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                }
                               },
                               child: Text(
                                 'diposting oleh @${threadModel.author!.username}',
@@ -153,15 +167,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
                                     ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          Container(
-                            width: 2,
-                            height: 2,
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: NomizoTheme.nomizoDark.shade500,
-                            ),
-                          ),
+                          buildDotDivider(),
                           Text(
                             'diposting',
                             style:
@@ -234,7 +240,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
                 children: [
                   // title
                   Text(
-                    threadModel.title!,
+                    threadModel.title ?? '',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
@@ -250,27 +256,26 @@ class _ThreadComponentState extends State<ThreadComponent> {
             ),
             const SizedBox(height: 12),
             // image
-            if (threadModel.images != null)
-              carouselImage(threadModel.images!, isOpened),
-            if (threadModel.images != null) const SizedBox(height: 12),
+            if (images.isNotEmpty) carouselImage(images, isOpened),
+            if (images.isNotEmpty) const SizedBox(height: 12),
             // like / dislike / comment / share button section
             Row(
               children: [
                 // comment
                 feedbackButton(
                   iconData: Icons.comment_outlined,
-                  label: '2',
+                  label: '${threadModel.replyCount}',
                   function: isOpened
                       ? () => provider.changeSelectedReply(replyModel: null)
                       : () => openDetail(
                             context: context,
-                            idThread: threadModel.id ?? 0,
+                            threadModel: threadModel,
                           ),
                 ),
                 // like
                 feedbackButton(
                   iconData: Icons.thumb_up_outlined,
-                  label: '123',
+                  label: '${threadModel.likedCount}',
                   function: () => provider.likeThread(threadModel),
                 ),
                 // dislike
@@ -282,7 +287,8 @@ class _ThreadComponentState extends State<ThreadComponent> {
                 feedbackButton(
                   iconData: Icons.share,
                   function: () async {
-                    await Share.share('Share');
+                    await Share.share(
+                        '$baseURL/thread?userId&topicId=1&limit=100&offset=0');
                   },
                 ),
               ],
@@ -294,12 +300,13 @@ class _ThreadComponentState extends State<ThreadComponent> {
   }
 
   // function openDetail
-  void openDetail({required BuildContext context, required int idThread}) {
+  void openDetail(
+      {required BuildContext context, required ThreadModel threadModel}) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => DetailThreadScreen(
-          idThread: idThread,
+          threadModel: threadModel,
         ),
       ),
     );
@@ -315,7 +322,11 @@ class _ThreadComponentState extends State<ThreadComponent> {
               ? () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const DetailImage()),
+                    MaterialPageRoute(
+                      builder: (_) => DetailImage(
+                        imageUrl: imgUrl[itemIndex],
+                      ),
+                    ),
                   );
                 }
               : null,
@@ -356,7 +367,7 @@ class _ThreadComponentState extends State<ThreadComponent> {
     String? label,
     void Function()? function,
   }) {
-    return Expanded(
+    return Flexible(
       child: Container(
         alignment: Alignment.centerLeft,
         child: InkWell(

@@ -1,4 +1,5 @@
 // import package
+import 'package:capstone_project/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -61,14 +62,14 @@ class _SearchScreenState extends State<SearchScreen> {
               // Popular Category
               Consumer<SearchScreenProvider>(
                 builder: (context, value, _) {
-                  if (value.state == FiniteState.loading) {
+                  if (value.categoryState == FiniteState.loading) {
                     return Center(
                       child: CircularProgressIndicator(
                         color: NomizoTheme.nomizoTosca.shade600,
                       ),
                     );
                   }
-                  if (value.state == FiniteState.failed) {
+                  if (value.categoryState == FiniteState.failed) {
                     return const Center(
                       child: Text('Something Wrong!!!'),
                     );
@@ -106,30 +107,41 @@ class _SearchScreenState extends State<SearchScreen> {
               const SizedBox(height: 8),
               Consumer<SearchScreenProvider>(
                 builder: (context, value, _) {
-                  if (value.state == FiniteState.loading) {
+                  if (value.userState == FiniteState.loading) {
                     return Center(
                       child: CircularProgressIndicator(
                         color: NomizoTheme.nomizoTosca.shade600,
                       ),
                     );
                   }
-                  if (value.state == FiniteState.failed) {
+                  if (value.userState == FiniteState.failed) {
                     return const Center(
                       child: Text('Something Wrong!!!'),
                     );
                   } else {
-                    if (value.popularUser.isEmpty) {
+                    // if (value.popularUser.isEmpty) {
+                    if (value.searchUser.isEmpty) {
                       return const Center(
                           child: Text('Pengguna Terpopuler Tidak Ada'));
                     } else {
                       return Column(
                         children: [
                           ListView.builder(
-                            itemCount: value.popularUser.length,
+                            itemCount: 3,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
+                              // return userCard(
+                              //     context, value.popularUser[index]);
                               return userCard(
-                                  context, value.popularUser[index]);
+                                  context,
+                                  UserModel(
+                                    iD: value.searchUser[index].id,
+                                    profileImage:
+                                        value.searchUser[index].profileImage,
+                                    username: value.searchUser[index].username,
+                                    followersCount:
+                                        value.searchUser[index].followersCount,
+                                  ));
                             },
                           ),
                           const SizedBox(height: 4),

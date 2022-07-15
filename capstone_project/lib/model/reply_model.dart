@@ -1,176 +1,80 @@
 class ReplyModel {
-  Author? author;
-  int? childCount;
-  bool? childExist;
-  String? content;
-  String? createdAt;
-  int? dislike;
   int? id;
-  int? like;
-  bool? parentExist;
-  Thread? thread;
+  Author? author;
+  String? content;
+  String? image;
+  int? likedCount;
+  int? unlikedCount;
+  int? replyCount;
+  String? createdAt;
   String? updatedAt;
+  String? deletedAt;
 
   ReplyModel(
-      {this.author,
-      this.childCount,
-      this.childExist,
+      {this.id,
+      this.author,
       this.content,
+      this.image,
+      this.likedCount,
+      this.unlikedCount,
+      this.replyCount,
       this.createdAt,
-      this.dislike,
-      this.id,
-      this.like,
-      this.parentExist,
-      this.thread,
-      this.updatedAt});
+      this.updatedAt,
+      this.deletedAt});
 
   ReplyModel.fromJson(Map<String, dynamic> json) {
-    author = json['author'] != null ? Author.fromJson(json['author']) : null;
-    childCount = json['child_count'];
-    childExist = json['child_exist'];
-    content = json['content'];
-    createdAt = json['created_at'];
-    dislike = json['dislike'];
     id = json['id'];
-    like = json['like'];
-    parentExist = json['parent_exist'];
-    thread = json['thread'] != null ? Thread.fromJson(json['thread']) : null;
+    author =
+        json['author'] != null ? Author.fromJson(json['author']) : null;
+    content = json['content'];
+    image = json['image'];
+    likedCount = json['liked_count'];
+    unlikedCount = json['unliked_count'];
+    replyCount = json['reply_count'];
+    createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    deletedAt = json['deleted_at'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
     if (author != null) {
       data['author'] = author!.toJson();
     }
-    data['child_count'] = childCount;
-    data['child_exist'] = childExist;
     data['content'] = content;
+    data['image'] = image;
+    data['liked_count'] = likedCount;
+    data['unliked_count'] = unlikedCount;
+    data['reply_count'] = replyCount;
     data['created_at'] = createdAt;
-    data['dislike'] = dislike;
-    data['id'] = id;
-    data['like'] = like;
-    data['parent_exist'] = parentExist;
-    if (thread != null) {
-      data['thread'] = thread!.toJson();
-    }
     data['updated_at'] = updatedAt;
+    data['deleted_at'] = deletedAt;
     return data;
   }
 }
 
 class Author {
   int? id;
-  String? profileImage;
   String? username;
+  String? profileImage;
+  String? deletedAt;
 
-  Author({this.id, this.profileImage, this.username});
+  Author({this.id, this.username, this.profileImage, this.deletedAt});
 
   Author.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    profileImage = json['profile_image'];
     username = json['username'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['profile_image'] = profileImage;
-    data['username'] = username;
-    return data;
-  }
-}
-
-class Thread {
-  Author? author;
-  String? content;
-  String? createdAt;
-  int? id;
-  List<String>? images;
-  String? title;
-  Topic? topic;
-  String? updatedAt;
-
-  Thread(
-      {this.author,
-      this.content,
-      this.createdAt,
-      this.id,
-      this.images,
-      this.title,
-      this.topic,
-      this.updatedAt});
-
-  Thread.fromJson(Map<String, dynamic> json) {
-    author = json['author'] != null ? Author.fromJson(json['author']) : null;
-    content = json['content'];
-    createdAt = json['created_at'];
-    id = json['id'];
-    images = json['images'].cast<String>();
-    title = json['title'];
-    topic = json['topic'] != null ? Topic.fromJson(json['topic']) : null;
-    updatedAt = json['updated_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (author != null) {
-      data['author'] = author!.toJson();
-    }
-    data['content'] = content;
-    data['created_at'] = createdAt;
-    data['id'] = id;
-    data['images'] = images;
-    data['title'] = title;
-    if (topic != null) {
-      data['topic'] = topic!.toJson();
-    }
-    data['updated_at'] = updatedAt;
-    return data;
-  }
-}
-
-class Topic {
-  int? activityCount;
-  int? contributorCount;
-  String? description;
-  int? id;
-  int? moderatorCount;
-  String? name;
-  String? profileImage;
-  String? rules;
-
-  Topic(
-      {this.activityCount,
-      this.contributorCount,
-      this.description,
-      this.id,
-      this.moderatorCount,
-      this.name,
-      this.profileImage,
-      this.rules});
-
-  Topic.fromJson(Map<String, dynamic> json) {
-    activityCount = json['activity_count'];
-    contributorCount = json['contributor_count'];
-    description = json['description'];
-    id = json['id'];
-    moderatorCount = json['moderator_count'];
-    name = json['name'];
     profileImage = json['profile_image'];
-    rules = json['rules'];
+    deletedAt = json['deleted_at'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['activity_count'] = activityCount;
-    data['contributor_count'] = contributorCount;
-    data['description'] = description;
     data['id'] = id;
-    data['moderator_count'] = moderatorCount;
-    data['name'] = name;
+    data['username'] = username;
     data['profile_image'] = profileImage;
-    data['rules'] = rules;
+    data['deleted_at'] = deletedAt;
     return data;
   }
 }

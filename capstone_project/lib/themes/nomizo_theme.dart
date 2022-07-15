@@ -21,17 +21,17 @@ class NomizoTheme {
         color: nomizoDark.shade900,
       ),
       bodyLarge: TextStyle(
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: FontWeight.w400,
         color: nomizoDark.shade900,
       ),
       bodyMedium: TextStyle(
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: FontWeight.w400,
         color: nomizoDark.shade900,
       ),
       bodySmall: TextStyle(
-        fontSize: 10,
+        fontSize: 12,
         fontWeight: FontWeight.w400,
         color: nomizoDark.shade900,
       ),
