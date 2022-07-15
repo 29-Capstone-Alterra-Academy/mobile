@@ -41,10 +41,7 @@ class _ModeratorCategoryScreenState extends State<ModeratorCategoryScreen> {
         itemBuilder: (context, index) {
           return moderatorItem(
             userModel: UserModel(
-                birthDate: '',
-                email: '',
-                gender: '',
-                id: 9,
+                iD: 9,
                 profileImage: '',
                 username: 'Map95'),
           );

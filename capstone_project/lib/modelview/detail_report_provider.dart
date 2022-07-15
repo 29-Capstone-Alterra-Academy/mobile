@@ -1,17 +1,13 @@
 import 'package:capstone_project/model/category_model.dart';
 import 'package:capstone_project/model/reply_model.dart';
-import 'package:capstone_project/model/report_category_model.dart';
-import 'package:capstone_project/model/report_reply_model.dart';
-import 'package:capstone_project/model/report_thread_model.dart';
-import 'package:capstone_project/model/report_user_model.dart';
 import 'package:capstone_project/model/thread_model.dart';
 import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/services/api_services.dart';
+// import 'package:capstone_project/services/api_services.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:flutter/cupertino.dart';
 
 class DetailReportProvider extends ChangeNotifier {
-  APIServices _apiServices = APIServices();
+  // APIServices _apiServices = APIServices();
   FiniteState state = FiniteState.none;
 
   ThreadModel? thread;

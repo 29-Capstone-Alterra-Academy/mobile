@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:badges/badges.dart';
 import 'package:capstone_project/modelview/profile_provider.dart';

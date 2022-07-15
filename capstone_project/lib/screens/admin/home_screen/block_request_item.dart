@@ -145,7 +145,6 @@ class _BlockRequestItemState extends State<BlockRequestItem> {
   ThreadModel threadModelExample = ThreadModel(
       author: Author(
         id: 3,
-        profileImage: '',
         username: 'raymond',
       ),
       content: 'Content Thread Bla Bla Bla...',
@@ -158,14 +157,9 @@ class _BlockRequestItemState extends State<BlockRequestItem> {
       image5: null,
       title: 'Judul Thread',
       topic: Topic(
-        activityCount: 0,
-        contributorCount: 0,
-        description: 'jkjkj',
         id: 88,
-        moderatorCount: 0,
         name: 'jk',
         profileImage: '',
-        rules: 'rules',
       ),
       updatedAt: '2016-08-29T09:12:33.001Z');
 }
