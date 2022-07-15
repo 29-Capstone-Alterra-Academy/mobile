@@ -13,6 +13,7 @@ import 'package:capstone_project/modelview/splash_screen_provider.dart';
 import 'package:capstone_project/modelview/search_screen_provider.dart';
 import 'package:capstone_project/modelview/bottom_navbar_provider.dart';
 import 'package:capstone_project/modelview/create_category_provider.dart';
+import 'package:capstone_project/modelview/notification_provider.dart';
 
 List<SingleChildWidget> providers = [
   ChangeNotifierProvider(create: (_) => SplashScreenProvider()),
@@ -27,4 +28,5 @@ List<SingleChildWidget> providers = [
   ChangeNotifierProvider(create: (_) => DetailThreadProvider()),
   ChangeNotifierProvider(create: (_) => ProfileProvider()),
   ChangeNotifierProvider(create: (_) => EditProfileProvider()),
+  ChangeNotifierProvider(create: (_) => NotificationProvider())
 ];

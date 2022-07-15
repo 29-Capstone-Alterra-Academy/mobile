@@ -11,6 +11,7 @@ import 'package:capstone_project/model/thread_model.dart';
 import 'package:capstone_project/model/search_model.dart';
 import 'package:capstone_project/model/category_model.dart';
 import 'package:capstone_project/model/moderator_model.dart';
+import 'package:capstone_project/model/norification_model.dart';
 
 class APIServices {
   final Dio dio = Dio();
@@ -562,6 +563,26 @@ class APIServices {
         },
       );
       return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  // NOTIFICAITON
+  Future notification() async {
+    try {
+      var response = await dio.get('$_baseURL/notification');
+
+      if (response.statusCode == 200) {
+        return NotificationModel(
+          id: response.data['context']['author']['id'],
+          username: response.data['context']['author']['username'],
+          image: response.data['context']['author']['profile_image'],
+        );
+      }
+
+      return null;
     } catch (e) {
       log(e.toString());
       return false;
