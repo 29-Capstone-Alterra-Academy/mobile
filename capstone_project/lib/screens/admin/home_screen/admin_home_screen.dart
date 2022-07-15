@@ -28,6 +28,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<AdminHomeProvider>(context, listen: false).changePage(0);
+    });
     super.initState();
   }
 
@@ -45,9 +48,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      homeProvider.changePage(0);
-                      pageController.jumpTo(0);
-                      // homeProvider.getThread('like');
+                      pageController.previousPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeIn,
+                      );
                     },
                     child: Container(
                       height: 58,
@@ -81,8 +85,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      homeProvider.changePage(1);
-                      pageController.jumpTo(1);
+                      pageController.nextPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeIn,
+                      );
                     },
                     child: Container(
                       height: 58,
@@ -105,19 +111,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 ),
               ],
             )),
-        body: PageView.builder(
+        body: PageView(
           controller: pageController,
-          itemCount: 2,
-          onPageChanged: (index) {
-            homeProvider.changePage(index);
+          onPageChanged: (value) {
+            homeProvider.changePage(value);
           },
-          itemBuilder: (context, index) {
-            if (value.currentPage == 0) {
-              return blockedView();
-            } else {
-              return requestView();
-            }
-          },
+          children: [
+            blockedView(),
+            requestView(),
+          ],
         ),
       );
     });

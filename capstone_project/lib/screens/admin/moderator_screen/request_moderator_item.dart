@@ -1,10 +1,12 @@
+import 'package:capstone_project/model/modrequest_model.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class RequestModeratorItem extends StatefulWidget {
-  const RequestModeratorItem({Key? key}) : super(key: key);
+  final ModrequestModel model;
+  const RequestModeratorItem({Key? key, required this.model}) : super(key: key);
 
   @override
   State<RequestModeratorItem> createState() => _RequestModeratorItemState();
@@ -20,9 +22,9 @@ class _RequestModeratorItemState extends State<RequestModeratorItem> {
         children: [
           // moderator profile request
           modrequest(
-            moderatorName: 'piropy',
-            time: '2016-08-29T09:12:33.001Z',
-            category: 'Covid-19',
+            moderatorName: widget.model.user!.username!,
+            time: widget.model.createdAt!,
+            category: widget.model.topic!.name!,
           ),
           const SizedBox(height: 12),
           // Approval button

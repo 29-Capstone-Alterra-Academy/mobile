@@ -1,4 +1,5 @@
 import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/modrequest_model.dart';
 import 'package:capstone_project/modelview/admin/admin_moderator_provider.dart';
 import 'package:capstone_project/screens/admin/moderator_screen/category_item.dart';
 import 'package:capstone_project/screens/admin/moderator_screen/request_moderator_item.dart';
@@ -19,8 +20,16 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
   final TextEditingController searchController = TextEditingController();
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<AdminModeratorProvider>(context, listen: false).changePage(0);
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final homeProvider =
+    final moderatorProvider =
         Provider.of<AdminModeratorProvider>(context, listen: false);
     return Consumer<AdminModeratorProvider>(
       builder: (context, value, _) {
@@ -30,13 +39,14 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // blocked tab
+                  // active moderator
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        homeProvider.changePage(0);
-                        pageController.jumpTo(0);
-                        // homeProvider.getThread('like');
+                        pageController.previousPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeIn,
+                        );
                       },
                       child: Container(
                         height: 58,
@@ -66,12 +76,14 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
                       endIndent: 0,
                     ),
                   ),
-                  // block request tab
+                  // moderator request tab
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        homeProvider.changePage(1);
-                        pageController.jumpTo(1);
+                        pageController.nextPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeIn,
+                        );
                       },
                       child: Container(
                         height: 58,
@@ -94,19 +106,15 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
                   ),
                 ],
               )),
-          body: PageView.builder(
+          body: PageView(
             controller: pageController,
-            itemCount: 2,
-            onPageChanged: (index) {
-              homeProvider.changePage(index);
+            onPageChanged: (value) {
+              moderatorProvider.changePage(value);
             },
-            itemBuilder: (context, index) {
-              if (value.currentPage == 0) {
-                return activeModeratorView();
-              } else {
-                return requestModeratorView();
-              }
-            },
+            children: [
+              activeModeratorView(),
+              requestModeratorView(),
+            ],
           ),
         );
       },
@@ -180,9 +188,16 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
         itemCount: 2,
         separatorBuilder: (context, index) => buildDivider(),
         itemBuilder: (context, index) {
-          return const RequestModeratorItem();
+          return RequestModeratorItem(model: model);
         },
       ),
     );
   }
+
+  ModrequestModel model = ModrequestModel(
+    id: 1,
+    user: User(id: 3, username: 'piropy', profileImage: ''),
+    topic: Topic(id: 2, name: 'Foods'),
+    createdAt: '2022-07-14T14:29:28.538845Z',
+  );
 }

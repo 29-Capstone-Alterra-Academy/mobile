@@ -217,7 +217,13 @@ class _BottomNavbarState extends State<BottomNavbar> {
           'Logout',
           4,
           currentIndex,
-          () => log('Log Out'),
+          () {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/login',
+              (route) => false,
+            );
+          },
         ),
       ],
     );
