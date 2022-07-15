@@ -141,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // pics
                           circlePic(
                             100,
-                            value.currentUser!.profileImage ?? '',
+                            '${value.currentUser!.profileImage}',
                           ),
                           // activities
                           profileDetails(
@@ -152,13 +152,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // followers
                           profileDetails(
                             context: context,
-                            count: value.selectedUser!.followersCount.toString(),
+                            count:
+                                value.selectedUser!.followersCount.toString(),
                             label: 'Pengikut',
                           ),
                           // following
                           profileDetails(
                             context: context,
-                            count: value.selectedUser!.followingCount.toString(),
+                            count:
+                                value.selectedUser!.followingCount.toString(),
                             label: 'Mengikuti',
                           ),
                         ],

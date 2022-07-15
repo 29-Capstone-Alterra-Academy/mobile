@@ -119,10 +119,15 @@ class _UploadScreenState extends State<UploadScreen> {
                 // title textfield section
                 TextFormField(
                   controller: _titleController,
+                  minLines: 1,
+                  maxLines: 3,
                   decoration: const InputDecoration(
                     hintText: 'Apa judul dari diskusi kamu?',
                     border: InputBorder.none,
                   ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Judul Tidak Boleh Kosong';
@@ -134,12 +139,13 @@ class _UploadScreenState extends State<UploadScreen> {
                 TextFormField(
                   controller: _contentController,
                   minLines: 1,
-                  maxLines: 10,
+                  maxLines: null,
                   keyboardType: TextInputType.multiline,
                   decoration: const InputDecoration(
                     hintText: 'Apa yang ingin kamu diskusikan?',
                     border: InputBorder.none,
                   ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Deskripsi Tidak Boleh Kosong';
@@ -290,25 +296,32 @@ class _UploadScreenState extends State<UploadScreen> {
   ) async {
     List<String> images = [];
     int index = 0;
-    if (imgs.length < 5) {
-      for (int i = index; i < imgs.length; i++) {
-        images.add(imgs[i].path);
+    // if images thread < 5 add image path
+    if (imgs.isNotEmpty) {
+      if (imgs.length < 5) {
+        // add image path to list images
+        for (int i = index; i < imgs.length; i++) {
+          images.add(imgs[i].path);
+          index++;
+        }
       }
-    }
-    for (var i = index; i < 5 - index; i++) {
-      if (index > 0) {
+      for (var i = index; i < 5; i++) {
+        if (index > 0) {
+          images.add('');
+        } else {
+          // add 5 images
+          images.add(imgs[i].path);
+        }
+      }
+    } else if (imgs.isEmpty) {
+      for (var i = 0; i < 5; i++) {
         images.add('');
-      } else {
-        images.add(imgs[i].path);
       }
     }
+
     bool result = await provider.uploadThread(
       ThreadModel(
-        author: Author(
-          id: profileModel!.id,
-          username: profileModel!.username,
-          deletedAt: null,
-        ),
+        title: _titleController.text,
         content: _contentController.text,
         createdAt: DateTime.now().toIso8601String(),
         image1: images[0],
@@ -316,7 +329,6 @@ class _UploadScreenState extends State<UploadScreen> {
         image3: images[2],
         image4: images[3],
         image5: images[4],
-        title: _titleController.text,
         topic: Topic(
           id: categoryModel.id,
           name: categoryModel.name,

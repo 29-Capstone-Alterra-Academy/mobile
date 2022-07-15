@@ -1,4 +1,6 @@
 // import package
+
+import 'package:capstone_project/model/search_user_model.dart';
 import 'package:capstone_project/screens/components/thread_component.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -123,11 +125,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           } else {
             return TabBarView(
               children: [
-                threadTabView(value.searchResult.threads),
-                // threadTabView('date'),
-                notFound(context),
-                categoryTabView(value.searchResult.topics),
-                usersTabView(value.searchResult.users),
+                threadTabView(value.searchThread),
+                newThreadTabView(value.searchThread),
+                categoryTabView(value.searchCategory),
+                usersTabView(value.searchUser),
+                // notFound(context),
+                // notFound(context),
+                // notFound(context),
+                // notFound(context),
               ],
             );
           }
@@ -136,68 +141,65 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget threadTabView(List<ThreadModel>? threadModel) {
-    if (threadModel == null) {
+  Widget threadTabView(List<ThreadModel> threadModel) {
+    if (threadModel.isEmpty) {
       return notFound(context);
     }
     return ListView.separated(
       itemCount: threadModel.length,
-      separatorBuilder: (context, index) => Divider(
-        height: 1,
-        color: NomizoTheme.nomizoDark.shade100,
-      ),
+      separatorBuilder: (context, index) => buildDivider(),
       itemBuilder: (context, index) => ThreadComponent(
         threadModel: threadModel[index],
         isOpened: false,
       ),
-      // return threadCard(context, threadModel[index]);
-      // },
     );
   }
 
-  // Widget newThreadTabView() {
-  //   return ListView.separated(
-  //     itemCount: 3,
-  //     separatorBuilder: (context, index) => Divider(
-  //       height: 1,
-  //       color: NomizoTheme.nomizoDark.shade100,
-  //     ),
-  //     itemBuilder: (context, index) {
-  //       return threadCard(context);
-  //     },
-  //   );
-  // }
+  Widget newThreadTabView(List<ThreadModel> threadModel) {
+    if (threadModel.isEmpty) {
+      return notFound(context);
+    }
+    return ListView.separated(
+      itemCount: threadModel.length,
+      separatorBuilder: (context, index) => buildDivider(),
+      itemBuilder: (context, index) => ThreadComponent(
+        threadModel: threadModel[index],
+        isOpened: false,
+      ),
+    );
+  }
 
-  Widget categoryTabView(List<CategoryModel>? categoryModel) {
-    if (categoryModel == null) {
+  Widget categoryTabView(List<CategoryModel> categoryModel) {
+    if (categoryModel.isEmpty) {
       return notFound(context);
     }
     return ListView.separated(
       itemCount: categoryModel.length,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      separatorBuilder: (context, index) => Divider(
-        height: 1,
-        color: NomizoTheme.nomizoDark.shade100,
-      ),
+      separatorBuilder: (context, index) => buildDivider(),
       itemBuilder: (context, index) {
         return categoryCard(context, categoryModel[index]);
       },
     );
   }
 
-  Widget usersTabView(List<UserModel>? userModel) {
-    if (userModel == null) {
+  Widget usersTabView(List<SearchUserModel> userModel) {
+    if (userModel.isEmpty) {
       return notFound(context);
     }
     return ListView.separated(
       itemCount: userModel.length,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      separatorBuilder: (context, index) => Divider(
-        height: 1,
-        color: NomizoTheme.nomizoDark.shade100,
-      ),
+      separatorBuilder: (context, index) => buildDivider(),
       itemBuilder: (context, index) {
-        return userCard(context, userModel[index]);
+        return userCard(
+            context,
+            UserModel(
+              iD: userModel[index].id,
+              profileImage: userModel[index].profileImage,
+              username: userModel[index].username,
+              followersCount: userModel[index].followersCount,
+            ));
       },
     );
   }

@@ -1,4 +1,5 @@
 // import package
+import 'package:capstone_project/model/thread_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -128,6 +129,9 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                   child: Text('Something Wrong!!!'),
                 );
               } else {
+                if (value.currentCategory.id == null) {
+                  return Container();
+                }
                 var convert = DateTime.parse(value.currentCategory.createdAt ??
                     DateTime.now().toIso8601String());
                 String createdTime = DateFormat('MMMM yyyy').format(convert);
@@ -156,8 +160,8 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                                 // kontibutor
                                 InkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context, '/contributor');
+                                    // Navigator.pushNamed(
+                                    //     context, '/contributor');
                                   },
                                   child: profileDetails(
                                     '${value.currentCategory.contributorCount}',
@@ -214,7 +218,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                             Row(
                               children: [
                                 Text(
-                                  'Created by ',
+                                  'Created ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall
@@ -222,16 +226,16 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                                         color: NomizoTheme.nomizoDark.shade500,
                                       ),
                                 ),
-                                Text(
-                                  '@robert',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        color: NomizoTheme.nomizoDark.shade500,
-                                      ),
-                                ),
+                                // Text(
+                                //   '@robert',
+                                //   style: Theme.of(context)
+                                //       .textTheme
+                                //       .bodySmall
+                                //       ?.copyWith(
+                                //         fontWeight: FontWeight.w600,
+                                //         color: NomizoTheme.nomizoDark.shade500,
+                                //       ),
+                                // ),
                                 Text(
                                   ' on $createdTime',
                                   style: Theme.of(context)
@@ -267,134 +271,16 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                       ),
                       const SizedBox(height: 12),
                       // button tab
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                provider.changePage(
-                                    0, value.currentCategory.id!);
-                              },
-                              child: Container(
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  border: value.currentPage == 0
-                                      ? Border(
-                                          bottom: BorderSide(
-                                            width: 2,
-                                            color:
-                                                NomizoTheme.nomizoDark.shade900,
-                                          ),
-                                        )
-                                      : const Border(),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Populer',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: value.currentPage == 0
-                                              ? NomizoTheme.nomizoDark.shade900
-                                              : NomizoTheme.nomizoDark.shade500,
-                                          fontWeight: value.currentPage == 0
-                                              ? FontWeight.w600
-                                              : FontWeight.w500,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                provider.changePage(
-                                    1, value.currentCategory.id!);
-                              },
-                              child: Container(
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  border: value.currentPage == 1
-                                      ? Border(
-                                          bottom: BorderSide(
-                                            width: 2,
-                                            color:
-                                                NomizoTheme.nomizoDark.shade900,
-                                          ),
-                                        )
-                                      : const Border(),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Terbaru',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: value.currentPage == 1
-                                              ? NomizoTheme.nomizoDark.shade900
-                                              : NomizoTheme.nomizoDark.shade500,
-                                          fontWeight: value.currentPage == 1
-                                              ? FontWeight.w600
-                                              : FontWeight.w500,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                      pageTabButton(
+                        provider,
+                        value.currentPage,
+                        value.currentCategory.id!,
                       ),
-                      Builder(builder: (context) {
-                        if (value.subState == FiniteState.loading) {
-                          return SizedBox(
-                            height: 200,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: NomizoTheme.nomizoTosca.shade600,
-                              ),
-                            ),
-                          );
-                        }
-                        if (value.subState == FiniteState.failed) {
-                          return const SizedBox(
-                            height: 200,
-                            child: Center(
-                              child: Text('Something Wrong!!!'),
-                            ),
-                          );
-                        } else {
-                          if (value.threads.isEmpty) {
-                            return const SizedBox(
-                                height: 200,
-                                child: Center(child: Text('Tidak Ada Thread')));
-                          }
-                          return ListView.builder(
-                            itemCount: value.threads.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              if (value.currentPage == 0) {
-                                // Popular Thread
-                                return ThreadComponent(
-                                  threadModel: value.threads[index],
-                                  isOpened: false,
-                                );
-                              } else {
-                                // Newest Thread
-                                return ThreadComponent(
-                                  threadModel: value.threads[index],
-                                  isOpened: false,
-                                );
-                              }
-                            },
-                          );
-                        }
-                      }),
+                      threadView(
+                        value.subState,
+                        value.currentPage,
+                        value.threads,
+                      ),
                     ],
                   ),
                 );
@@ -430,5 +316,127 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
         ),
       ],
     );
+  }
+
+  // page view tab section
+  Widget pageTabButton(CategoryProvider provider, int page, int idCategory) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: InkWell(
+            onTap: () {
+              provider.changePage(0, idCategory);
+            },
+            child: Container(
+              height: 44,
+              decoration: BoxDecoration(
+                border: page == 0
+                    ? Border(
+                        bottom: BorderSide(
+                          width: 2,
+                          color: NomizoTheme.nomizoDark.shade900,
+                        ),
+                      )
+                    : const Border(),
+              ),
+              child: Center(
+                child: Text(
+                  'Populer',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: page == 0
+                            ? NomizoTheme.nomizoDark.shade900
+                            : NomizoTheme.nomizoDark.shade500,
+                        fontWeight:
+                            page == 0 ? FontWeight.w600 : FontWeight.w500,
+                      ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: InkWell(
+            onTap: () {
+              provider.changePage(1, idCategory);
+            },
+            child: Container(
+              height: 44,
+              decoration: BoxDecoration(
+                border: page == 1
+                    ? Border(
+                        bottom: BorderSide(
+                          width: 2,
+                          color: NomizoTheme.nomizoDark.shade900,
+                        ),
+                      )
+                    : const Border(),
+              ),
+              child: Center(
+                child: Text(
+                  'Terbaru',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: page == 1
+                            ? NomizoTheme.nomizoDark.shade900
+                            : NomizoTheme.nomizoDark.shade500,
+                        fontWeight:
+                            page == 1 ? FontWeight.w600 : FontWeight.w500,
+                      ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // thread view section
+  Widget threadView(FiniteState state, int page, List<ThreadModel> threads) {
+    if (state == FiniteState.loading) {
+      return SizedBox(
+        height: 200,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: NomizoTheme.nomizoTosca.shade600,
+          ),
+        ),
+      );
+    }
+    if (state == FiniteState.failed) {
+      return const SizedBox(
+        height: 200,
+        child: Center(
+          child: Text('Something Wrong!!!'),
+        ),
+      );
+    } else {
+      if (threads.isEmpty) {
+        return const SizedBox(
+            height: 200, child: Center(child: Text('Tidak Ada Thread')));
+      }
+      return ListView.separated(
+        itemCount: threads.length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        separatorBuilder: (context, index) => buildDivider(),
+        itemBuilder: (context, index) {
+          if (page == 0) {
+            // Popular Thread
+            return ThreadComponent(
+              threadModel: threads[index],
+              isOpened: false,
+            );
+          } else {
+            // Newest Thread
+            return ThreadComponent(
+              threadModel: threads[index],
+              isOpened: false,
+            );
+          }
+        },
+      );
+    }
   }
 }

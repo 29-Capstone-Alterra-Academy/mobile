@@ -63,20 +63,26 @@ class ProfileProvider extends ChangeNotifier {
   /// Get Popular Thread From This User
   void getPopularThread() async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(
-      userId: currentUser!.id,
-      sortby: 'like',
+    threads = await _apiServices.getThread(userId: currentUser!.id);
+    // sort by reply count
+    threads.sort(
+      (a, b) => a.replyCount!.compareTo(b.replyCount!),
     );
+    // reverse list
+    threads = threads.reversed.toList();
     changeSubState(FiniteState.none);
   }
 
   /// Get Newest Thread From This User
   void getNewestThread() async {
     changeSubState(FiniteState.loading);
-    threads = await _apiServices.getThread(
-      userId: currentUser!.id,
-      sortby: 'date',
+    threads = await _apiServices.getThread(userId: currentUser!.id);
+    // sort by id
+    threads.sort(
+      (a, b) => a.id!.compareTo(b.id!),
     );
+    // reverse list
+    threads = threads.reversed.toList();
     changeSubState(FiniteState.none);
   }
 

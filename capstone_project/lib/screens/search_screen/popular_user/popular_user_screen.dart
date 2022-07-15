@@ -1,3 +1,4 @@
+import 'package:capstone_project/model/user_model.dart';
 import 'package:capstone_project/modelview/search_screen_provider.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
@@ -59,14 +60,24 @@ class _PopularUserScreenState extends State<PopularUserScreen> {
               child: Text('Something Wrong!!!'),
             );
           } else {
-            if (value.popularUser.isEmpty) {
+            // if (value.popularUser.isEmpty) {
+            if (value.searchUser.isEmpty) {
               return const Center(child: Text('User Terpopuler Tidak Ada'));
             } else {
               return ListView.builder(
-                itemCount: value.popularUser.length,
+                // itemCount: value.popularUser.length,
+                itemCount: value.searchUser.length,
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                 itemBuilder: (context, index) {
-                  return userCard(context, value.popularUser[index]);
+                  // return userCard(context, value.popularUser[index]);
+                  return userCard(
+                      context,
+                      UserModel(
+                        iD: value.searchUser[index].id,
+                        profileImage: value.searchUser[index].profileImage,
+                        username: value.searchUser[index].username,
+                        followersCount: value.searchUser[index].followersCount,
+                      ));
                 },
               );
             }

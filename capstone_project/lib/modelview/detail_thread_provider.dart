@@ -13,6 +13,7 @@ import 'package:capstone_project/services/api_services.dart';
 // import model
 import 'package:capstone_project/model/thread_model.dart';
 import 'package:capstone_project/model/reply_model.dart' as reply;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailThreadProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
@@ -21,10 +22,14 @@ class DetailThreadProvider extends ChangeNotifier {
   reply.ReplyModel? selectedReply;
 
   List<reply.ReplyModel>? repliesThread;
-  List<reply.ReplyModel>? repliesChild;
+  List<reply.ReplyModel> repliesChild = [];
 
   FiniteState state = FiniteState.none;
   bool expandReply = false;
+  bool isLikeThread = false;
+  bool isDislikeThread = false;
+  bool isLikeReply = false;
+  bool isDislikeReply = false;
 
   File? image;
 
@@ -50,6 +55,10 @@ class DetailThreadProvider extends ChangeNotifier {
     expandReply = false;
     image = null;
     currentThread = null;
+    isLikeThread = false;
+    isDislikeThread = false;
+    isLikeReply = false;
+    isDislikeReply = false;
     notifyListeners();
   }
 
@@ -70,94 +79,181 @@ class DetailThreadProvider extends ChangeNotifier {
   void loadDetailThread(ThreadModel threadModel) async {
     changeState(FiniteState.loading);
     currentThread = threadModel;
-    // repliesThread = await _apiServices.getReply(replyId: 9, relation: 'parent');
+    repliesThread = await _apiServices.getReply(
+      scope: 'thread',
+      idThread: threadModel.id!,
+      limit: 30,
+    );
     changeState(FiniteState.none);
   }
 
   /// Get Reply Child
-  void getReplyChild() async {
-    changeState(FiniteState.loading);
-    repliesThread = await _apiServices.getReply(replyId: 9, relation: 'child');
-    // repliesChild = repliesThread;
-    changeState(FiniteState.none);
+  Future getReplyChild(int replyParentId) async {
+    repliesChild = await _apiServices.getReplyChild(replyId: replyParentId);
+    notifyListeners();
   }
 
   /// Like | Delete Like Thread
   void likeThread(ThreadModel threadModel) async {
-    await _apiServices.likeThread(threadModel.id ?? 1);
-    // await _apiServices.deleteLikeThread(threadModel.id ?? 1);
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (isLikeThread) {
+        if (await _apiServices.deleteLikeThread(
+            token: token, idThread: threadModel.id!)) {
+          isLikeThread = false;
+        }
+      } else {
+        if (await _apiServices.likeThread(
+          token: token,
+          idThread: threadModel.id!,
+        )) {
+          isLikeThread = true;
+        }
+      }
+      loadDetailThread(currentThread!);
+    }
   }
 
   /// Dislike | Delete Dislike Thread
   void dislikeThread(ThreadModel threadModel) async {
-    await _apiServices.dislikeThread(threadModel.id ?? 1);
-    // await _apiServices.deleteunLikeThread(threadModel.id ?? 1);
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (isLikeThread) {
+        if (await _apiServices.deleteDislikeThread(
+            token: token, idThread: threadModel.id!)) {
+          isLikeThread = false;
+        }
+      } else {
+        if (await _apiServices.dislikeThread(
+          token: token,
+          idThread: threadModel.id!,
+        )) {
+          isLikeThread = true;
+        }
+      }
+      loadDetailThread(currentThread!);
+    }
   }
 
   /// Post Comment | Reply
-  Future postReplyThread({
-    required ProfileModel author,
-    required ThreadModel thread,
+  Future<bool> postReplyThread({
+    required int idThread,
     required String content,
   }) async {
-    await _apiServices.replyThread(
-      reply.ReplyModel(
-        author: reply.Author(
-          id: author.id,
-          profileImage: author.profileImage,
-          username: author.username,
-        ),
-        childCount: 0,
-        childExist: true,
-        content: content,
-        createdAt: DateTime.now().toIso8601String(),
-        dislike: 0,
-        id: 9,
-        like: 0,
-        parentExist: true,
-        thread: reply.Thread.fromJson(thread.toJson()),
-        updatedAt: DateTime.now().toIso8601String(),
-      ),
-    );
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (await _apiServices.replyThread(
+      token: token!,
+      idThread: idThread,
+      content: content,
+    )) {
+      repliesThread = await _apiServices.getReply(
+        scope: 'thread',
+        idThread: idThread,
+        limit: 30,
+      );
+      notifyListeners();
+      return true;
+    }
+    return false;
   }
 
   /// Like | Delete Like Thread
-  void likeReply(reply.ReplyModel replyModel) async {
-    await _apiServices.likeReply(replyModel.id ?? 1);
-    // await _apiServices.deleteLikeThread(threadModel.id ?? 1);
+  void likeReply(reply.ReplyModel replyModel, int idThread) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (isLikeReply) {
+        if (await _apiServices.deleteLikeReply(
+          token: token,
+          idReply: replyModel.id!,
+        )) {
+          isLikeReply = false;
+        }
+      } else {
+        if (await _apiServices.likeReply(
+          token: token,
+          idReply: replyModel.id!,
+        )) {
+          isLikeReply = true;
+        }
+      }
+      loadDetailThread(currentThread!);
+    }
   }
 
   /// Dislike | Delete Dislike Thread
-  void dislikeReply(reply.ReplyModel replyModel) async {
-    await _apiServices.dislikeThread(replyModel.id ?? 1);
-    // await _apiServices.deleteunLikeThread(threadModel.id ?? 1);
+  void dislikeReply(reply.ReplyModel replyModel, int idThread) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (isLikeReply) {
+        if (await _apiServices.deleteDislikeReply(
+          token: token,
+          idReply: replyModel.id!,
+        )) {
+          isLikeReply = false;
+        }
+      } else {
+        if (await _apiServices.dislikeReply(
+          token: token,
+          idReply: replyModel.id!,
+        )) {
+          isLikeReply = true;
+        }
+      }
+      loadDetailThread(currentThread!);
+    }
   }
 
   /// Post Reply Child / Reply from reply
   Future postReplyChild({
-    required ProfileModel author,
-    required reply.ReplyModel replyParent,
+    required int idReplyParent,
     required String content,
   }) async {
-    await _apiServices.replyChild(
-      author: author,
-      replyParent: replyParent,
-      content: content,
-    );
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.replyChild(
+        token: token,
+        idReplyParent: idReplyParent,
+        content: content,
+      )) {
+        repliesChild = await _apiServices.getReplyChild(
+          replyId: idReplyParent,
+        );
+        notifyListeners();
+        return true;
+      }
+    }
+    return false;
   }
 
   /// Follow User
   Future<bool> followUser(int idUser) async {
-    if (await _apiServices.followUser(idUser)) {
-      return true;
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.followUser(token: token, idUser: idUser)) {
+        return true;
+      }
     }
     return false;
   }
 
   /// Follow Category
   Future<bool> followCategory(int idCategory) async {
-    if (await _apiServices.subscribeCategory(idCategory)) {
-      return true;
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.subscribeCategory(
+        token: token,
+        idCategory: idCategory,
+      )) {
+        return true;
+      }
     }
     return false;
   }

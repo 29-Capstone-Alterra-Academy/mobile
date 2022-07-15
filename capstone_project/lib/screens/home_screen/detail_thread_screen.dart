@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -105,7 +103,9 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
                               separatorBuilder: (context, index) =>
                                   buildDivider(),
                               itemBuilder: (context, index) => ReplyComponent(
-                                  replyModel: value.repliesThread![index]),
+                                replyModel: value.repliesThread![index],
+                                threadModel: value.currentThread!,
+                              ),
                             ),
                         ],
                       ),
@@ -158,7 +158,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
                       style: Theme.of(context).textTheme.bodyMedium,
                       decoration: InputDecoration(
                         isDense: true,
-                        contentPadding: const EdgeInsets.fromLTRB(6, 12, 12, 4),
+                        // contentPadding: const EdgeInsets.fromLTRB(6, 12, 12, 4),
                         // attach file
                         prefix: InkWell(
                           onTap: () => provider.pickImage(),
@@ -208,26 +208,37 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
               IconButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    log('Komentar dikirim');
                     buildLoading(context);
                     // if reply to reply
                     if (value.selectedReply != null) {
                       await provider
                           .postReplyChild(
-                            author: profile.currentUser!,
-                            replyParent: value.selectedReply!,
-                            content: _commentController.text,
-                          )
-                          .then((value) => Navigator.pop(context));
+                        idReplyParent: value.selectedReply!.id!,
+                        content: _commentController.text,
+                      )
+                          .then((value) {
+                        Navigator.pop(context);
+                        if (value) {
+                          buildToast('Komentar berhasil dikirim');
+                        } else {
+                          buildToast('Komentar gagal dikirim');
+                        }
+                      });
                     } else {
                       // if reply to thread
                       await provider
                           .postReplyThread(
-                            author: profile.currentUser!,
-                            thread: value.currentThread!,
-                            content: _commentController.text,
-                          )
-                          .then((value) => Navigator.pop(context));
+                        idThread: value.currentThread!.id!,
+                        content: _commentController.text,
+                      )
+                          .then((value) {
+                        Navigator.pop(context);
+                        if (value) {
+                          buildToast('Komentar berhasil dikirim');
+                        } else {
+                          buildToast('Komentar gagal dikirim');
+                        }
+                      });
                     }
                     _commentController.clear();
                   }

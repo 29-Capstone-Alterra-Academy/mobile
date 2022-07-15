@@ -1,3 +1,4 @@
+import 'package:capstone_project/model/user_model.dart';
 import 'package:capstone_project/modelview/category_provider.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
@@ -45,7 +46,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
           controller: _searchController,
           autofocus: true,
           onSubmitted: (value) {
-            provider.getSearchResult();
+            provider.getSearchResult(keyword: _searchController.text);
           },
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
@@ -79,17 +80,24 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
               child: Text('Something Wrong!!!'),
             );
           } else {
-            if (value.results == null || value.results!.users == null) {
+            if (value.searchUser.isEmpty) {
               if (value.isSearched) {
                 return notFound(context);
               }
               return Container();
             } else {
               return ListView.builder(
-                itemCount: value.results!.threads!.length,
+                itemCount: value.searchUser.length,
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                 itemBuilder: (context, index) {
-                  return userCard(context, value.results!.users![index]);
+                  return userCard(
+                      context,
+                      UserModel(
+                        iD: value.searchUser[index].id,
+                        profileImage: value.searchUser[index].profileImage,
+                        username: value.searchUser[index].username,
+                        followersCount: value.searchUser[index].followersCount,
+                      ));
                 },
               );
             }

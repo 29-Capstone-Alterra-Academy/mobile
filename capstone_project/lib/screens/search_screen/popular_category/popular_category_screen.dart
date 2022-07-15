@@ -52,14 +52,14 @@ class _PopularCategoryScreenState extends State<PopularCategoryScreen> {
       ),
       body: Consumer<SearchScreenProvider>(
         builder: (context, value, _) {
-          if (value.state == FiniteState.loading) {
+          if (value.categoryState == FiniteState.loading) {
             return Center(
               child: CircularProgressIndicator(
                 color: NomizoTheme.nomizoTosca.shade600,
               ),
             );
           }
-          if (value.state == FiniteState.failed) {
+          if (value.categoryState == FiniteState.failed) {
             return const Center(
               child: Text('Something Wrong!!!'),
             );
