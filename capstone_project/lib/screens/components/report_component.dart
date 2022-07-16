@@ -10,7 +10,6 @@ import 'package:capstone_project/screens/components/card_widget.dart';
 
 // import provider
 import 'package:capstone_project/modelview/user_provider.dart';
-import 'package:capstone_project/modelview/profile_provider.dart';
 import 'package:capstone_project/modelview/category_provider.dart';
 import 'package:capstone_project/modelview/detail_thread_provider.dart';
 
@@ -89,7 +88,7 @@ class _ReportComponentState extends State<ReportComponent> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              return moreMenu(label: reportCause[index], type: reportType);
+              return moreMenu(index: index, type: reportType);
             },
           ),
           const SizedBox(height: 10),
@@ -98,9 +97,9 @@ class _ReportComponentState extends State<ReportComponent> {
     );
   }
 
-  Widget moreMenu({required String label, required String type}) {
+  Widget moreMenu({required int index, required String type}) {
     return InkWell(
-      onTap: reportFunction(type, label),
+      onTap: reportFunction(type, index),
       child: Column(
         children: [
           Container(
@@ -109,7 +108,7 @@ class _ReportComponentState extends State<ReportComponent> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.centerLeft,
             child: Text(
-              label,
+              reportCause[index],
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -121,7 +120,7 @@ class _ReportComponentState extends State<ReportComponent> {
   }
 
   /// Get Report Function based on report type
-  void Function()? reportFunction(String type, String reason) {
+  void Function()? reportFunction(String type, int reasonId) {
     void Function()? reportFunction;
 
     /// function based on report type
@@ -130,7 +129,9 @@ class _ReportComponentState extends State<ReportComponent> {
         final provider = Provider.of<CategoryProvider>(context, listen: false);
         reportFunction = () async {
           buildLoading(context);
-          await provider.reportCategory(provider.currentCategory, reason).then(
+          await provider
+              .reportCategory(provider.currentCategory, reasonId + 2)
+              .then(
             (value) {
               Navigator.pop(context);
               Navigator.pop(context);
@@ -141,14 +142,12 @@ class _ReportComponentState extends State<ReportComponent> {
         break;
       case "user":
         final provider = Provider.of<UserProvider>(context, listen: false);
-        final reporter = Provider.of<ProfileProvider>(context, listen: false);
         reportFunction = () async {
           buildLoading(context);
           await provider
               .reportUser(
-            reporter.currentUser!,
             provider.selectedUser!,
-            reason,
+            reasonId + 2,
           )
               .then(
             (value) {
@@ -164,7 +163,9 @@ class _ReportComponentState extends State<ReportComponent> {
             Provider.of<DetailThreadProvider>(context, listen: false);
         reportFunction = () async {
           buildLoading(context);
-          await provider.reportThread(provider.currentThread!, reason).then(
+          await provider
+              .reportThread(provider.currentThread!, reasonId + 2)
+              .then(
             (value) {
               Navigator.pop(context);
               Navigator.pop(context);
@@ -176,15 +177,10 @@ class _ReportComponentState extends State<ReportComponent> {
       case "reply":
         final provider =
             Provider.of<DetailThreadProvider>(context, listen: false);
-        final reporter = Provider.of<ProfileProvider>(context, listen: false);
         reportFunction = () async {
           buildLoading(context);
           await provider
-              .reportReply(
-            provider.selectedReply!,
-            reason,
-            reporter.currentUser!,
-          )
+              .reportReply(provider.selectedReply!, reasonId + 2)
               .then(
             (value) {
               Navigator.pop(context);
@@ -197,16 +193,12 @@ class _ReportComponentState extends State<ReportComponent> {
       default:
         final provider =
             Provider.of<DetailThreadProvider>(context, listen: false);
-        final reporter = Provider.of<ProfileProvider>(context, listen: false);
         reportFunction = () async {
           showDialog(
               context: context,
               builder: (context) =>
                   const Center(child: CircularProgressIndicator()));
-          await provider
-              .reportReply(
-                  provider.repliesThread![0], reason, reporter.currentUser!)
-              .then(
+          await provider.reportReply(provider.repliesThread![0], reasonId).then(
             (value) {
               Navigator.pop(context);
               Navigator.pop(context);

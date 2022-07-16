@@ -8,15 +8,20 @@ import 'package:capstone_project/screens/search_screen/search_screen.dart';
 import 'package:capstone_project/screens/upload_screen/upload_screen.dart';
 import 'package:capstone_project/screens/notification_screen/notification_screen.dart';
 import 'package:capstone_project/screens/profile_screen/profile_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BottomNavbarProvider extends ChangeNotifier {
   FiniteState state = FiniteState.none;
   int currentIndex = 0;
+  bool isAdmin = false;
 
   late List<Widget> itemScreen = [];
 
   // Load Item Screen
-  void loadItemScreen(bool isAdmin) {
+  void loadItemScreen() async {
+    final prefs = await SharedPreferences.getInstance();
+    isAdmin = prefs.getBool('isAdmin') ?? false;
+
     changeState(FiniteState.loading);
     if (isAdmin) {
       itemScreen = [
@@ -47,5 +52,13 @@ class BottomNavbarProvider extends ChangeNotifier {
   void changeState(FiniteState s) {
     state = s;
     notifyListeners();
+  }
+
+  Future logOut() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('isAdmin');
+    prefs.remove('access_token');
+    prefs.remove('refresh_token');
+    currentIndex = 0;
   }
 }

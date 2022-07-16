@@ -120,14 +120,16 @@ class _SearchScreenState extends State<SearchScreen> {
                     );
                   } else {
                     // if (value.popularUser.isEmpty) {
-                    if (value.searchUser.isEmpty) {
+                    if (value.popularUser.isEmpty) {
                       return const Center(
                           child: Text('Pengguna Terpopuler Tidak Ada'));
                     } else {
                       return Column(
                         children: [
                           ListView.builder(
-                            itemCount: 3,
+                            itemCount: value.popularUser.length > 3
+                                ? 3
+                                : value.popularUser.length,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               // return userCard(
@@ -135,12 +137,12 @@ class _SearchScreenState extends State<SearchScreen> {
                               return userCard(
                                   context,
                                   UserModel(
-                                    iD: value.searchUser[index].id,
+                                    iD: value.popularUser[index].id,
                                     profileImage:
-                                        value.searchUser[index].profileImage,
-                                    username: value.searchUser[index].username,
+                                        value.popularUser[index].profileImage,
+                                    username: value.popularUser[index].username,
                                     followersCount:
-                                        value.searchUser[index].followersCount,
+                                        value.popularUser[index].followersCount,
                                   ));
                             },
                           ),

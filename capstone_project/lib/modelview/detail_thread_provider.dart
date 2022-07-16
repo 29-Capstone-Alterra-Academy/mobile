@@ -1,6 +1,5 @@
 import 'dart:io';
 // import package
-import 'package:capstone_project/model/profile_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -111,7 +110,6 @@ class DetailThreadProvider extends ChangeNotifier {
           isLikeThread = true;
         }
       }
-      loadDetailThread(currentThread!);
     }
   }
 
@@ -133,7 +131,6 @@ class DetailThreadProvider extends ChangeNotifier {
           isLikeThread = true;
         }
       }
-      loadDetailThread(currentThread!);
     }
   }
 
@@ -259,21 +256,25 @@ class DetailThreadProvider extends ChangeNotifier {
   }
 
   /// Report Thread
-  Future<String> reportThread(ThreadModel threadModel, String reason) async {
-    if (await _apiServices.reportThread(threadModel, reason)) {
-      return "Laporan Anda sudah dikirim. Terima kasih.";
+  Future<String> reportThread(ThreadModel threadModel, int reasonId) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.reportThread(token, threadModel, reasonId)) {
+        return "Laporan Anda sudah dikirim. Terima kasih.";
+      }
     }
     return "Laporan Anda gagal dikirim";
   }
 
   /// Report Reply
-  Future<String> reportReply(
-    reply.ReplyModel replyModel,
-    String reason,
-    ProfileModel reporter,
-  ) async {
-    if (await _apiServices.reportReply(replyModel, reason, reporter)) {
-      return "Laporan Anda sudah dikirim. Terima kasih.";
+  Future<String> reportReply(reply.ReplyModel replyModel, int reasonId) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.reportReply(token, replyModel, reasonId)) {
+        return "Laporan Anda sudah dikirim. Terima kasih.";
+      }
     }
     return "Laporan Anda gagal dikirim";
   }

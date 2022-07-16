@@ -26,6 +26,10 @@ class LoginProvider extends ChangeNotifier {
       prefs.setString('access_token', response[1]);
       prefs.setString('refresh_token', response[2]);
 
+      if (email == 'abdul123@gmail.com') {
+        prefs.setBool('isAdmin', true);
+      }
+
       return true;
     } else {
       // if failed login

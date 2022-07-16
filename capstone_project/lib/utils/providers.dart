@@ -1,3 +1,4 @@
+import 'package:capstone_project/modelview/admin/admin_report_provider.dart';
 import 'package:capstone_project/modelview/authentication/login_provider.dart';
 import 'package:capstone_project/modelview/authentication/register_provider.dart';
 import 'package:capstone_project/modelview/admin/admin_moderator_provider.dart';
@@ -27,6 +28,7 @@ List<SingleChildWidget> providers = [
   ChangeNotifierProvider(create: (_) => BottomNavbarProvider()),
   ChangeNotifierProvider(create: (_) => AdminHomeProvider()),
   ChangeNotifierProvider(create: (_) => AdminModeratorProvider()),
+  ChangeNotifierProvider(create: (_) => AdminReportProvider()),
   ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
   ChangeNotifierProvider(create: (_) => SearchScreenProvider()),
   ChangeNotifierProvider(create: (_) => CategoryProvider()),

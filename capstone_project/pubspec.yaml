@@ -92,6 +92,9 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
+    - family:  NomizoIcons
+      fonts:
+       - asset: fonts/NomizoIcons.ttf
     - family: Inter
       fonts:
         - asset: assets/fonts/inter/Inter-VariableFont_slnt,wght.ttf

@@ -156,7 +156,7 @@ class _ReplyComponentState extends State<ReplyComponent> {
                         );
                       },
                       child: Text(
-                        '${reply.author!.username}',
+                        '@${reply.author!.username}',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w500,
                             ),

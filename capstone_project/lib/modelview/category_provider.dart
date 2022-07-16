@@ -154,9 +154,13 @@ class CategoryProvider extends ChangeNotifier {
 
   /// Report Category
   Future<String> reportCategory(
-      CategoryModel categoryModel, String reason) async {
-    if (await _apiServices.reportCategory(categoryModel, reason)) {
-      return "Laporan Anda sudah dikirim. Terima kasih.";
+      CategoryModel categoryModel, int reasonId) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.reportCategory(token, categoryModel, reasonId)) {
+        return "Laporan Anda sudah dikirim. Terima kasih.";
+      }
     }
     return "Laporan Anda gagal dikirim";
   }

@@ -1,5 +1,4 @@
 // import package
-import 'package:capstone_project/model/profile_model.dart';
 import 'package:flutter/cupertino.dart';
 
 // import utils
@@ -131,10 +130,13 @@ class UserProvider extends ChangeNotifier {
   }
 
   /// Report User
-  Future<String> reportUser(
-      ProfileModel reporter, UserModel targetUser, String reason) async {
-    if (await _apiServices.reportUser(reporter, targetUser, reason)) {
-      return "Laporan Anda sudah dikirim. Terima kasih.";
+  Future<String> reportUser(UserModel targetUser, int reasonId) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await _apiServices.reportUser(token, targetUser, reasonId)) {
+        return "Laporan Anda sudah dikirim. Terima kasih.";
+      }
     }
     return "Laporan Anda gagal dikirim";
   }

@@ -4,8 +4,22 @@ import 'package:provider/provider.dart';
 import '../../modelview/notification_provider.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 
-class NotificationScreen extends StatelessWidget {
+class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
+
+  @override
+  State<NotificationScreen> createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends State<NotificationScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<NotificationProvider>(context, listen: false)
+          .getAllNotification();
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
