@@ -237,6 +237,12 @@ class APIServices {
           'sort_by': sortby ?? 'activity_count',
         },
       );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
 
       List<CategoryModel> topics = (response.data as List)
           .map((e) => CategoryModel.fromJson(e))
@@ -356,8 +362,8 @@ class APIServices {
         ),
       );
       return true;
-    } catch (e) {
-      log(e.toString());
+    } on DioError catch (e) {
+      log(e.message.toString());
       return false;
     }
   }
@@ -411,6 +417,20 @@ class APIServices {
         ),
       );
 
+  /// REQUEST TO BE MODERATOR
+  Future<bool> requestModerator({
+    required String token,
+    required int idCategory,
+  }) async {
+    try {
+      await dio.post(
+        '$_baseURL/topic/$idCategory/modrequest',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
       return true;
     } catch (e) {
       log(e.toString());
@@ -453,8 +473,16 @@ class APIServices {
         },
       );
 
-      List<ThreadModel> category =
-          (response.data as List).map((e) => ThreadModel.fromJson(e)).toList();
+    try {
+      await dio.post(
+        '$_baseURL/topic/${threadModel.topic!.id}/thread',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return category;
     } on Exception catch (e) {
@@ -1006,11 +1034,6 @@ class APIServices {
   //   }
   // }
 
-  /// EDIT PROFILE PASSWORD
-  /// REQUEST EMAIL VERIFICATION CODE
-  /// SUBMIT EMAILVERIFICATION CODE
-  /// CHECK USERNAME AVAILABILITY
-  ///
   /// GET THREAD BY ID
   // Future getThreadById(int idThread) async {
   //   try {

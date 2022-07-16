@@ -270,7 +270,7 @@ class _BlockedItemState extends State<BlockedItem> {
         username: 'gaga',
       ),
       image: '',
-      likedCount: 1000,
+      likedCount: 10,
       unlikedCount: 20,
       replyCount: 376,
       content:

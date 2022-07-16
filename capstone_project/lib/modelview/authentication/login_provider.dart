@@ -29,7 +29,6 @@ class LoginProvider extends ChangeNotifier {
       if (email == 'abdul123@gmail.com') {
         prefs.setBool('isAdmin', true);
       }
-
       return true;
     } else {
       // if failed login

@@ -1,3 +1,4 @@
+
 import 'package:badges/badges.dart';
 import 'package:capstone_project/modelview/notification_provider.dart';
 import 'package:capstone_project/modelview/profile_provider.dart';
@@ -16,6 +17,8 @@ class BottomNavbar extends StatefulWidget {
 }
 
 class _BottomNavbarState extends State<BottomNavbar> {
+  bool isAdmin = true;
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -218,7 +221,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
             ],
           ),
         ),
-        // loh out
+        // log out
         navbarItem(
           // Icons.logout,
           // Icons.logout_outlined,
