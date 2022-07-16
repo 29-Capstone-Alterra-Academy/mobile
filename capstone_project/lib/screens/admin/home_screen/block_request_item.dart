@@ -153,8 +153,8 @@ class _BlockRequestItemState extends State<BlockRequestItem> {
       image1: '',
       image2: '',
       image3: '',
-      image4: null,
-      image5: null,
+      image4: '',
+      image5: '',
       title: 'Judul Thread',
       topic: Topic(
         id: 88,

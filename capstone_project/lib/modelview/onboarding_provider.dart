@@ -6,19 +6,19 @@ class OnboardingProvider extends ChangeNotifier {
       'image': 'assets/img/onboarding/onboarding1.png',
       'title': 'Free speech platform',
       'subtitle':
-          'Nomizo memberikan kesempatan bagi anda untuk\nberpendapat secara bebas selama tanpa ada\nunsur ujaran kebencian',
+          'Nomizo memberikan kesempatan bagi anda untuk berpendapat secara bebas selama tanpa ada unsur ujaran kebencian',
     },
     {
       'image': 'assets/img/onboarding/onboarding2.png',
       'title': 'Saving your time',
       'subtitle':
-          'Nomizo membantu anda untuk menghemat waktu\nyang anda butuhkan saat anda berdiskusi',
+          'Nomizo membantu anda untuk menghemat waktu yang anda butuhkan saat anda berdiskusi',
     },
     {
       'image': 'assets/img/onboarding/onboarding3.png',
       'title': 'Find ideas',
       'subtitle':
-          'Nomizo memudahkan anda dalam mencari\nsebuah ide yang anda butuhkan',
+          'Nomizo memudahkan anda dalam mencari sebuah ide yang anda butuhkan',
     },
   ];
 

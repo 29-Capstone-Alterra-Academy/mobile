@@ -102,17 +102,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         await provider
                             .editProfile(
                           ProfileModel(
-                            birthDate: profile.currentUser!.birthDate,
-                            email: profile.currentUser!.email,
-                            gender: profile.currentUser!.gender,
-                            id: profile.currentUser!.id,
-                            isVerified: profile.currentUser!.isVerified,
                             profileImage: profile.currentUser!.profileImage,
                             username: _usernameController.text,
                             bio: _bioController.text,
-                            createdAt: profile.currentUser!.createdAt,
-                            updatedAt: profile.currentUser!.updatedAt,
-                            deletedAt: profile.currentUser!.deletedAt,
                           ),
                         )
                             .then((value) {

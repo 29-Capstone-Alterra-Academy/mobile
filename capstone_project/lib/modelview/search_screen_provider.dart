@@ -10,7 +10,7 @@ import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/services/api_services.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
+// import 'package:capstone_project/model/user_model.dart';
 import 'package:capstone_project/model/category_model.dart';
 
 class SearchScreenProvider extends ChangeNotifier {
@@ -21,7 +21,7 @@ class SearchScreenProvider extends ChangeNotifier {
 
   List<CategoryModel> popularCategory = [];
   List<CategoryModel> allCategory = [];
-  List<UserModel> popularUser = [];
+  List<SearchUserModel> popularUser = [];
 
   List<ThreadModel> searchThread = [];
   List<CategoryModel> searchCategory = [];
@@ -60,10 +60,10 @@ class SearchScreenProvider extends ChangeNotifier {
   void getPopularUser() async {
     changeUserState(FiniteState.loading);
     // popularUser = await _apiServices.getUsers();
-    searchUser = await _apiServices.getSearchResult(
+    popularUser = await _apiServices.getSearchResult(
         limit: 100, offset: 0, keyword: 'user', scope: 'user');
-    searchUser.sort((a, b) => a.followersCount!.compareTo(b.followersCount!));
-    searchUser = searchUser.reversed.toList();
+    popularUser.sort((a, b) => a.followersCount!.compareTo(b.followersCount!));
+    popularUser = popularUser.reversed.toList();
     changeUserState(FiniteState.none);
   }
 

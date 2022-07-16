@@ -2,9 +2,12 @@ import 'dart:developer';
 
 import 'package:capstone_project/model/reply_model.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
-import 'package:capstone_project/screens/components/reply_component.dart';
+import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
+
+import '../../components/nomizo_icons_icons.dart';
 
 class BlockedItem extends StatefulWidget {
   const BlockedItem({Key? key}) : super(key: key);
@@ -118,16 +121,158 @@ class _BlockedItemState extends State<BlockedItem> {
           color: NomizoTheme.nomizoDark.shade100,
         ),
       ),
-      child: ReplyComponent(replyModel: replyModelExample),
+      child: replyCard(replyModelExample),
+    );
+  }
+
+  Widget replyCard(ReplyModel reply) {
+    // convert thread date to time ago format
+    var convert = DateTime.parse(reply.createdAt!);
+    var difference = DateTime.now().difference(convert);
+    var date = DateTime.now().subtract(difference);
+    String replyDate = timeago.format(date, locale: 'id');
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // head
+          Row(
+            children: [
+              // profile pic
+              circlePic(42, '${reply.author!.profileImage}'),
+              const SizedBox(width: 7),
+              // title
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // posted by
+                    Text(
+                      '@${reply.author!.username}',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    // post time
+                    Row(
+                      children: [
+                        Text(
+                          'mengomentari',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: NomizoTheme.nomizoDark.shade500,
+                                  ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Container(
+                          width: 2,
+                          height: 2,
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: NomizoTheme.nomizoDark.shade500,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            replyDate,
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: NomizoTheme.nomizoDark.shade500,
+                                    ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              // more
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.more_horiz,
+                  color: NomizoTheme.nomizoDark.shade900,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // thread content
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Text(
+              '${reply.content}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              // comment
+              feedbackButton(
+                iconData: NomizoIcons.commentOutlined,
+                label: reply.replyCount.toString(),
+              ),
+              // like
+              feedbackButton(
+                iconData: NomizoIcons.likeOutlined,
+                label: reply.likedCount.toString(),
+              ),
+              // dislike
+              feedbackButton(iconData: NomizoIcons.dislikeOutlined),
+              // share
+              feedbackButton(iconData: NomizoIcons.share),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget feedbackButton({
+    required IconData iconData,
+    String? label,
+    void Function()? function,
+  }) {
+    return Expanded(
+      child: Container(
+        alignment: Alignment.centerLeft,
+        child: InkWell(
+          onTap: function,
+          child: label == null
+              ? Icon(iconData)
+              : Row(
+                  children: [
+                    Icon(iconData),
+                    const SizedBox(width: 4),
+                    Text(
+                      label,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                  ],
+                ),
+        ),
+      ),
     );
   }
 
   ReplyModel replyModelExample = ReplyModel(
+      id: 1,
       author: Author(
         id: 9,
         profileImage: '',
         username: 'gaga',
       ),
+      image: '',
+      likedCount: 10,
+      unlikedCount: 20,
+      replyCount: 376,
       content:
           'Penyakit virus corona (COVID-19) adalah penyakit menular yang disebabkan oleh virus SARS-Cov-2.',
       createdAt: '2016-08-29T09:12:33.001Z',

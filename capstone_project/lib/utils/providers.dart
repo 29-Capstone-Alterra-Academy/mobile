@@ -1,3 +1,4 @@
+import 'package:capstone_project/modelview/admin/admin_report_provider.dart';
 import 'package:capstone_project/modelview/authentication/login_provider.dart';
 import 'package:capstone_project/modelview/authentication/register_provider.dart';
 import 'package:capstone_project/modelview/admin/admin_moderator_provider.dart';
@@ -17,6 +18,7 @@ import 'package:capstone_project/modelview/splash_screen_provider.dart';
 import 'package:capstone_project/modelview/search_screen_provider.dart';
 import 'package:capstone_project/modelview/bottom_navbar_provider.dart';
 import 'package:capstone_project/modelview/create_category_provider.dart';
+import 'package:capstone_project/modelview/notification_provider.dart';
 
 List<SingleChildWidget> providers = [
   ChangeNotifierProvider(create: (_) => SplashScreenProvider()),
@@ -26,6 +28,7 @@ List<SingleChildWidget> providers = [
   ChangeNotifierProvider(create: (_) => BottomNavbarProvider()),
   ChangeNotifierProvider(create: (_) => AdminHomeProvider()),
   ChangeNotifierProvider(create: (_) => AdminModeratorProvider()),
+  ChangeNotifierProvider(create: (_) => AdminReportProvider()),
   ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
   ChangeNotifierProvider(create: (_) => SearchScreenProvider()),
   ChangeNotifierProvider(create: (_) => CategoryProvider()),
@@ -35,4 +38,5 @@ List<SingleChildWidget> providers = [
   ChangeNotifierProvider(create: (_) => DetailThreadProvider()),
   ChangeNotifierProvider(create: (_) => ProfileProvider()),
   ChangeNotifierProvider(create: (_) => EditProfileProvider()),
+  ChangeNotifierProvider(create: (_) => NotificationProvider())
 ];

@@ -1,6 +1,8 @@
 
 import 'package:badges/badges.dart';
+import 'package:capstone_project/modelview/notification_provider.dart';
 import 'package:capstone_project/modelview/profile_provider.dart';
+import 'package:capstone_project/screens/components/nomizo_icons_icons.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +23,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<BottomNavbarProvider>(context, listen: false)
-          .loadItemScreen(isAdmin);
+          .loadItemScreen();
       Provider.of<ProfileProvider>(context, listen: false).getProfile();
     });
     super.initState();
@@ -56,7 +58,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
                   ),
                   color: NomizoTheme.nomizoDark.shade50,
                 ),
-                child: isAdmin
+                child: value.isAdmin
                     ? adminNavbar(provider, value.currentIndex)
                     : userNavbar(provider, value.currentIndex),
               ),
@@ -69,14 +71,16 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
   // Navbar Container (User)
   Widget userNavbar(BottomNavbarProvider provider, int currentIndex) {
+    Provider.of<NotificationProvider>(context, listen: false)
+        .getAllNotification();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       mainAxisSize: MainAxisSize.max,
       children: [
         // beranda
         navbarItem(
-          Icons.home,
-          Icons.home_outlined,
+          NomizoIcons.home,
+          NomizoIcons.homeOutlined,
           'Beranda',
           0,
           currentIndex,
@@ -117,13 +121,21 @@ class _BottomNavbarState extends State<BottomNavbar> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Badge(
-                badgeColor: NomizoTheme.nomizoRed.shade600,
-                position: BadgePosition.topEnd(top: 0, end: 0),
-                child: currentIndex == 3
-                    ? const Icon(Icons.notifications)
-                    : const Icon(Icons.notifications_outlined),
-              ),
+              Consumer<NotificationProvider>(builder: (context, value, _) {
+                if (value.notification.isNotEmpty) {
+                  return Badge(
+                    badgeColor: NomizoTheme.nomizoRed.shade600,
+                    position: BadgePosition.topEnd(top: 0, end: 0),
+                    child: currentIndex == 3
+                        ? const Icon(Icons.notifications)
+                        : const Icon(Icons.notifications_outlined),
+                  );
+                } else {
+                  return currentIndex == 3
+                      ? const Icon(Icons.notifications)
+                      : const Icon(Icons.notifications_outlined);
+                }
+              }),
               Text(
                 'Notifikasi',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -158,8 +170,8 @@ class _BottomNavbarState extends State<BottomNavbar> {
       children: [
         // beranda
         navbarItem(
-          Icons.home,
-          Icons.home_outlined,
+          NomizoIcons.home,
+          NomizoIcons.homeOutlined,
           'Beranda',
           0,
           currentIndex,
@@ -193,8 +205,8 @@ class _BottomNavbarState extends State<BottomNavbar> {
                 badgeColor: NomizoTheme.nomizoRed.shade600,
                 position: BadgePosition.topEnd(top: 0, end: 0),
                 child: currentIndex == 3
-                    ? const Icon(Icons.campaign)
-                    : const Icon(Icons.campaign_outlined),
+                    ? const Icon(NomizoIcons.report)
+                    : const Icon(NomizoIcons.reportOutlined),
               ),
               Text(
                 'Laporan',
@@ -209,19 +221,23 @@ class _BottomNavbarState extends State<BottomNavbar> {
             ],
           ),
         ),
-        // profil
+        // log out
         navbarItem(
-          Icons.logout,
-          Icons.logout_outlined,
+          // Icons.logout,
+          // Icons.logout_outlined,
+          NomizoIcons.logout,
+          NomizoIcons.logoutOutlined,
           'Logout',
           4,
           currentIndex,
-          () {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              '/login',
-              (route) => false,
-            );
+          () async {
+            await provider.logOut().then(
+                  (value) => Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/login',
+                    (route) => false,
+                  ),
+                );
           },
         ),
       ],

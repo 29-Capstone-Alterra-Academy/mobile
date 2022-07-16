@@ -196,9 +196,16 @@ class _ThreadComponentState extends State<ThreadComponent> {
                           () async {
                             buildLoading(context);
                             await provider
-                                .followUser(threadModel.author!.id ?? 1)
+                                .followUser(threadModel.author!.id!)
                                 .then((value) {
                               Navigator.pop(context);
+                              if (value) {
+                                buildToast(
+                                    'Berhasil mengikuti @${threadModel.author!.username}');
+                              } else {
+                                buildToast(
+                                    'Gagal mengikuti @${threadModel.author!.username}');
+                              }
                               Navigator.pop(context);
                             });
                           },
@@ -206,9 +213,14 @@ class _ThreadComponentState extends State<ThreadComponent> {
                           () async {
                             buildLoading(context);
                             await provider
-                                .followCategory(threadModel.author!.id ?? 1)
+                                .followCategory(threadModel.topic!.id!)
                                 .then((value) {
                               Navigator.pop(context);
+                              if (value) {
+                                buildToast('Berhasil engikuti kategori');
+                              } else {
+                                buildToast('Gagal mengikuti kategori');
+                              }
                               Navigator.pop(context);
                             });
                           },

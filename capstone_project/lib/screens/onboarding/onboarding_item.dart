@@ -40,9 +40,8 @@ class _OnboardingItemState extends State<OnboardingItem> {
         ),
         const SizedBox(height: 10),
         // subtitle
-        Container(
-          width: 328,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             widget.provider.items[widget.indexPage]['subtitle'],
             textAlign: TextAlign.center,
