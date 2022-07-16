@@ -1,6 +1,6 @@
 import 'dart:io';
 // import package
-import 'package:capstone_project/model/profile_model.dart';
+// import 'package:capstone_project/model/profile_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:file_picker/file_picker.dart';
 

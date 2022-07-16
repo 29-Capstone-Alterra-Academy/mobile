@@ -186,6 +186,7 @@ class _ReplyComponentState extends State<ReplyComponent> {
                         Expanded(
                           child: Text(
                             replyDate,
+                            overflow: TextOverflow.ellipsis,
                             style:
                                 Theme.of(context).textTheme.bodySmall?.copyWith(
                                       color: NomizoTheme.nomizoDark.shade500,

@@ -120,8 +120,8 @@ class APIServices {
   }) async {
     FormData formData = FormData.fromMap({
       "username": userProfile.username,
-      if(imgPath != null)
-      "profile_image": await MultipartFile.fromFile(imgPath),
+      if (imgPath != null)
+        "profile_image": await MultipartFile.fromFile(imgPath),
       "bio": userProfile.bio,
     });
     try {
@@ -237,12 +237,6 @@ class APIServices {
           'sort_by': sortby ?? 'activity_count',
         },
       );
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
 
       List<CategoryModel> topics = (response.data as List)
           .map((e) => CategoryModel.fromJson(e))
@@ -417,20 +411,6 @@ class APIServices {
         ),
       );
 
-  /// REQUEST TO BE MODERATOR
-  Future<bool> requestModerator({
-    required String token,
-    required int idCategory,
-  }) async {
-    try {
-      await dio.post(
-        '$_baseURL/topic/$idCategory/modrequest',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
       return true;
     } catch (e) {
       log(e.toString());
@@ -473,16 +453,8 @@ class APIServices {
         },
       );
 
-    try {
-      await dio.post(
-        '$_baseURL/topic/${threadModel.topic!.id}/thread',
-        data: formData,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
+      List<ThreadModel> category =
+          (response.data as List).map((e) => ThreadModel.fromJson(e)).toList();
 
       return category;
     } on Exception catch (e) {
