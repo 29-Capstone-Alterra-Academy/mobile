@@ -1,6 +1,6 @@
 // import package
-import 'package:capstone_project/model/search_user_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // import utils
 import 'package:capstone_project/utils/finite_state.dart';
@@ -9,11 +9,12 @@ import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/services/api_services.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/category_model.dart';
-import 'package:capstone_project/model/moderator_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/model/search_model/search_user_model.dart';
+import 'package:capstone_project/model/moderator_model/moderator_model.dart';
+import 'package:capstone_project/model/search_model/search_category_model.dart';
 
 class CategoryProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
@@ -25,7 +26,7 @@ class CategoryProvider extends ChangeNotifier {
   List<ThreadModel> threads = [];
 
   List<ThreadModel> searchThread = [];
-  List<CategoryModel> searchCategory = [];
+  List<SearchCategoryModel> searchCategory = [];
   List<SearchUserModel> searchUser = [];
 
   CategoryModel currentCategory = CategoryModel();

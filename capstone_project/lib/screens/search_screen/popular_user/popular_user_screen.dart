@@ -1,8 +1,8 @@
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/modelview/search_screen_provider.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/utils/finite_state.dart';
+import 'package:capstone_project/viewmodel/search_viewmodel/search_screen_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -61,22 +61,22 @@ class _PopularUserScreenState extends State<PopularUserScreen> {
             );
           } else {
             // if (value.popularUser.isEmpty) {
-            if (value.searchUser.isEmpty) {
+            if (value.popularUser.isEmpty) {
               return const Center(child: Text('User Terpopuler Tidak Ada'));
             } else {
               return ListView.builder(
                 // itemCount: value.popularUser.length,
-                itemCount: value.searchUser.length,
+                itemCount: value.popularUser.length,
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                 itemBuilder: (context, index) {
                   // return userCard(context, value.popularUser[index]);
                   return userCard(
                       context,
                       UserModel(
-                        iD: value.searchUser[index].id,
-                        profileImage: value.searchUser[index].profileImage,
-                        username: value.searchUser[index].username,
-                        followersCount: value.searchUser[index].followersCount,
+                        iD: value.popularUser[index].id,
+                        profileImage: value.popularUser[index].profileImage,
+                        username: value.popularUser[index].username,
+                        followersCount: value.popularUser[index].followersCount,
                       ));
                 },
               );

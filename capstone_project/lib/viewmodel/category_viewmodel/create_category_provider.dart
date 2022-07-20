@@ -1,23 +1,15 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/services/api_services.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:capstone_project/services/api_services.dart';
-
-import 'package:capstone_project/model/profile_model.dart';
-
-class EditProfileProvider extends ChangeNotifier {
+class CreateCategoryProvider extends ChangeNotifier {
   final APIServices apiServices = APIServices();
 
   File? img;
-  String profilePic = '';
-
-  // Set image user
-  void setImage() {
-    notifyListeners();
-  }
 
   /// Pick Images Form Device
   void pickImage() async {
@@ -29,33 +21,36 @@ class EditProfileProvider extends ChangeNotifier {
       return;
     }
     img = File(result.files.first.path!);
-    profilePic = img!.path;
     notifyListeners();
   }
 
-  /// Edit Profile
-  Future<bool> editProfile(ProfileModel profileModel) async {
+  /// Create Category
+  Future<bool> checkCategoryName({required String name}) async {
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('access_token');
-    String? imgPath = img != null ? img!.path : null;
     if (token != null) {
-      if (await apiServices.editProfile(
-        userProfile: profileModel,
+      if (await apiServices.checkCategoryName(
         token: token,
-        imgPath: imgPath,
+        name: name,
       )) {
-        resetForm();
         return true;
       }
-      return false;
     }
     return false;
   }
 
-  /// Check Username Availability
-  Future<bool> checkUsername(String username) async {
-    if (await apiServices.checkUsername(username: username)) {
-      return true;
+  /// Create Category
+  Future<bool> createCategory(CategoryModel categoryModel) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      if (await apiServices.createCategory(
+        token: token,
+        categoryModel: categoryModel,
+      )) {
+        resetForm();
+        return true;
+      }
     }
     return false;
   }

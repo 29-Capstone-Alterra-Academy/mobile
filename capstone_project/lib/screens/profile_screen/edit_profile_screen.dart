@@ -12,11 +12,11 @@ import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import model
-import 'package:capstone_project/model/profile_model.dart';
+import 'package:capstone_project/model/user_model/profile_model.dart';
 
 // import provider
-import 'package:capstone_project/modelview/profile_provider.dart';
-import 'package:capstone_project/modelview/edit_profile_provider.dart';
+import 'package:capstone_project/viewmodel/profile_viewmodel/profile_provider.dart';
+import 'package:capstone_project/viewmodel/profile_viewmodel/edit_profile_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);

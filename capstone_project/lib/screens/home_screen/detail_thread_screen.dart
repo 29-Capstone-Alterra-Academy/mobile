@@ -1,17 +1,20 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 
-import 'package:capstone_project/screens/components/reply_component.dart';
-import 'package:capstone_project/screens/components/thread_component.dart';
+import 'package:capstone_project/screens/components/thread_card.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/screens/components/reply_component.dart';
 
-import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
 
-import 'package:capstone_project/modelview/profile_provider.dart';
-import 'package:capstone_project/modelview/detail_thread_provider.dart';
+import 'package:capstone_project/viewmodel/profile_viewmodel/profile_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/detail_thread_provider.dart';
+
 
 class DetailThreadScreen extends StatefulWidget {
   final ThreadModel threadModel;
@@ -32,7 +35,7 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
     _commentController = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<DetailThreadProvider>(context, listen: false)
-          .loadDetailThread(widget.threadModel);
+          .loadDetailThread(widget.threadModel.id!);
     });
     super.initState();
   }
@@ -89,21 +92,22 @@ class _DetailThreadScreenState extends State<DetailThreadScreen> {
                         shrinkWrap: true,
                         children: [
                           // post
-                          ThreadComponent(
+                          threadCard(
+                            context: context,
                             threadModel: value.currentThread!,
                             isOpened: true,
                           ),
                           buildDivider(),
                           // comment & reply section
-                          if (value.repliesThread != null)
+                          if (value.repliesThread.isNotEmpty)
                             ListView.separated(
-                              itemCount: value.repliesThread!.length,
+                              itemCount: value.repliesThread.length,
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               separatorBuilder: (context, index) =>
                                   buildDivider(),
                               itemBuilder: (context, index) => ReplyComponent(
-                                replyModel: value.repliesThread![index],
+                                replyModel: value.repliesThread[index],
                                 threadModel: value.currentThread!,
                               ),
                             ),

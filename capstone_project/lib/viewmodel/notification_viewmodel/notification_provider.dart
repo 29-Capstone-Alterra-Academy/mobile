@@ -2,7 +2,7 @@ import 'package:capstone_project/services/api_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 
-import '../model/norification_model.dart';
+import '../../model/notification_model/notification_model.dart';
 
 class NotificationProvider with ChangeNotifier {
   final APIServices _apiServices = APIServices();

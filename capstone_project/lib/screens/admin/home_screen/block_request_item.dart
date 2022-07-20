@@ -1,7 +1,7 @@
-import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
-import 'package:capstone_project/screens/components/thread_component.dart';
+import 'package:capstone_project/screens/components/thread_card.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -98,8 +98,11 @@ class _BlockRequestItemState extends State<BlockRequestItem> {
       ),
       child: IgnorePointer(
         ignoring: true,
-        child:
-            ThreadComponent(threadModel: threadModelExample, isOpened: false),
+        child: threadCard(
+          context: context,
+          threadModel: threadModelExample,
+          isOpened: false,
+        ),
       ),
     );
   }

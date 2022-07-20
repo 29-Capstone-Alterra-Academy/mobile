@@ -13,13 +13,13 @@ import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import model
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/profile_model.dart';
-import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
+import 'package:capstone_project/model/user_model/profile_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
 
 // import provider
-import 'package:capstone_project/modelview/upload_provider.dart';
-import 'package:capstone_project/modelview/profile_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/upload_provider.dart';
+import 'package:capstone_project/viewmodel/profile_viewmodel/profile_provider.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({Key? key}) : super(key: key);

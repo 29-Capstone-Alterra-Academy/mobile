@@ -1,7 +1,6 @@
 import 'dart:io';
 
 // import package
-import 'package:capstone_project/modelview/upload_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,10 +12,11 @@ import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import model
-import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
 
 // import provider
-import 'package:capstone_project/modelview/create_category_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/upload_provider.dart';
+import 'package:capstone_project/viewmodel/category_viewmodel/create_category_provider.dart';
 
 class CreateCategoryScreen extends StatefulWidget {
   const CreateCategoryScreen({Key? key}) : super(key: key);

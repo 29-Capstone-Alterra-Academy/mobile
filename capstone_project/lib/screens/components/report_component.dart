@@ -9,9 +9,9 @@ import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 
 // import provider
-import 'package:capstone_project/modelview/user_provider.dart';
-import 'package:capstone_project/modelview/category_provider.dart';
-import 'package:capstone_project/modelview/detail_thread_provider.dart';
+import 'package:capstone_project/viewmodel/user_viewmodel/user_provider.dart';
+import 'package:capstone_project/viewmodel/category_viewmodel/category_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/detail_thread_provider.dart';
 
 class ReportComponent extends StatefulWidget {
   final String type;
@@ -99,7 +99,7 @@ class _ReportComponentState extends State<ReportComponent> {
 
   Widget moreMenu({required int index, required String type}) {
     return InkWell(
-      onTap: reportFunction(type, index),
+      onTap: reportFunction(type, index != 0 ? index + 2 : index + 1),
       child: Column(
         children: [
           Container(
@@ -130,7 +130,7 @@ class _ReportComponentState extends State<ReportComponent> {
         reportFunction = () async {
           buildLoading(context);
           await provider
-              .reportCategory(provider.currentCategory, reasonId + 2)
+              .reportCategory(provider.currentCategory, reasonId)
               .then(
             (value) {
               Navigator.pop(context);
@@ -163,9 +163,7 @@ class _ReportComponentState extends State<ReportComponent> {
             Provider.of<DetailThreadProvider>(context, listen: false);
         reportFunction = () async {
           buildLoading(context);
-          await provider
-              .reportThread(provider.currentThread!, reasonId + 2)
-              .then(
+          await provider.reportThread(provider.currentThread!, reasonId).then(
             (value) {
               Navigator.pop(context);
               Navigator.pop(context);
@@ -179,9 +177,7 @@ class _ReportComponentState extends State<ReportComponent> {
             Provider.of<DetailThreadProvider>(context, listen: false);
         reportFunction = () async {
           buildLoading(context);
-          await provider
-              .reportReply(provider.selectedReply!, reasonId + 2)
-              .then(
+          await provider.reportReply(provider.selectedReply!, reasonId).then(
             (value) {
               Navigator.pop(context);
               Navigator.pop(context);
@@ -198,7 +194,7 @@ class _ReportComponentState extends State<ReportComponent> {
               context: context,
               builder: (context) =>
                   const Center(child: CircularProgressIndicator()));
-          await provider.reportReply(provider.repliesThread![0], reasonId).then(
+          await provider.reportReply(provider.repliesThread[0], reasonId).then(
             (value) {
               Navigator.pop(context);
               Navigator.pop(context);

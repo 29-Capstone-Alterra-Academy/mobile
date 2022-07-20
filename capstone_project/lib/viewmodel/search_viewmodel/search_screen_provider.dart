@@ -1,6 +1,7 @@
 // import package
-import 'package:capstone_project/model/search_user_model.dart';
-import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/search_model/search_category_model.dart';
+import 'package:capstone_project/model/search_model/search_user_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
 import 'package:flutter/material.dart';
 
 // import utils
@@ -11,7 +12,7 @@ import 'package:capstone_project/services/api_services.dart';
 
 // import model
 // import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
 
 class SearchScreenProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
@@ -20,11 +21,10 @@ class SearchScreenProvider extends ChangeNotifier {
   FiniteState userState = FiniteState.none;
 
   List<CategoryModel> popularCategory = [];
-  List<CategoryModel> allCategory = [];
   List<SearchUserModel> popularUser = [];
 
   List<ThreadModel> searchThread = [];
-  List<CategoryModel> searchCategory = [];
+  List<SearchCategoryModel> searchCategory = [];
   List<SearchUserModel> searchUser = [];
 
   void changeCategoryState(FiniteState s) {
@@ -42,17 +42,12 @@ class SearchScreenProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// GET 3 POPULAR TOPICS
+  /// GET MOST POPULAR TOPICS
   void getPopularCategory() async {
     changeCategoryState(FiniteState.loading);
-    popularCategory = await _apiServices.getCategory(limit: 3);
-    changeCategoryState(FiniteState.none);
-  }
-
-  /// GET MOST POPULAR TOPICS
-  void getAllPopularCategory(int limit) async {
-    changeCategoryState(FiniteState.loading);
-    allCategory = await _apiServices.getCategory(limit: limit);
+    popularCategory = await _apiServices.getCategory(limit: 100);
+    popularCategory.sort((a, b) => a.activityCount!.compareTo(b.activityCount!));
+    popularCategory = popularCategory.reversed.toList();
     changeCategoryState(FiniteState.none);
   }
 

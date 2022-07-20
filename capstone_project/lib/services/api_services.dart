@@ -1,22 +1,23 @@
 import 'dart:developer';
 
 // import package
-import 'package:capstone_project/model/modrequest_model.dart';
-import 'package:capstone_project/model/profile_model.dart';
-import 'package:capstone_project/model/report_category_model.dart';
-import 'package:capstone_project/model/report_reply_model.dart';
-import 'package:capstone_project/model/report_thread_model.dart';
-import 'package:capstone_project/model/report_user_model.dart';
-import 'package:capstone_project/model/search_user_model.dart';
 import 'package:dio/dio.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/reply_model.dart';
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/category_model.dart';
-import 'package:capstone_project/model/moderator_model.dart';
-import 'package:capstone_project/model/norification_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
+import 'package:capstone_project/model/reply_model/reply_model.dart';
+import 'package:capstone_project/model/user_model/profile_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/model/search_model/search_user_model.dart';
+import 'package:capstone_project/model/report_model/report_user_model.dart';
+import 'package:capstone_project/model/report_model/report_reply_model.dart';
+import 'package:capstone_project/model/moderator_model/moderator_model.dart';
+import 'package:capstone_project/model/report_model/report_thread_model.dart';
+import 'package:capstone_project/model/moderator_model/modrequest_model.dart';
+import 'package:capstone_project/model/search_model/search_category_model.dart';
+import 'package:capstone_project/model/report_model/report_category_model.dart';
+import 'package:capstone_project/model/notification_model/notification_model.dart';
 
 class APIServices {
   final Dio dio = Dio();
@@ -68,9 +69,9 @@ class APIServices {
   /// REFRESH TOKEN
 
   /// REGISTER
-  Future<List<String>> registerUser(String email, String password) async {
+  Future<bool> registerUser(String email, String password) async {
     try {
-      final request = await dio.post(
+      await dio.post(
         '$_baseURL/register',
         data: {
           "email": email,
@@ -78,13 +79,10 @@ class APIServices {
         },
       );
 
-      Map auth = request.data;
-      var response = auth.values.toList();
-
-      return ['success', ...response];
+      return true;
     } on DioError catch (e) {
       log(e.message);
-      return [''];
+      return false;
     }
   }
 
@@ -460,6 +458,20 @@ class APIServices {
     } on Exception catch (e) {
       log(e.toString());
       return <ThreadModel>[];
+    }
+  }
+
+  /// GET THREAD BY ID
+  Future<ThreadModel?> getThreadById(int threadId) async {
+    try {
+      var response = await dio.get('$_baseURL/thread/$threadId');
+
+      ThreadModel thread = ThreadModel.fromJson(response.data);
+
+      return thread;
+    } on Exception catch (e) {
+      log(e.toString());
+      return null;
     }
   }
 
@@ -969,8 +981,8 @@ class APIServices {
             .toList();
         return searchResult;
       } else if (scope == 'topic') {
-        List<CategoryModel> searchResult = (response.data as List)
-            .map((e) => CategoryModel.fromJson(e))
+        List<SearchCategoryModel> searchResult = (response.data as List)
+            .map((e) => SearchCategoryModel.fromJson(e))
             .toList();
         return searchResult;
       } else {
@@ -984,7 +996,7 @@ class APIServices {
       if (scope == 'thread') {
         return <ThreadModel>[];
       } else if (scope == 'topic') {
-        return <CategoryModel>[];
+        return <SearchCategoryModel>[];
       } else {
         return <SearchUserModel>[];
       }

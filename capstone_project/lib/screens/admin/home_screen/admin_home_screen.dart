@@ -14,7 +14,7 @@ import 'package:capstone_project/screens/admin/home_screen/blocked_item.dart';
 import 'package:capstone_project/screens/admin/home_screen/block_request_item.dart';
 
 // import provider
-import 'package:capstone_project/modelview/admin/admin_home_provider.dart';
+import 'package:capstone_project/viewmodel/admin_viewmodel/admin_home_provider.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({Key? key}) : super(key: key);

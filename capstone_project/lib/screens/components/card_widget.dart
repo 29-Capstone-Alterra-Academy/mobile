@@ -1,11 +1,11 @@
 // import package
-import 'package:capstone_project/modelview/upload_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/model/search_model/search_category_model.dart';
 
 // import theme & component
 import 'package:capstone_project/themes/nomizo_theme.dart';
@@ -13,8 +13,9 @@ import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import provider
 import 'package:provider/provider.dart';
-import 'package:capstone_project/modelview/user_provider.dart';
-import 'package:capstone_project/modelview/category_provider.dart';
+import 'package:capstone_project/viewmodel/user_viewmodel/user_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/upload_provider.dart';
+import 'package:capstone_project/viewmodel/category_viewmodel/category_provider.dart';
 
 // import screen
 import 'package:capstone_project/screens/search_screen/detail_user/detail_user_screen.dart';
@@ -267,6 +268,77 @@ Widget userCard(BuildContext context, UserModel userModel) {
     ),
   );
 }
+
+/// SEARCH CATEGORY CARD
+Widget searchCategoryCard(BuildContext context, SearchCategoryModel categoryModel) {
+  final provider = Provider.of<CategoryProvider>(context, listen: false);
+  return InkWell(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetailCategoryScreen(
+            idCategory: categoryModel.id ?? 1,
+          ),
+        ),
+      );
+    },
+    child: Container(
+      height: 60,
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: [
+          // image
+          circlePic(52, categoryModel.profileImage ?? ''),
+          const SizedBox(width: 8),
+          // content
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // title
+                Text(
+                  categoryModel.name ?? '',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                const SizedBox(height: 2),
+                // subtitle
+                Text(
+                  '${categoryModel.threadCount} Postingan',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: NomizoTheme.nomizoDark.shade500,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // button
+          Consumer<CategoryProvider>(builder: (context, value, _) {
+            if (value.isSub) {
+              return outlinedBtn28(context, () async {
+                buildLoading(context);
+                await provider
+                    .unsubscribeCategory(value.currentCategory.id ?? 9)
+                    .then((value) => Navigator.pop(context));
+              }, 'Mengikuti');
+            }
+            return elevatedBtn28(context, () async {
+              buildLoading(context);
+              provider
+                  .subscribeCategory(value.currentCategory.id ?? 9)
+                  .then((value) => Navigator.pop(context));
+            }, 'Ikuti');
+          }),
+        ],
+      ),
+    ),
+  );
+}
+
 
 /// HORIZONTAL DIVIDER
 Widget buildDivider() {

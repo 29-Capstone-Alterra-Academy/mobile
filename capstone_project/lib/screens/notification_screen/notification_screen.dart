@@ -1,7 +1,7 @@
+import 'package:capstone_project/viewmodel/notification_viewmodel/notification_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:provider/provider.dart';
-import '../../modelview/notification_provider.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 
 class NotificationScreen extends StatefulWidget {

@@ -1,5 +1,4 @@
 // import package
-import 'package:capstone_project/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,8 +7,11 @@ import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 
+// import model
+import 'package:capstone_project/model/user_model/user_model.dart';
+
 // import provider
-import 'package:capstone_project/modelview/search_screen_provider.dart';
+import 'package:capstone_project/viewmodel/search_viewmodel/search_screen_provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -81,7 +83,10 @@ class _SearchScreenState extends State<SearchScreen> {
                       return Column(
                         children: [
                           ListView.builder(
-                            itemCount: value.popularCategory.length,
+                            itemCount: value.popularCategory.length > 3
+                                ? 3
+                                : value.popularCategory.length,
+                            physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               return categoryCard(
@@ -131,6 +136,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ? 3
                                 : value.popularUser.length,
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
                               // return userCard(
                               //     context, value.popularUser[index]);

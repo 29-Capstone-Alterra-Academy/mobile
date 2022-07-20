@@ -1,6 +1,6 @@
 // import package
-import 'package:capstone_project/model/modrequest_model.dart';
-import 'package:capstone_project/model/search_model.dart';
+import 'package:capstone_project/model/moderator_model/modrequest_model.dart';
+import 'package:capstone_project/model/search_model/search_model.dart';
 // import 'package:capstone_project/services/api_services.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -12,7 +12,7 @@ import 'package:capstone_project/services/api_services.dart';
 
 // import model
 // import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminModeratorProvider extends ChangeNotifier {

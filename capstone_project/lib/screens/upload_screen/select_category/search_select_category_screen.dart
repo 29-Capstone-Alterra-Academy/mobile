@@ -10,7 +10,7 @@ import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 
 // import provider
-import 'package:capstone_project/modelview/upload_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/upload_provider.dart';
 
 class SearchSelectCategoryScreen extends StatefulWidget {
   const SearchSelectCategoryScreen({Key? key}) : super(key: key);

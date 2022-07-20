@@ -1,13 +1,13 @@
 
 import 'package:badges/badges.dart';
-import 'package:capstone_project/modelview/notification_provider.dart';
-import 'package:capstone_project/modelview/profile_provider.dart';
 import 'package:capstone_project/screens/components/nomizo_icons_icons.dart';
 import 'package:capstone_project/utils/finite_state.dart';
+import 'package:capstone_project/viewmodel/bottom_navbar_viewmodel/bottom_navbar_provider.dart';
+import 'package:capstone_project/viewmodel/notification_viewmodel/notification_provider.dart';
+import 'package:capstone_project/viewmodel/profile_viewmodel/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
-import 'package:capstone_project/modelview/bottom_navbar_provider.dart';
 
 class BottomNavbar extends StatefulWidget {
   const BottomNavbar({Key? key}) : super(key: key);
@@ -22,9 +22,10 @@ class _BottomNavbarState extends State<BottomNavbar> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<ProfileProvider>(context, listen: false).getProfile();
       Provider.of<BottomNavbarProvider>(context, listen: false)
           .loadItemScreen();
-      Provider.of<ProfileProvider>(context, listen: false).getProfile();
+      
     });
     super.initState();
   }

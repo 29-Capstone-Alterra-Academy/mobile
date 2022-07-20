@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:capstone_project/model/category_model.dart';
-import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
 import 'package:capstone_project/services/api_services.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:file_picker/file_picker.dart';

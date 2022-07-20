@@ -1,7 +1,4 @@
 // import package
-
-import 'package:capstone_project/model/search_user_model.dart';
-import 'package:capstone_project/screens/components/thread_component.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,14 +6,16 @@ import 'package:provider/provider.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/screens/components/thread_card.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
+import 'package:capstone_project/model/search_model/search_user_model.dart';
+import 'package:capstone_project/model/search_model/search_category_model.dart';
 
 // import provider
-import 'package:capstone_project/modelview/search_screen_provider.dart';
+import 'package:capstone_project/viewmodel/search_viewmodel/search_screen_provider.dart';
 
 // import screen
 import 'package:capstone_project/screens/search_screen/focused_search_screen.dart';
@@ -144,32 +143,46 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   Widget threadTabView(List<ThreadModel> threadModel) {
     if (threadModel.isEmpty) {
       return notFound(context);
+    } else {
+      // reverse sort by reply + like count
+      threadModel.sort(
+        (a, b) => (a.replyCount! + a.likedCount!).compareTo(
+          (b.replyCount! + b.likedCount!),
+        ),
+      );
+      threadModel = threadModel.reversed.toList();
+      return ListView.separated(
+        itemCount: threadModel.length,
+        separatorBuilder: (context, index) => buildDivider(),
+        itemBuilder: (context, index) => threadCard(
+          context: context,
+          threadModel: threadModel[index],
+          isOpened: false,
+        ),
+      );
     }
-    return ListView.separated(
-      itemCount: threadModel.length,
-      separatorBuilder: (context, index) => buildDivider(),
-      itemBuilder: (context, index) => ThreadComponent(
-        threadModel: threadModel[index],
-        isOpened: false,
-      ),
-    );
   }
 
   Widget newThreadTabView(List<ThreadModel> threadModel) {
     if (threadModel.isEmpty) {
       return notFound(context);
+    } else {
+      // reverse sort by update date
+      threadModel.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
+      threadModel = threadModel.reversed.toList();
+      return ListView.separated(
+        itemCount: threadModel.length,
+        separatorBuilder: (context, index) => buildDivider(),
+        itemBuilder: (context, index) => threadCard(
+          context: context,
+          threadModel: threadModel[index],
+          isOpened: false,
+        ),
+      );
     }
-    return ListView.separated(
-      itemCount: threadModel.length,
-      separatorBuilder: (context, index) => buildDivider(),
-      itemBuilder: (context, index) => ThreadComponent(
-        threadModel: threadModel[index],
-        isOpened: false,
-      ),
-    );
   }
 
-  Widget categoryTabView(List<CategoryModel> categoryModel) {
+  Widget categoryTabView(List<SearchCategoryModel> categoryModel) {
     if (categoryModel.isEmpty) {
       return notFound(context);
     }
@@ -178,7 +191,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       separatorBuilder: (context, index) => buildDivider(),
       itemBuilder: (context, index) {
-        return categoryCard(context, categoryModel[index]);
+        return searchCategoryCard(context, categoryModel[index]);
       },
     );
   }

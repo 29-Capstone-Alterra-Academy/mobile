@@ -1,7 +1,7 @@
 // import model
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
 
 class SearchModel {
   List<ThreadModel>? threads;

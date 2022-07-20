@@ -1,9 +1,9 @@
-import 'package:capstone_project/modelview/admin/admin_moderator_provider.dart';
 import 'package:capstone_project/screens/admin/moderator_screen/category_item.dart';
 import 'package:capstone_project/screens/admin/moderator_screen/request_moderator_item.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/utils/finite_state.dart';
+import 'package:capstone_project/viewmodel/admin_viewmodel/admin_moderator_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
