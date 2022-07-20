@@ -21,7 +21,7 @@ class DetailThreadProvider extends ChangeNotifier {
   ThreadModel? currentThread;
   reply.ReplyModel? selectedReply;
 
-  List<reply.ReplyModel>? repliesThread;
+  List<reply.ReplyModel> repliesThread = [];
   List<reply.ReplyModel> repliesChild = [];
 
   FiniteState state = FiniteState.none;
@@ -76,15 +76,28 @@ class DetailThreadProvider extends ChangeNotifier {
   }
 
   /// Get Thread, Reply parent, & currentUser
-  void loadDetailThread(ThreadModel threadModel) async {
+  void loadDetailThread(int threadId) async {
     changeState(FiniteState.loading);
-    currentThread = threadModel;
+    await getThread(threadId);
+    await getReply(threadId);
+    changeState(FiniteState.none);
+  }
+
+  Future getThread(int threadId) async {
+    currentThread = await _apiServices.getThreadById(threadId);
+    notifyListeners();
+  }
+
+  /// Get Reply Thread
+  Future getReply(int threadId) async {
     repliesThread = await _apiServices.getReply(
       scope: 'thread',
-      idThread: threadModel.id!,
+      idThread: threadId,
       limit: 30,
     );
-    changeState(FiniteState.none);
+    repliesThread.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
+    repliesThread = repliesThread.reversed.toList();
+    notifyListeners();
   }
 
   /// Get Reply Child
@@ -94,45 +107,51 @@ class DetailThreadProvider extends ChangeNotifier {
   }
 
   /// Like | Delete Like Thread
-  void likeThread(ThreadModel threadModel) async {
+  void likeThread(int threadId) async {
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('access_token');
     if (token != null) {
       if (isLikeThread) {
         if (await _apiServices.deleteLikeThread(
-            token: token, idThread: threadModel.id!)) {
+          token: token,
+          idThread: threadId,
+        )) {
           isLikeThread = false;
         }
       } else {
         if (await _apiServices.likeThread(
           token: token,
-          idThread: threadModel.id!,
+          idThread: threadId,
         )) {
           isLikeThread = true;
         }
       }
     }
+    loadDetailThread(threadId);
   }
 
   /// Dislike | Delete Dislike Thread
-  void dislikeThread(ThreadModel threadModel) async {
+  void dislikeThread(int threadId) async {
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('access_token');
     if (token != null) {
       if (isLikeThread) {
         if (await _apiServices.deleteDislikeThread(
-            token: token, idThread: threadModel.id!)) {
+          token: token,
+          idThread: threadId,
+        )) {
           isLikeThread = false;
         }
       } else {
         if (await _apiServices.dislikeThread(
           token: token,
-          idThread: threadModel.id!,
+          idThread: threadId,
         )) {
           isLikeThread = true;
         }
       }
     }
+    loadDetailThread(threadId);
   }
 
   /// Post Comment | Reply
@@ -147,11 +166,7 @@ class DetailThreadProvider extends ChangeNotifier {
       idThread: idThread,
       content: content,
     )) {
-      repliesThread = await _apiServices.getReply(
-        scope: 'thread',
-        idThread: idThread,
-        limit: 30,
-      );
+      getReply(idThread);
       notifyListeners();
       return true;
     }
@@ -178,7 +193,7 @@ class DetailThreadProvider extends ChangeNotifier {
           isLikeReply = true;
         }
       }
-      loadDetailThread(currentThread!);
+      loadDetailThread(idThread);
     }
   }
 
@@ -202,7 +217,7 @@ class DetailThreadProvider extends ChangeNotifier {
           isLikeReply = true;
         }
       }
-      loadDetailThread(currentThread!);
+      loadDetailThread(idThread);
     }
   }
 

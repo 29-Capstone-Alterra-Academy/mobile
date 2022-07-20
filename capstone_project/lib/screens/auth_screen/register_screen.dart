@@ -143,8 +143,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     validator: (password) {
                       if (password == null || password.isEmpty) {
                         return '* Silahkan memasukkan Password';
-                      } else if (password.length < 8) {
+                      }
+                      if (password.length < 8) {
                         return '* Password harus minimal 8 karakter';
+                      }
+                      if (!password.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
+                        return '* Password hanya boleh berupa karakter alphanumeric';
                       }
                       return null; //form is valid
                     },
@@ -234,7 +238,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   }
                   // success
                   else if (value == 'success') {
-                    alertDialog(isSuccess: true, errorType: 'usedEmail');
+                    alertDialog(isSuccess: true);
                     provider.resetObscure();
                   }
                   // something wrong
@@ -290,7 +294,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (isSuccess) {
       message =
           'Kamu telah berhasil terdaftar pada\naplikasi nomizo, Silahkan masuk\nuntuk mulai berdiskusi!';
-    } else if (errorType == 'usedEmail') {
+    } else if (!isSuccess && errorType == 'usedEmail') {
       message = 'Email yang kamu masukkan telah\nterdaftar di nomizo.';
     } else {
       message = 'Something Wrong!!!';
@@ -351,7 +355,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ? () {
                         Navigator.pop(context);
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/navbar',
+                          '/login',
                           (route) => false,
                         );
                       }

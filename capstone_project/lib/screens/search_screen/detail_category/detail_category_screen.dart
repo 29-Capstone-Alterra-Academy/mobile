@@ -1,7 +1,6 @@
 // import package
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -11,10 +10,13 @@ import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 
 // import component
+import 'package:capstone_project/screens/components/thread_card.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 import 'package:capstone_project/screens/components/more_component.dart';
-import 'package:capstone_project/screens/components/thread_component.dart';
 import 'package:capstone_project/screens/components/report_component.dart';
+
+// import model
+import 'package:capstone_project/model/thread_model.dart';
 
 // import provider
 import 'package:capstone_project/modelview/upload_provider.dart';
@@ -424,13 +426,15 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
         itemBuilder: (context, index) {
           if (page == 0) {
             // Popular Thread
-            return ThreadComponent(
+            return threadCard(
+              context: context,
               threadModel: threads[index],
               isOpened: false,
             );
           } else {
             // Newest Thread
-            return ThreadComponent(
+            return threadCard(
+              context: context,
               threadModel: threads[index],
               isOpened: false,
             );

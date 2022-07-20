@@ -1,5 +1,6 @@
 // import package
-import 'package:capstone_project/model/search_user_model.dart';
+import 'package:capstone_project/model/search_model/search_category_model.dart';
+import 'package:capstone_project/model/search_model/search_user_model.dart';
 import 'package:flutter/cupertino.dart';
 
 // import utils
@@ -25,7 +26,7 @@ class CategoryProvider extends ChangeNotifier {
   List<ThreadModel> threads = [];
 
   List<ThreadModel> searchThread = [];
-  List<CategoryModel> searchCategory = [];
+  List<SearchCategoryModel> searchCategory = [];
   List<SearchUserModel> searchUser = [];
 
   CategoryModel currentCategory = CategoryModel();

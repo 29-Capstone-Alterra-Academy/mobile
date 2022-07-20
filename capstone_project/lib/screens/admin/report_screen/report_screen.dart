@@ -1,8 +1,8 @@
 import 'package:badges/badges.dart';
-import 'package:capstone_project/model/report_category_model.dart' as category;
-import 'package:capstone_project/model/report_reply_model.dart' as reply;
-import 'package:capstone_project/model/report_thread_model.dart' as thread;
-import 'package:capstone_project/model/report_user_model.dart' as user;
+import 'package:capstone_project/model/report_model/report_category_model.dart' as category;
+import 'package:capstone_project/model/report_model/report_reply_model.dart' as reply;
+import 'package:capstone_project/model/report_model/report_thread_model.dart' as thread;
+import 'package:capstone_project/model/report_model/report_user_model.dart' as user;
 import 'package:capstone_project/modelview/admin/admin_report_provider.dart';
 import 'package:capstone_project/screens/admin/report_screen/detail_report_screen.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';

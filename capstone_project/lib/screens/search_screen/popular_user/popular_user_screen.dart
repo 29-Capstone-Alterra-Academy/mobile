@@ -61,22 +61,22 @@ class _PopularUserScreenState extends State<PopularUserScreen> {
             );
           } else {
             // if (value.popularUser.isEmpty) {
-            if (value.searchUser.isEmpty) {
+            if (value.popularUser.isEmpty) {
               return const Center(child: Text('User Terpopuler Tidak Ada'));
             } else {
               return ListView.builder(
                 // itemCount: value.popularUser.length,
-                itemCount: value.searchUser.length,
+                itemCount: value.popularUser.length,
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                 itemBuilder: (context, index) {
                   // return userCard(context, value.popularUser[index]);
                   return userCard(
                       context,
                       UserModel(
-                        iD: value.searchUser[index].id,
-                        profileImage: value.searchUser[index].profileImage,
-                        username: value.searchUser[index].username,
-                        followersCount: value.searchUser[index].followersCount,
+                        iD: value.popularUser[index].id,
+                        profileImage: value.popularUser[index].profileImage,
+                        username: value.popularUser[index].username,
+                        followersCount: value.popularUser[index].followersCount,
                       ));
                 },
               );

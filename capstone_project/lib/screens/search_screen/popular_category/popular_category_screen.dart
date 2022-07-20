@@ -22,7 +22,7 @@ class _PopularCategoryScreenState extends State<PopularCategoryScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<SearchScreenProvider>(context, listen: false)
-          .getAllPopularCategory(50);
+          .getPopularCategory();
     });
     super.initState();
   }
@@ -64,14 +64,14 @@ class _PopularCategoryScreenState extends State<PopularCategoryScreen> {
               child: Text('Something Wrong!!!'),
             );
           } else {
-            if (value.allCategory.isEmpty) {
+            if (value.popularCategory.isEmpty) {
               return const Center(child: Text('TOPIC TERPOPULER TIDAK ADA'));
             } else {
               return ListView.builder(
-                itemCount: value.allCategory.length,
+                itemCount: value.popularCategory.length,
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                 itemBuilder: (context, index) {
-                  return categoryCard(context, value.allCategory[index]);
+                  return categoryCard(context, value.popularCategory[index]);
                 },
               );
             }

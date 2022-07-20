@@ -22,9 +22,10 @@ class _BottomNavbarState extends State<BottomNavbar> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<ProfileProvider>(context, listen: false).getProfile();
       Provider.of<BottomNavbarProvider>(context, listen: false)
           .loadItemScreen();
-      Provider.of<ProfileProvider>(context, listen: false).getProfile();
+      
     });
     super.initState();
   }

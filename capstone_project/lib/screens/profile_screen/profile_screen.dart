@@ -15,8 +15,8 @@ import 'package:capstone_project/modelview/bottom_navbar_provider.dart';
 
 // import screen
 import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/screens/components/thread_card.dart';
 import 'package:capstone_project/screens/components/more_component.dart';
-import 'package:capstone_project/screens/components/thread_component.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -317,12 +317,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         if (value.currentPage == 0) {
-                          return ThreadComponent(
+                          return threadCard(
+                            context: context,
                             threadModel: value.threads[index],
                             isOpened: false,
                           );
                         } else {
-                          return ThreadComponent(
+                          return threadCard(
+                            context: context,
                             threadModel: value.threads[index],
                             isOpened: false,
                           );

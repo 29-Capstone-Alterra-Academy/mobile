@@ -4,6 +4,7 @@ import 'package:capstone_project/modelview/authentication/register_provider.dart
 import 'package:capstone_project/modelview/admin/admin_moderator_provider.dart';
 import 'package:capstone_project/modelview/edit_profile_provider.dart';
 import 'package:capstone_project/modelview/admin/admin_home_provider.dart';
+import 'package:capstone_project/modelview/search_user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -31,6 +32,7 @@ List<SingleChildWidget> providers = [
   ChangeNotifierProvider(create: (_) => AdminReportProvider()),
   ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
   ChangeNotifierProvider(create: (_) => SearchScreenProvider()),
+  ChangeNotifierProvider(create: (_) => SearchUserProvider()),
   ChangeNotifierProvider(create: (_) => CategoryProvider()),
   ChangeNotifierProvider(create: (_) => UserProvider()),
   ChangeNotifierProvider(create: (_) => UploadProvider()),

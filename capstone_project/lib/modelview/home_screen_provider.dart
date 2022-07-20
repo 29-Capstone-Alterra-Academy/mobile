@@ -1,6 +1,4 @@
 // import package
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 
 // import package
@@ -13,17 +11,26 @@ import 'package:capstone_project/services/api_services.dart';
 import 'package:capstone_project/model/thread_model.dart';
 
 class HomeScreenProvider extends ChangeNotifier {
-  final APIServices apiServices = APIServices();
+  final APIServices _apiServices = APIServices();
 
-  List<ThreadModel> threads = [];
+  List<ThreadModel> recomended = [];
+  List<ThreadModel> followed = [];
+  ThreadModel? selectedThread;
 
   FiniteState state = FiniteState.none;
   int currentPage = 1;
 
   /// Change tab page
-  void changePage(int index) {
+  void changePage(int index) async {
+    changeState(FiniteState.loading);
+    if (index == 0) {
+      await getFollowedThread();
+    }
+    if (index == 1) {
+      await getRecomendedThread();
+    }
     currentPage = index;
-    notifyListeners();
+    changeState(FiniteState.none);
   }
 
   /// Change State
@@ -32,22 +39,21 @@ class HomeScreenProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Get Thread (Recomended | Followed)
-  void getThread() async {
-    changeState(FiniteState.loading);
-    // get random topic
-    var topics = await apiServices.getCategory(limit: 20);
-    List<int> allCategoryId = [];
-    for (var element in topics) {
-      allCategoryId.add(element.id!);
-    }
-    int randomIndex = Random().nextInt(allCategoryId.length - 1);
-
-    // get threads from random topic id
-    threads = await apiServices.getThread(
-      categoryId: allCategoryId[randomIndex],
-      sortby: 'like',
-    );
-    changeState(FiniteState.none);
+  /// Get Recomended Thread
+  Future getRecomendedThread() async {
+    recomended = await _apiServices.getThread(categoryId: 1);
+    notifyListeners();
   }
+
+  /// Get Thread from Followed Category
+  Future getFollowedThread() async {
+    followed = await _apiServices.getThread(categoryId: 3);
+    notifyListeners();
+  }
+
+  // void getSelectedThread(int threadId) async {
+  //   changeState(FiniteState.loading);
+  //   selectedThread = await _apiServices.getThread
+  //   changeState(FiniteState.none);
+  // }
 }

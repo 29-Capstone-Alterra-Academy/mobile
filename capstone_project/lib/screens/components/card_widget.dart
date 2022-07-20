@@ -1,4 +1,5 @@
 // import package
+import 'package:capstone_project/model/search_model/search_category_model.dart';
 import 'package:capstone_project/modelview/upload_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -267,6 +268,77 @@ Widget userCard(BuildContext context, UserModel userModel) {
     ),
   );
 }
+
+/// SEARCH CATEGORY CARD
+Widget searchCategoryCard(BuildContext context, SearchCategoryModel categoryModel) {
+  final provider = Provider.of<CategoryProvider>(context, listen: false);
+  return InkWell(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetailCategoryScreen(
+            idCategory: categoryModel.id ?? 1,
+          ),
+        ),
+      );
+    },
+    child: Container(
+      height: 60,
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: [
+          // image
+          circlePic(52, categoryModel.profileImage ?? ''),
+          const SizedBox(width: 8),
+          // content
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // title
+                Text(
+                  categoryModel.name ?? '',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                const SizedBox(height: 2),
+                // subtitle
+                Text(
+                  '${categoryModel.threadCount} Postingan',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: NomizoTheme.nomizoDark.shade500,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // button
+          Consumer<CategoryProvider>(builder: (context, value, _) {
+            if (value.isSub) {
+              return outlinedBtn28(context, () async {
+                buildLoading(context);
+                await provider
+                    .unsubscribeCategory(value.currentCategory.id ?? 9)
+                    .then((value) => Navigator.pop(context));
+              }, 'Mengikuti');
+            }
+            return elevatedBtn28(context, () async {
+              buildLoading(context);
+              provider
+                  .subscribeCategory(value.currentCategory.id ?? 9)
+                  .then((value) => Navigator.pop(context));
+            }, 'Ikuti');
+          }),
+        ],
+      ),
+    ),
+  );
+}
+
 
 /// HORIZONTAL DIVIDER
 Widget buildDivider() {

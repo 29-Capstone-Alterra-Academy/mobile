@@ -81,7 +81,10 @@ class _SearchScreenState extends State<SearchScreen> {
                       return Column(
                         children: [
                           ListView.builder(
-                            itemCount: value.popularCategory.length,
+                            itemCount: value.popularCategory.length > 3
+                                ? 3
+                                : value.popularCategory.length,
+                            physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               return categoryCard(
@@ -131,6 +134,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ? 3
                                 : value.popularUser.length,
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
                               // return userCard(
                               //     context, value.popularUser[index]);

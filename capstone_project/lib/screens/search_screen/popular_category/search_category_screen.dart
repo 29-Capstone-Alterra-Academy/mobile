@@ -30,71 +30,81 @@ class _SearchCategoryScreenState extends State<SearchCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CategoryProvider>(context, listen: false);
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            provider.resetSearchResult();
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.keyboard_arrow_left,
-          ),
-        ),
-        title: TextField(
-          controller: _searchController,
-          autofocus: true,
-          onSubmitted: (value) {
-            provider.getSearchResult(keyword: _searchController.text);
-          },
-          decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.search),
-            hintText: 'Cari kategori',
-            suffixIcon: IconButton(
-              onPressed: () {
-                _searchController.clear();
-              },
-              icon: const Icon(Icons.close),
-            ),
-            isDense: true,
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(4),
-              ),
+    return WillPopScope(
+      onWillPop: () async {
+        provider.resetSearchResult();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              provider.resetSearchResult();
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              Icons.keyboard_arrow_left,
             ),
           ),
-        ),
-      ),
-      body: Consumer<CategoryProvider>(
-        builder: (context, value, _) {
-          if (value.state == FiniteState.loading) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: NomizoTheme.nomizoTosca.shade600,
-              ),
-            );
-          }
-          if (value.state == FiniteState.failed) {
-            return const Center(
-              child: Text('Something Wrong!!!'),
-            );
-          } else {
-            if (value.searchCategory.isEmpty) {
-              if (value.isSearched) {
-                return notFound(context);
-              }
-              return Container();
-            } else {
-              return ListView.builder(
-                itemCount: value.searchCategory.length,
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                itemBuilder: (context, index) {
-                  return categoryCard(context, value.searchCategory[index]);
+          title: TextField(
+            controller: _searchController,
+            autofocus: true,
+            onChanged: (value) {
+              provider.getSearchResult(keyword: _searchController.text);
+            },
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.search),
+              hintText: 'Cari kategori',
+              suffixIcon: IconButton(
+                onPressed: () {
+                  _searchController.clear();
+                  provider.resetSearchResult();
                 },
+                icon: const Icon(Icons.close),
+              ),
+              isDense: true,
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(4),
+                ),
+              ),
+            ),
+          ),
+        ),
+        body: Consumer<CategoryProvider>(
+          builder: (context, value, _) {
+            if (value.state == FiniteState.loading) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: NomizoTheme.nomizoTosca.shade600,
+                ),
               );
             }
-          }
-        },
+            if (value.state == FiniteState.failed) {
+              return const Center(
+                child: Text('Something Wrong!!!'),
+              );
+            } else {
+              if (value.searchCategory.isEmpty) {
+                if (value.isSearched) {
+                  return notFound(context);
+                }
+                return Container();
+              } else {
+                return ListView.builder(
+                  itemCount: value.searchCategory.length,
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  itemBuilder: (context, index) {
+                    return searchCategoryCard(
+                      context,
+                      value.searchCategory[index],
+                    );
+                  },
+                );
+              }
+            }
+          },
+        ),
       ),
     );
   }
