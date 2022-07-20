@@ -11,8 +11,8 @@ import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/services/api_services.dart';
 
 // import model
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/reply_model.dart' as reply;
+import 'package:capstone_project/model/thread_model/thread_model.dart';
+import 'package:capstone_project/model/reply_model/reply_model.dart' as reply;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailThreadProvider extends ChangeNotifier {

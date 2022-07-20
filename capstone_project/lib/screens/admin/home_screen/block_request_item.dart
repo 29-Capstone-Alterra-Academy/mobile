@@ -1,4 +1,4 @@
-import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/thread_card.dart';

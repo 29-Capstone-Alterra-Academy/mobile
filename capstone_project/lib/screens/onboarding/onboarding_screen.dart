@@ -5,8 +5,8 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 // import screen file
 import 'package:capstone_project/themes/nomizo_theme.dart';
-import 'package:capstone_project/modelview/onboarding_provider.dart';
 import 'package:capstone_project/screens/onboarding/onboarding_item.dart';
+import 'package:capstone_project/viewmodel/onboarding_viewmodel/onboarding_provider.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({Key? key}) : super(key: key);

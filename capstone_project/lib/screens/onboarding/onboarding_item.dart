@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
-import 'package:capstone_project/modelview/onboarding_provider.dart';
+import 'package:capstone_project/viewmodel/onboarding_viewmodel/onboarding_provider.dart';
 
 class OnboardingItem extends StatefulWidget {
   final OnboardingProvider provider;

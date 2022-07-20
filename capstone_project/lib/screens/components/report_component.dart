@@ -9,9 +9,9 @@ import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 
 // import provider
-import 'package:capstone_project/modelview/user_provider.dart';
-import 'package:capstone_project/modelview/category_provider.dart';
-import 'package:capstone_project/modelview/detail_thread_provider.dart';
+import 'package:capstone_project/viewmodel/user_viewmodel/user_provider.dart';
+import 'package:capstone_project/viewmodel/category_viewmodel/category_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/detail_thread_provider.dart';
 
 class ReportComponent extends StatefulWidget {
   final String type;

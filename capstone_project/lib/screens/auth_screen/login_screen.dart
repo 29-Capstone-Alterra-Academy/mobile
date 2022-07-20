@@ -1,6 +1,6 @@
-import 'package:capstone_project/modelview/authentication/login_provider.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/viewmodel/authentication_viewmodel/login_provider.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone_project/screens/components/header.dart';

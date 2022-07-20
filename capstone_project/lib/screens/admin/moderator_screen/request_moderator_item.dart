@@ -1,4 +1,4 @@
-import 'package:capstone_project/model/modrequest_model.dart';
+import 'package:capstone_project/model/moderator_model/modrequest_model.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:flutter/material.dart';

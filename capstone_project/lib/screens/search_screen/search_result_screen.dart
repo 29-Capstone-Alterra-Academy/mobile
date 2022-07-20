@@ -1,9 +1,4 @@
 // import package
-
-
-import 'package:capstone_project/model/search_model/search_category_model.dart';
-import 'package:capstone_project/model/search_model/search_user_model.dart';
-import 'package:capstone_project/screens/components/thread_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,13 +6,16 @@ import 'package:provider/provider.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/screens/components/thread_card.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
+import 'package:capstone_project/model/search_model/search_user_model.dart';
+import 'package:capstone_project/model/search_model/search_category_model.dart';
 
 // import provider
-import 'package:capstone_project/modelview/search_screen_provider.dart';
+import 'package:capstone_project/viewmodel/search_viewmodel/search_screen_provider.dart';
 
 // import screen
 import 'package:capstone_project/screens/search_screen/focused_search_screen.dart';

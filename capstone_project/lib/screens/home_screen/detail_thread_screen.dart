@@ -1,17 +1,20 @@
-import 'package:capstone_project/screens/components/thread_card.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 
-import 'package:capstone_project/screens/components/reply_component.dart';
+import 'package:capstone_project/screens/components/thread_card.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/screens/components/reply_component.dart';
 
-import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
 
-import 'package:capstone_project/modelview/profile_provider.dart';
-import 'package:capstone_project/modelview/detail_thread_provider.dart';
+import 'package:capstone_project/viewmodel/profile_viewmodel/profile_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/detail_thread_provider.dart';
+
 
 class DetailThreadScreen extends StatefulWidget {
   final ThreadModel threadModel;

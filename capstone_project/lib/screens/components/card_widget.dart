@@ -1,12 +1,11 @@
 // import package
-import 'package:capstone_project/model/search_model/search_category_model.dart';
-import 'package:capstone_project/modelview/upload_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/model/search_model/search_category_model.dart';
 
 // import theme & component
 import 'package:capstone_project/themes/nomizo_theme.dart';
@@ -14,8 +13,9 @@ import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import provider
 import 'package:provider/provider.dart';
-import 'package:capstone_project/modelview/user_provider.dart';
-import 'package:capstone_project/modelview/category_provider.dart';
+import 'package:capstone_project/viewmodel/user_viewmodel/user_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/upload_provider.dart';
+import 'package:capstone_project/viewmodel/category_viewmodel/category_provider.dart';
 
 // import screen
 import 'package:capstone_project/screens/search_screen/detail_user/detail_user_screen.dart';

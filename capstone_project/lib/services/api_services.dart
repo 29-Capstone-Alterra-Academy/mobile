@@ -1,23 +1,23 @@
 import 'dart:developer';
 
 // import package
-import 'package:capstone_project/model/modrequest_model.dart';
-import 'package:capstone_project/model/profile_model.dart';
-import 'package:capstone_project/model/report_model/report_category_model.dart';
-import 'package:capstone_project/model/report_model/report_reply_model.dart';
-import 'package:capstone_project/model/report_model/report_thread_model.dart';
-import 'package:capstone_project/model/report_model/report_user_model.dart';
-import 'package:capstone_project/model/search_model/search_category_model.dart';
-import 'package:capstone_project/model/search_model/search_user_model.dart';
 import 'package:dio/dio.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/reply_model.dart';
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/category_model.dart';
-import 'package:capstone_project/model/moderator_model.dart';
-import 'package:capstone_project/model/notification_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
+import 'package:capstone_project/model/reply_model/reply_model.dart';
+import 'package:capstone_project/model/user_model/profile_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/model/search_model/search_user_model.dart';
+import 'package:capstone_project/model/report_model/report_user_model.dart';
+import 'package:capstone_project/model/report_model/report_reply_model.dart';
+import 'package:capstone_project/model/moderator_model/moderator_model.dart';
+import 'package:capstone_project/model/report_model/report_thread_model.dart';
+import 'package:capstone_project/model/moderator_model/modrequest_model.dart';
+import 'package:capstone_project/model/search_model/search_category_model.dart';
+import 'package:capstone_project/model/report_model/report_category_model.dart';
+import 'package:capstone_project/model/notification_model/notification_model.dart';
 
 class APIServices {
   final Dio dio = Dio();

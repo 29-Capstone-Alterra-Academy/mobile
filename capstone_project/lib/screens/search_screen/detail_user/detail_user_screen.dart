@@ -17,7 +17,7 @@ import 'package:capstone_project/screens/components/more_component.dart';
 import 'package:capstone_project/screens/components/report_component.dart';
 
 // import provider
-import 'package:capstone_project/modelview/user_provider.dart';
+import 'package:capstone_project/viewmodel/user_viewmodel/user_provider.dart';
 
 class DetailUserScreen extends StatefulWidget {
   final int idUser;

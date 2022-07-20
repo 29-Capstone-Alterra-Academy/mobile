@@ -16,11 +16,11 @@ import 'package:capstone_project/screens/components/more_component.dart';
 import 'package:capstone_project/screens/components/report_component.dart';
 
 // import model
-import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
 
 // import provider
-import 'package:capstone_project/modelview/upload_provider.dart';
-import 'package:capstone_project/modelview/category_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/upload_provider.dart';
+import 'package:capstone_project/viewmodel/category_viewmodel/category_provider.dart';
 
 class DetailCategoryScreen extends StatefulWidget {
   final int idCategory;

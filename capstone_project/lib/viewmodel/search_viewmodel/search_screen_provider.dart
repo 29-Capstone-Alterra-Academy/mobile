@@ -1,7 +1,7 @@
 // import package
 import 'package:capstone_project/model/search_model/search_category_model.dart';
 import 'package:capstone_project/model/search_model/search_user_model.dart';
-import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
 import 'package:flutter/material.dart';
 
 // import utils
@@ -12,7 +12,7 @@ import 'package:capstone_project/services/api_services.dart';
 
 // import model
 // import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
 
 class SearchScreenProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();

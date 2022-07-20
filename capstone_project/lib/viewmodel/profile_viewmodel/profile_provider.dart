@@ -1,4 +1,3 @@
-import 'package:capstone_project/model/user_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -6,8 +5,9 @@ import 'package:capstone_project/utils/finite_state.dart';
 
 import 'package:capstone_project/services/api_services.dart';
 
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/profile_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
+import 'package:capstone_project/model/user_model/profile_model.dart';
 
 class ProfileProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();

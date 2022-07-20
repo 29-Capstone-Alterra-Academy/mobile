@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:capstone_project/model/reply_model.dart';
+import 'package:capstone_project/model/reply_model/reply_model.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';

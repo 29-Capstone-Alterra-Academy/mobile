@@ -1,5 +1,5 @@
-import 'package:capstone_project/model/category_model.dart';
-import 'package:capstone_project/model/user_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:flutter/material.dart';

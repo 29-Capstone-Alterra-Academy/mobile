@@ -1,7 +1,7 @@
-import 'package:capstone_project/modelview/authentication/register_provider.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
+import 'package:capstone_project/viewmodel/authentication_viewmodel/register_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:capstone_project/screens/components/header.dart';

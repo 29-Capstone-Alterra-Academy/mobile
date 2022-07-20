@@ -1,6 +1,4 @@
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/modelview/detail_thread_provider.dart';
-import 'package:capstone_project/modelview/profile_provider.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/more_component.dart';
 import 'package:capstone_project/screens/components/nomizo_icons_icons.dart';
@@ -11,6 +9,8 @@ import 'package:capstone_project/screens/search_screen/detail_category/detail_ca
 import 'package:capstone_project/screens/search_screen/detail_user/detail_user_screen.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/utils/url.dart';
+import 'package:capstone_project/viewmodel/profile_viewmodel/profile_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/detail_thread_provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

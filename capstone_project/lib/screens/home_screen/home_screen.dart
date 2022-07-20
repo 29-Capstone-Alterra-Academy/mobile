@@ -1,5 +1,5 @@
 // import package
-import 'package:capstone_project/screens/components/thread_card.dart';
+import 'package:capstone_project/viewmodel/home_viewmodel/home_screen_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,9 +9,9 @@ import 'package:capstone_project/themes/nomizo_theme.dart';
 // import component
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/screens/components/thread_card.dart';
 
 // import provider
-import 'package:capstone_project/modelview/home_screen_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

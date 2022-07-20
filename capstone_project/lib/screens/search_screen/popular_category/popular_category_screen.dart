@@ -8,7 +8,7 @@ import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 
 // import provider
-import 'package:capstone_project/modelview/search_screen_provider.dart';
+import 'package:capstone_project/viewmodel/search_viewmodel/search_screen_provider.dart';
 
 class PopularCategoryScreen extends StatefulWidget {
   const PopularCategoryScreen({Key? key}) : super(key: key);

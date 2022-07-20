@@ -11,7 +11,7 @@ import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import provider
-import 'package:capstone_project/modelview/upload_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/upload_provider.dart';
 
 class SelectCategoryScreen extends StatefulWidget {
   const SelectCategoryScreen({Key? key}) : super(key: key);
