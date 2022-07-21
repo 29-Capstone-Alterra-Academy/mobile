@@ -1,18 +1,21 @@
 class ModeratorModel {
-  String? profileImage;
+  int? id;
   String? username;
+  String? profileImage;
 
-  ModeratorModel({this.profileImage, this.username});
+  ModeratorModel({this.id, this.username, this.profileImage});
 
   ModeratorModel.fromJson(Map<String, dynamic> json) {
-    profileImage = json['profile_image'];
+    id = json['id'];
     username = json['username'];
+    profileImage = json['profile_image'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['profile_image'] = profileImage;
+    data['id'] = id;
     data['username'] = username;
+    data['profile_image'] = profileImage;
     return data;
   }
 }

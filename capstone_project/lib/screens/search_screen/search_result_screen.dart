@@ -1,4 +1,5 @@
 // import package
+import 'package:capstone_project/viewmodel/search_viewmodel/search_history_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -35,6 +36,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   void initState() {
     _searchController = TextEditingController(text: widget.value);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<SearchHistoryProvider>(context, listen: false)
+          .checkHistory(widget.value);
       Provider.of<SearchScreenProvider>(context, listen: false)
           .getSearchResult(widget.value);
     });

@@ -2,6 +2,7 @@
 
 import 'package:capstone_project/screens/admin/moderator_screen/moderator_search_screen.dart';
 import 'package:capstone_project/screens/profile_screen/edit_profile_screen.dart';
+import 'package:capstone_project/screens/search_screen/search_history/seach_history_screen.dart';
 import 'package:capstone_project/screens/upload_screen/select_category/create_category_screen.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -58,6 +59,9 @@ Route<dynamic>? nomizoRoutes(RouteSettings settings) {
     case '/search':
       return CupertinoPageRoute(
           builder: (_) => const FocusedSearchScreen(''), settings: settings);
+    case '/searchHisotry':
+      return CupertinoPageRoute(
+          builder: (_) => const SearchHistoryScreen(), settings: settings);
     case '/popularCategory':
       return CupertinoPageRoute(
           builder: (_) => const PopularCategoryScreen(), settings: settings);

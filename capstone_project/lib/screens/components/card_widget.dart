@@ -1,4 +1,6 @@
 // import package
+import 'package:capstone_project/model/search_model/search_history_model.dart';
+import 'package:capstone_project/viewmodel/search_viewmodel/search_history_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -158,7 +160,7 @@ Widget categoryCard(BuildContext context, CategoryModel categoryModel) {
                 const SizedBox(height: 2),
                 // subtitle
                 Text(
-                  '${categoryModel.activityCount} Postingan',
+                  '${categoryModel.activityCount ?? 0} Aktivitas',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: NomizoTheme.nomizoDark.shade500,
                       ),
@@ -229,7 +231,7 @@ Widget userCard(BuildContext context, UserModel userModel) {
                 // subtitle
                 if (userModel.threadCount != null)
                   Text(
-                    '${userModel.threadCount} Postingan',
+                    '${userModel.threadCount ?? 0} Postingan',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: NomizoTheme.nomizoDark.shade500,
                         ),
@@ -270,7 +272,8 @@ Widget userCard(BuildContext context, UserModel userModel) {
 }
 
 /// SEARCH CATEGORY CARD
-Widget searchCategoryCard(BuildContext context, SearchCategoryModel categoryModel) {
+Widget searchCategoryCard(
+    BuildContext context, SearchCategoryModel categoryModel) {
   final provider = Provider.of<CategoryProvider>(context, listen: false);
   return InkWell(
     onTap: () {
@@ -307,7 +310,7 @@ Widget searchCategoryCard(BuildContext context, SearchCategoryModel categoryMode
                 const SizedBox(height: 2),
                 // subtitle
                 Text(
-                  '${categoryModel.threadCount} Postingan',
+                  '${categoryModel.threadCount ?? 0} Postingan',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: NomizoTheme.nomizoDark.shade500,
                       ),
@@ -339,6 +342,28 @@ Widget searchCategoryCard(BuildContext context, SearchCategoryModel categoryMode
   );
 }
 
+Widget searchHistoryCard(BuildContext context, SearchHistoryModel history) {
+  final provider = Provider.of<SearchHistoryProvider>(context, listen: false);
+  return Container(
+    height: 28,
+    padding: const EdgeInsets.symmetric(vertical: 2),
+    child: Row(
+      children: [
+        const Icon(Icons.schedule, size: 24),
+        const SizedBox(width: 8),
+        Expanded(
+            child: Text(history.keyword!, style: Theme.of(context).textTheme.bodyMedium)),
+        const SizedBox(width: 8),
+        InkWell(
+          onTap: () {
+            provider.removeHistory(history.id!);
+          },
+          child: const Icon(Icons.close, size: 18),
+        ),
+      ],
+    ),
+  );
+}
 
 /// HORIZONTAL DIVIDER
 Widget buildDivider() {

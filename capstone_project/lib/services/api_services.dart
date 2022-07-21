@@ -324,9 +324,16 @@ class APIServices {
   }
 
   /// GET TOPIC MODERATOR
-  Future getModerator(int idCategory) async {
+  Future getModerator({required String token, required int idCategory}) async {
     try {
-      var response = await dio.get('$_baseURL/topic/$idCategory/moderator');
+      var response = await dio.get(
+        '$_baseURL/topic/$idCategory/moderator',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       List<ModeratorModel> moderator = (response.data as List)
           .map((e) => ModeratorModel.fromJson(e))

@@ -96,7 +96,6 @@ class DetailThreadProvider extends ChangeNotifier {
       limit: 30,
     );
     repliesThread.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
-    repliesThread = repliesThread.reversed.toList();
     notifyListeners();
   }
 
@@ -167,7 +166,6 @@ class DetailThreadProvider extends ChangeNotifier {
       content: content,
     )) {
       getReply(idThread);
-      notifyListeners();
       return true;
     }
     return false;
