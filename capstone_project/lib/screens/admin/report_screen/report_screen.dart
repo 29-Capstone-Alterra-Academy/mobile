@@ -1,9 +1,16 @@
 import 'package:badges/badges.dart';
-import 'package:capstone_project/model/report_model/report_category_model.dart' as category;
-import 'package:capstone_project/model/report_model/report_reply_model.dart' as reply;
-import 'package:capstone_project/model/report_model/report_thread_model.dart' as thread;
-import 'package:capstone_project/model/report_model/report_user_model.dart' as user;
+import 'package:capstone_project/model/report_model/report_category_model.dart'
+    as category;
+import 'package:capstone_project/model/report_model/report_reply_model.dart'
+    as reply;
+import 'package:capstone_project/model/report_model/report_thread_model.dart'
+    as thread;
+import 'package:capstone_project/model/report_model/report_user_model.dart'
+    as user;
 import 'package:capstone_project/screens/admin/report_screen/detail_report_screen.dart';
+import 'package:capstone_project/screens/admin/report_screen/report_category_screen.dart';
+import 'package:capstone_project/screens/admin/report_screen/report_thread_screen.dart';
+import 'package:capstone_project/screens/admin/report_screen/report_user_screen.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/utils/finite_state.dart';
@@ -89,7 +96,7 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget reportThreadItem(List<thread.ReportThreadModel> threadModel) {
     if (threadModel.isEmpty) {
       return const Center(
-        child: Text('Lapoarn Kosong'),
+        child: Text('Laporan Kosong'),
       );
     }
     return ListView.builder(
@@ -100,8 +107,8 @@ class _ReportScreenState extends State<ReportScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => const DetailReportScreen(
-                  tabIndex: 0,
+                builder: (_) => ReportThreadScreen(
+                  idThread: threadModel[index].thread!.id!,
                 ),
               ),
             );
@@ -143,7 +150,7 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget reportReplyItem(List<reply.ReportReplyModel> replyModel) {
     if (replyModel.isEmpty) {
       return const Center(
-        child: Text('Lapoarn Kosong'),
+        child: Text('Laporan Kosong'),
       );
     }
     return ListView.builder(
@@ -151,13 +158,39 @@ class _ReportScreenState extends State<ReportScreen> {
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const DetailReportScreen(
-                  tabIndex: 1,
-                ),
-              ),
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return blockConfirmation(
+                  context: context,
+                  title: 'Apakah yakin memblokir?',
+                  subtitle:
+                      'Seluruh aktivitas yang ada pada laporan ini akan terblokir',
+                  button1: 'Batalkan',
+                  button2: 'Blokir',
+                  function: () {
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            );
+          },
+          onLongPress: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return blockConfirmation(
+                  context: context,
+                  title: 'Apakah yakin mengabaikannya?',
+                  subtitle:
+                      'Setelah anda mengabaikannya, maka laporan dianggap selesai',
+                  button1: 'Batalkan',
+                    button2: 'Abaikan',
+                  function: () {
+                    Navigator.pop(context);
+                  },
+                );
+              },
             );
           },
           child: Container(
@@ -197,7 +230,7 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget reportCategoryItem(List<category.ReportCategoryModel> categoryModel) {
     if (categoryModel.isEmpty) {
       return const Center(
-        child: Text('Lapoarn Kosong'),
+        child: Text('Laporan Kosong'),
       );
     }
     return ListView.builder(
@@ -208,8 +241,8 @@ class _ReportScreenState extends State<ReportScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => const DetailReportScreen(
-                  tabIndex: 2,
+                builder: (_) => ReportCategoryScreen(
+                  idCategory: categoryModel[index].topic!.id!,
                 ),
               ),
             );
@@ -251,7 +284,7 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget reportUserItem(List<user.ReportUserModel> userModel) {
     if (userModel.isEmpty) {
       return const Center(
-        child: Text('Lapoarn Kosong'),
+        child: Text('Laporan Kosong'),
       );
     }
     return ListView.builder(
@@ -262,8 +295,8 @@ class _ReportScreenState extends State<ReportScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => const DetailReportScreen(
-                  tabIndex: 3,
+                builder: (_) => ReportUserScreen(
+                  idUser: userModel[index].suspect!.id!,
                 ),
               ),
             );

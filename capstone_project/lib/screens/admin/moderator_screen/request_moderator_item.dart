@@ -28,7 +28,10 @@ class _RequestModeratorItemState extends State<RequestModeratorItem> {
           ),
           const SizedBox(height: 12),
           // Approval button
-          approvalButton(),
+          approvalButton(
+            widget.model.user!.username!,
+            widget.model.topic!.name!,
+          ),
         ],
       ),
     );
@@ -101,14 +104,48 @@ class _RequestModeratorItemState extends State<RequestModeratorItem> {
   }
 
   // Approval button
-  Widget approvalButton() {
+  Widget approvalButton(String user, String category) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // reject button
-        outlinedBtn42(context, () {}, 'Abaikan'),
+        outlinedBtn42(context, () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return blockConfirmation(
+                context: context,
+                title: 'Apakah yakin mengabaikannya?',
+                subtitle:
+                    'Setelah anda mengabaikannya, maka @$user akan batal menjadi moderator dari $category',
+                button1: 'Batalkan',
+                button2: 'Abaikan',
+                function: () {
+                  Navigator.pop(context);
+                },
+              );
+            },
+          );
+        }, 'Abaikan'),
         // accept button
-        elevatedBtn42(context, () {}, 'Terima'),
+        elevatedBtn42(context, () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return blockConfirmation(
+                context: context,
+                title: 'Apakah yakin menerimanya?',
+                subtitle:
+                    'Setelah anda menerima, maka @$user akan langsung menjadi moderator dari $category',
+                button1: 'Batalkan',
+                button2: 'Blokir',
+                function: () {
+                  Navigator.pop(context);
+                },
+              );
+            },
+          );
+        }, 'Terima'),
       ],
     );
   }

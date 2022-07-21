@@ -1,5 +1,5 @@
-
 import 'package:badges/badges.dart';
+import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/nomizo_icons_icons.dart';
 import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/viewmodel/bottom_navbar_viewmodel/bottom_navbar_provider.dart';
@@ -17,7 +17,6 @@ class BottomNavbar extends StatefulWidget {
 }
 
 class _BottomNavbarState extends State<BottomNavbar> {
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -26,7 +25,6 @@ class _BottomNavbarState extends State<BottomNavbar> {
       Provider.of<ProfileProvider>(context, listen: false).getProfile();
       Provider.of<BottomNavbarProvider>(context, listen: false)
           .loadItemScreen();
-      
     });
     super.initState();
   }
@@ -225,21 +223,35 @@ class _BottomNavbarState extends State<BottomNavbar> {
         ),
         // log out
         navbarItem(
-          // Icons.logout,
-          // Icons.logout_outlined,
           NomizoIcons.logout,
           NomizoIcons.logoutOutlined,
           'Logout',
           4,
           currentIndex,
-          () async {
-            await provider.logOut().then(
-                  (value) => Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/login',
-                    (route) => false,
-                  ),
+          () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return blockConfirmation(
+                  context: context,
+                  title: 'Ingin Keluar?',
+                  subtitle:
+                      'Apabila anda keluar dari akun ini, anda harus masuk kembali untuk dapat beridskusi di nomizo',
+                  button1: 'Batal',
+                  button2: 'Keluar',
+                  function: () async {
+                    Navigator.pop(context);
+                    await provider.logOut().then(
+                          (value) => Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/login',
+                            (route) => false,
+                          ),
+                        );
+                  },
                 );
+              },
+            );
           },
         ),
       ],
