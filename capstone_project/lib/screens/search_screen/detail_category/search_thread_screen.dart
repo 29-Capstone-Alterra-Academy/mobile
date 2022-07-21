@@ -1,8 +1,8 @@
-import 'package:capstone_project/modelview/category_provider.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
-import 'package:capstone_project/screens/components/thread_component.dart';
+import 'package:capstone_project/screens/components/thread_card.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/utils/finite_state.dart';
+import 'package:capstone_project/viewmodel/category_viewmodel/category_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -45,8 +45,8 @@ class _SearchThreadScreenState extends State<SearchThreadScreen> {
         title: TextField(
           controller: _searchController,
           autofocus: true,
-          onSubmitted: (value) {
-            provider.getSearchResult(category: provider.currentCategory.name);
+          onChanged: (value) {
+            provider.getSearchResult(keyword: _searchController.text);
           },
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
@@ -54,6 +54,7 @@ class _SearchThreadScreenState extends State<SearchThreadScreen> {
             suffixIcon: IconButton(
               onPressed: () {
                 _searchController.clear();
+                provider.resetSearchResult();
               },
               icon: const Icon(Icons.close),
             ),
@@ -80,17 +81,18 @@ class _SearchThreadScreenState extends State<SearchThreadScreen> {
               child: Text('Something Wrong!!!'),
             );
           } else {
-            if (value.results == null || value.results!.threads == null) {
+            if (value.searchThread.isEmpty) {
               if (value.isSearched) {
                 return notFound(context);
               }
               return Container();
             } else {
               return ListView.builder(
-                itemCount: value.results!.threads!.length,
+                itemCount: value.searchThread.length,
                 itemBuilder: (context, index) {
-                  return ThreadComponent(
-                    threadModel: value.results!.threads![index],
+                  return threadCard(
+                    context: context,
+                    threadModel: value.searchThread[index],
                     isOpened: false,
                   );
                 },

@@ -1,11 +1,13 @@
 // import package
-import 'package:capstone_project/modelview/upload_provider.dart';
+import 'package:capstone_project/model/search_model/search_history_model.dart';
+import 'package:capstone_project/viewmodel/search_viewmodel/search_history_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 // import model
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/model/search_model/search_category_model.dart';
 
 // import theme & component
 import 'package:capstone_project/themes/nomizo_theme.dart';
@@ -13,8 +15,9 @@ import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import provider
 import 'package:provider/provider.dart';
-import 'package:capstone_project/modelview/user_provider.dart';
-import 'package:capstone_project/modelview/category_provider.dart';
+import 'package:capstone_project/viewmodel/user_viewmodel/user_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/upload_provider.dart';
+import 'package:capstone_project/viewmodel/category_viewmodel/category_provider.dart';
 
 // import screen
 import 'package:capstone_project/screens/search_screen/detail_user/detail_user_screen.dart';
@@ -33,11 +36,20 @@ Widget circlePic(double size, String img) {
     clipBehavior: Clip.antiAlias,
     child: Image.network(
       img,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
       errorBuilder: (context, error, stackTrace) => Padding(
         padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
         child: Image.asset('assets/img/app_logo.png', fit: BoxFit.contain),
       ),
-      fit: BoxFit.cover,
     ),
   );
 }
@@ -148,7 +160,7 @@ Widget categoryCard(BuildContext context, CategoryModel categoryModel) {
                 const SizedBox(height: 2),
                 // subtitle
                 Text(
-                  '${categoryModel.activityCount} Postingan',
+                  '${categoryModel.activityCount ?? 0} Aktivitas',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: NomizoTheme.nomizoDark.shade500,
                       ),
@@ -189,7 +201,7 @@ Widget userCard(BuildContext context, UserModel userModel) {
         context,
         MaterialPageRoute(
           builder: (_) => DetailUserScreen(
-            idUser: userModel.id ?? 1,
+            idUser: userModel.iD ?? 1,
           ),
         ),
       );
@@ -210,23 +222,24 @@ Widget userCard(BuildContext context, UserModel userModel) {
               children: [
                 // title
                 Text(
-                  '@${userModel.username!}',
+                  '@${userModel.username}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
                 ),
                 const SizedBox(height: 2),
                 // subtitle
-                Text(
-                  'Nama Moderator',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: NomizoTheme.nomizoDark.shade500,
-                      ),
-                ),
+                if (userModel.threadCount != null)
+                  Text(
+                    '${userModel.threadCount ?? 0} Postingan',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: NomizoTheme.nomizoDark.shade500,
+                        ),
+                  ),
                 const SizedBox(height: 2),
                 // subtitle2
                 Text(
-                  'Jumlah Folower',
+                  '${userModel.followersCount} Pengikut',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: NomizoTheme.nomizoDark.shade500,
                       ),
@@ -241,19 +254,113 @@ Widget userCard(BuildContext context, UserModel userModel) {
               return outlinedBtn28(context, () async {
                 buildLoading(context);
                 await provider
-                    .unfollowUser(value.selectedUser!.id ?? 9)
+                    .unfollowUser(value.selectedUser!.iD!)
                     .then((value) => Navigator.pop(context));
               }, 'Mengikuti');
             }
             return elevatedBtn28(context, () async {
               buildLoading(context);
               provider
-                  .followUser(value.selectedUser!.id ?? 9)
+                  .followUser(value.selectedUser!.iD!)
                   .then((value) => Navigator.pop(context));
             }, 'Ikuti');
           }),
         ],
       ),
+    ),
+  );
+}
+
+/// SEARCH CATEGORY CARD
+Widget searchCategoryCard(
+    BuildContext context, SearchCategoryModel categoryModel) {
+  final provider = Provider.of<CategoryProvider>(context, listen: false);
+  return InkWell(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetailCategoryScreen(
+            idCategory: categoryModel.id ?? 1,
+          ),
+        ),
+      );
+    },
+    child: Container(
+      height: 60,
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: [
+          // image
+          circlePic(52, categoryModel.profileImage ?? ''),
+          const SizedBox(width: 8),
+          // content
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // title
+                Text(
+                  categoryModel.name ?? '',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                const SizedBox(height: 2),
+                // subtitle
+                Text(
+                  '${categoryModel.threadCount ?? 0} Postingan',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: NomizoTheme.nomizoDark.shade500,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // button
+          Consumer<CategoryProvider>(builder: (context, value, _) {
+            if (value.isSub) {
+              return outlinedBtn28(context, () async {
+                buildLoading(context);
+                await provider
+                    .unsubscribeCategory(value.currentCategory.id ?? 9)
+                    .then((value) => Navigator.pop(context));
+              }, 'Mengikuti');
+            }
+            return elevatedBtn28(context, () async {
+              buildLoading(context);
+              provider
+                  .subscribeCategory(value.currentCategory.id ?? 9)
+                  .then((value) => Navigator.pop(context));
+            }, 'Ikuti');
+          }),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget searchHistoryCard(BuildContext context, SearchHistoryModel history) {
+  final provider = Provider.of<SearchHistoryProvider>(context, listen: false);
+  return Container(
+    height: 28,
+    padding: const EdgeInsets.symmetric(vertical: 2),
+    child: Row(
+      children: [
+        const Icon(Icons.schedule, size: 24),
+        const SizedBox(width: 8),
+        Expanded(
+            child: Text(history.keyword!, style: Theme.of(context).textTheme.bodyMedium)),
+        const SizedBox(width: 8),
+        InkWell(
+          onTap: () {
+            provider.removeHistory(history.id!);
+          },
+          child: const Icon(Icons.close, size: 18),
+        ),
+      ],
     ),
   );
 }

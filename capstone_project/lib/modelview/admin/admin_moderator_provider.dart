@@ -1,5 +1,7 @@
 // import package
-import 'package:capstone_project/model/search_model.dart';
+
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/model/search_model/search_model.dart';
 import 'package:capstone_project/services/api_services.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -11,7 +13,6 @@ import 'package:capstone_project/utils/finite_state.dart';
 
 // import model
 // import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/category_model.dart';
 
 class AdminModeratorProvider extends ChangeNotifier {
   final APIServices _apiServices = APIServices();
@@ -38,9 +39,14 @@ class AdminModeratorProvider extends ChangeNotifier {
   /// Get Moderator Request
 
   /// Get Category for Active Moderator
-  void getSearchResult({String? category}) async {
+  void getSearchResult({required String category}) async {
     changeState(FiniteState.loading);
-    results = await _apiServices.getSearchResult(category: category);
+    results = await _apiServices.getSearchResult(
+      limit: 30,
+      offset: 0,
+      keyword: category,
+      scope: 'topic',
+    );
     isSearched = true;
     changeState(FiniteState.none);
   }

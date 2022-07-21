@@ -1,10 +1,9 @@
-import 'package:capstone_project/model/category_model.dart';
-import 'package:capstone_project/model/modrequest_model.dart';
-import 'package:capstone_project/modelview/admin/admin_moderator_provider.dart';
 import 'package:capstone_project/screens/admin/moderator_screen/category_item.dart';
 import 'package:capstone_project/screens/admin/moderator_screen/request_moderator_item.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
+import 'package:capstone_project/utils/finite_state.dart';
+import 'package:capstone_project/viewmodel/admin_viewmodel/admin_moderator_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -154,23 +153,31 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
               ),
             ),
           ),
-          ListView.builder(
-            itemCount: 10,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return CategoryItem(
-                categoryModel: CategoryModel(
-                  activityCount: 0,
-                  contributorCount: 0,
-                  description: 'jkjkj',
-                  id: 88,
-                  moderatorCount: 0,
-                  name: 'Covid-19',
-                  profileImage: '',
-                  rules: 'rules',
-                ),
-              );
+          Consumer<AdminModeratorProvider>(
+            builder: (context, value, _) {
+              if (value.state == FiniteState.loading) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: NomizoTheme.nomizoTosca.shade600,
+                  ),
+                );
+              } else {
+                if (value.categories.isEmpty) {
+                  return const Center(
+                    child: Text('Tidak ada kategori'),
+                  );
+                } else {
+                  return ListView.builder(
+                    itemCount: value.categories.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return CategoryItem(
+                          categoryModel: value.categories[index]);
+                    },
+                  );
+                }
+              }
             },
           ),
         ],
@@ -184,20 +191,31 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       padding: const EdgeInsets.only(top: 12),
-      child: ListView.separated(
-        itemCount: 2,
-        separatorBuilder: (context, index) => buildDivider(),
-        itemBuilder: (context, index) {
-          return RequestModeratorItem(model: model);
+      child: Consumer<AdminModeratorProvider>(
+        builder: (context, value, _) {
+          if (value.state == FiniteState.loading) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: NomizoTheme.nomizoTosca.shade600,
+              ),
+            );
+          } else {
+            if (value.modrequest.isEmpty) {
+              return const Center(
+                child: Text('Tidak ada permohonan moderator'),
+              );
+            } else {
+              return ListView.separated(
+                itemCount: value.modrequest.length,
+                separatorBuilder: (context, index) => buildDivider(),
+                itemBuilder: (context, index) {
+                  return RequestModeratorItem(model: value.modrequest[index]);
+                },
+              );
+            }
+          }
         },
       ),
     );
   }
-
-  ModrequestModel model = ModrequestModel(
-    id: 1,
-    user: User(id: 3, username: 'piropy', profileImage: ''),
-    topic: Topic(id: 2, name: 'Foods'),
-    createdAt: '2022-07-14T14:29:28.538845Z',
-  );
 }

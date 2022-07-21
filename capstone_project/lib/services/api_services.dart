@@ -4,13 +4,20 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 
 // import model
-import 'package:capstone_project/model/auth_model.dart';
-import 'package:capstone_project/model/user_model.dart';
-import 'package:capstone_project/model/reply_model.dart';
-import 'package:capstone_project/model/thread_model.dart';
-import 'package:capstone_project/model/search_model.dart';
-import 'package:capstone_project/model/category_model.dart';
-import 'package:capstone_project/model/moderator_model.dart';
+import 'package:capstone_project/model/user_model/user_model.dart';
+import 'package:capstone_project/model/reply_model/reply_model.dart';
+import 'package:capstone_project/model/user_model/profile_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
+import 'package:capstone_project/model/search_model/search_user_model.dart';
+import 'package:capstone_project/model/report_model/report_user_model.dart';
+import 'package:capstone_project/model/report_model/report_reply_model.dart';
+import 'package:capstone_project/model/moderator_model/moderator_model.dart';
+import 'package:capstone_project/model/report_model/report_thread_model.dart';
+import 'package:capstone_project/model/moderator_model/modrequest_model.dart';
+import 'package:capstone_project/model/search_model/search_category_model.dart';
+import 'package:capstone_project/model/report_model/report_category_model.dart';
+import 'package:capstone_project/model/notification_model/notification_model.dart';
 
 class APIServices {
   final Dio dio = Dio();
@@ -24,29 +31,107 @@ class APIServices {
     );
   }
 
-  final String _baseURL =
-      'https://virtserver.swaggerhub.com/etrnal70/nomizo/1.0.0';
+  // final String _baseURL = 'https://virtserver.swaggerhub.com/etrnal70/nomizo/1.0.0';
+  final String _baseURL = 'https://staking-spade-production.up.railway.app';
 
   /// LOGIN
-  Future<List<AuthenticationModel>> postLogin() async {
+  Future<List<String>> postLogin(String email, String password) async {
     try {
-      final request = await Dio().post('$_baseURL/login');
+      final request = await dio.post(
+        '$_baseURL/login',
+        data: {
+          "email": email,
+          "password": password,
+        },
+      );
 
-      List<AuthenticationModel> auth = (request.data as List)
-          .map((e) => AuthenticationModel.fromJson(e))
-          .toList();
+      Map auth = request.data;
+      var response = auth.values.toList();
 
-      return auth;
-    } on Exception catch (e) {
+      return ['success', ...response];
+    } on DioError catch (e) {
       log(e.toString());
-      return <AuthenticationModel>[];
+      return ['', ''];
     }
   }
 
-  /// POST | CREATE CATEGORY
-  Future createCategory(CategoryModel categoryModel) async {
+  /// LOGOUT
+  // Future logout() async {
+  //   try {
+  //     await dio.post('$_baseURL/logout');
+  //     return true;
+  //   } catch (e) {
+  //     log(e.toString());
+  //     return false;
+  //   }
+  // }
+
+  /// REFRESH TOKEN
+
+  /// REGISTER
+  Future<bool> registerUser(String email, String password) async {
     try {
-      await dio.post('$_baseURL/topic', data: categoryModel.toJson());
+      await dio.post(
+        '$_baseURL/register',
+        data: {
+          "email": email,
+          "password": password,
+        },
+      );
+
+      return true;
+    } on DioError catch (e) {
+      log(e.message);
+      return false;
+    }
+  }
+
+  /// REQUEST FOR RESET PASSWORD
+  /// INPUT RESET CODE
+  /// SET NEW PASSWORD
+
+  /// PROFILE
+  Future getUserProfile({required String token}) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/profile',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      var users = ProfileModel.fromJson(response.data);
+
+      return users;
+    } on Exception catch (e) {
+      log(e.toString());
+    }
+  }
+
+  /// EDIT PROFILE
+  Future editProfile({
+    required ProfileModel userProfile,
+    required String token,
+    String? imgPath,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "username": userProfile.username,
+      if (imgPath != null)
+        "profile_image": await MultipartFile.fromFile(imgPath),
+      "bio": userProfile.bio,
+    });
+    try {
+      await dio.put(
+        '$_baseURL/profile',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
       return true;
     } catch (e) {
       log(e.toString());
@@ -54,12 +139,101 @@ class APIServices {
     }
   }
 
-  /// GET POPULAR | Newest CATEGORY
-  Future getCategroy({String? sortby}) async {
+  /// EDIT CURRENT PASSWORD
+  /// REQUEST EMAIL VERIFICARION CODE
+  /// SUBMIT EMAIL VERIFICATION CODE
+
+  /// CHECK EMAIL AVAILABILITY
+  Future checkEmail(String email) async {
+    try {
+      var request = await dio.get(
+        '$_baseURL/user/check',
+        queryParameters: {'email': email},
+      );
+      log(request.data.toString());
+      return true;
+    } on DioError catch (e) {
+      log(e.message);
+      log(e.response!.statusCode.toString());
+      return false;
+    }
+  }
+
+  /// CHECK USERNAME AVAILIBILITY
+  Future checkUsername({required String username}) async {
+    try {
+      await dio.get(
+        '$_baseURL/user/check',
+        queryParameters: {
+          'username': username,
+        },
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// GET USER PROFILE BY ID
+  Future getUsersById(int idUser) async {
+    try {
+      var response = await dio.get('$_baseURL/user/$idUser');
+
+      var users = UserModel.fromJson(response.data);
+
+      return users;
+    } on Exception catch (e) {
+      log(e.toString());
+    }
+  }
+
+  /// FOLLOW USER
+  Future followUser({required String token, required int idUser}) async {
+    try {
+      await dio.get(
+        '$_baseURL/user/$idUser/follow',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// UNFOLLOW USER
+  Future unfollowUser({required String token, required int idUser}) async {
+    try {
+      await dio.get(
+        '$_baseURL/user/$idUser/unfollow',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// GET LIST OF TOPICS
+  Future<List<CategoryModel>> getCategory({int? limit, String? sortby}) async {
     try {
       var response = await dio.get(
         '$_baseURL/topic',
-        queryParameters: {'sort_by': sortby ?? 'activity_count'},
+        queryParameters: {
+          'limit': limit,
+          'offset': 0,
+          'sort_by': sortby ?? 'activity_count',
+        },
       );
 
       List<CategoryModel> topics = (response.data as List)
@@ -73,27 +247,93 @@ class APIServices {
     }
   }
 
-  /// GET CATEGORY BY ID
-  Future getCategroyById(int idCategory) async {
+  /// CREATE NEW TOPIC
+  Future createCategory({
+    required String token,
+    required CategoryModel categoryModel,
+  }) async {
+    FormData formData = FormData.fromMap({
+      'name': categoryModel.name,
+      if (categoryModel.profileImage != '')
+        'profile_image':
+            await MultipartFile.fromFile(categoryModel.profileImage!),
+      'description': categoryModel.description,
+      'rules': categoryModel.rules
+    });
     try {
-      var response = await dio.get('$_baseURL/topic/$idCategory');
+      await dio.post(
+        '$_baseURL/topic',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
 
-      // CategoryModel category = CategoryModel.fromJson(response.data);
-      List<CategoryModel> topics = (response.data as List)
-          .map((e) => CategoryModel.fromJson(e))
-          .toList();
+  /// CHECK TOPIC NAME AVAILIBILITY
+  Future<bool> checkCategoryName({
+    required String token,
+    required String name,
+  }) async {
+    try {
+      await dio.get(
+        '$_baseURL/topic/check',
+        queryParameters: {
+          'topicname': name,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return true;
+    } on DioError catch (e) {
+      log(e.message.toString());
+      return false;
+    }
+  }
 
-      return topics.first;
+  /// GET TOPIC BY ID
+  Future getCategroyById(
+      {required String token, required int idCategory}) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/topic/$idCategory',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      CategoryModel topics = CategoryModel.fromJson(response.data);
+
+      return topics;
     } on Exception catch (e) {
       log(e.toString());
       return CategoryModel();
     }
   }
 
-  /// Get Moderator
-  Future getModerator(int idCategory) async {
+  /// GET TOPIC MODERATOR
+  Future getModerator({required String token, required int idCategory}) async {
     try {
-      var response = await dio.get('$_baseURL/topic/$idCategory/moderator');
+      var response = await dio.get(
+        '$_baseURL/topic/$idCategory/moderator',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       List<ModeratorModel> moderator = (response.data as List)
           .map((e) => ModeratorModel.fromJson(e))
@@ -106,72 +346,115 @@ class APIServices {
     }
   }
 
-  /// Get Contributor
-
-  /// GET POPULAR USER
-  Future getUsers() async {
+  /// REQUEST TO BE MODERATOR
+  Future<bool> requestModerator({
+    required String token,
+    required int idCategory,
+  }) async {
     try {
-      var response = await dio.get('$_baseURL/profile');
-
-      // List<UserModel> topics = (response.data as List)
-      //     .map((e) => UserModel.fromJson(e))
-      //     .toList();
-
-      var users = UserModel.fromJson(response.data);
-
-      return [users];
-    } on Exception catch (e) {
-      log(e.toString());
-      return <UserModel>[];
+      await dio.post(
+        '$_baseURL/topic/$idCategory/modrequest',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return true;
+    } on DioError catch (e) {
+      log(e.message.toString());
+      return false;
     }
   }
 
-  /// GET USER BY ID
-  Future getUsersById(int idUser) async {
+  /// SUBSCRIBE TO TOPIC
+  Future<bool> subscribeCategory({
+    required String token,
+    required int idCategory,
+  }) async {
     try {
-      var response = await dio.get('$_baseURL/user/$idUser');
-
-      var users = UserModel.fromJson(response.data);
-
-      return users;
-    } on Exception catch (e) {
+      await dio.get(
+        '$_baseURL/topic/$idCategory/subscribe',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return true;
+    } catch (e) {
       log(e.toString());
+      return false;
     }
   }
 
-  /// GET SEARCH RESULT
-  Future getSearchResult({String? category}) async {
+  /// CRETAE NEW THREAD
+  Future<bool> uploadThread(ThreadModel threadModel, String token) async {
+    FormData formData = FormData.fromMap({
+      "title": threadModel.title,
+      "content": threadModel.content,
+      if (threadModel.image1 != '')
+        "image_1": await MultipartFile.fromFile(threadModel.image1!),
+      if (threadModel.image2 != '')
+        "image_2": await MultipartFile.fromFile(threadModel.image2!),
+      if (threadModel.image3 != '')
+        "image_3": await MultipartFile.fromFile(threadModel.image3!),
+      if (threadModel.image4 != '')
+        "image_4": await MultipartFile.fromFile(threadModel.image4!),
+      if (threadModel.image5 != '')
+        "image_5": await MultipartFile.fromFile(threadModel.image5!),
+    });
+
     try {
-      var response = await dio.get(
-        '$_baseURL/search',
-        queryParameters: {
-          'sort_thread': 'best',
-          'order': 'asc',
-          'topic': category ?? '',
-          'limit': '10',
-          'offset': '5',
-        },
+      await dio.post(
+        '$_baseURL/topic/${threadModel.topic!.id}/thread',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
 
-      SearchModel searchResult = SearchModel.fromJson(response.data);
-
-      return searchResult;
-    } on Exception catch (e) {
+      return true;
+    } catch (e) {
       log(e.toString());
-      return SearchModel();
+      return false;
     }
   }
 
-  /// GET THREAD BY CATEGORY NAME
-  Future getThread(
-      {String? username, String? categoryName, String? sortby}) async {
+  /// UNSUBSCRIBE TO TOPIC
+  Future<bool> unsubscribeCategory({
+    required String token,
+    required int idCategory,
+  }) async {
+    try {
+      await dio.get(
+        '$_baseURL/topic/$idCategory/subscribe',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// GET THREAD
+  Future<List<ThreadModel>> getThread(
+      {int? userId, int? categoryId, String? sortby}) async {
     try {
       var response = await dio.get(
         '$_baseURL/thread',
         queryParameters: {
-          'username': username ?? '',
-          'topic': categoryName ?? '',
-          'sort_by': sortby ?? 'like',
+          'userId': userId,
+          'topicId': categoryId,
+          'limit': 100,
+          'offset': 0,
         },
       );
 
@@ -185,12 +468,37 @@ class APIServices {
     }
   }
 
+  /// GET THREAD BY ID
+  Future<ThreadModel?> getThreadById(int threadId) async {
+    try {
+      var response = await dio.get('$_baseURL/thread/$threadId');
+
+      ThreadModel thread = ThreadModel.fromJson(response.data);
+
+      return thread;
+    } on Exception catch (e) {
+      log(e.toString());
+      return null;
+    }
+  }
+
   /// DELETE THREAD
   /// UPDATE THREAD
+
   /// DELETE LIKE THREAD
-  Future<bool> deleteLikeThread(int idThread) async {
+  Future<bool> deleteLikeThread({
+    required String token,
+    required int idThread,
+  }) async {
     try {
-      await dio.delete('$_baseURL/thread/$idThread/like');
+      await dio.delete(
+        '$_baseURL/thread/$idThread/like',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -199,34 +507,67 @@ class APIServices {
     }
   }
 
-  /// LIKE THREAD
-  Future<bool> likeThread(int idThread) async {
-    try {
-      await dio.post('$_baseURL/thread/$idThread/like');
-
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// POST REPLY THREAD
-  Future replyThread(ReplyModel replyModel) async {
+  /// LIKE THREAD THREAD
+  Future<bool> likeThread({
+    required String token,
+    required int idThread,
+  }) async {
     try {
       await dio.post(
-        '$_baseURL/thread/${replyModel.thread!.id}/reply',
-        data: replyModel.toJson(),
+        '$_baseURL/thread/$idThread/like',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
+
+      return true;
     } catch (e) {
       log(e.toString());
+      return false;
     }
   }
 
-  /// DELETE UNLIKE THREAD
-  Future<bool> deleteDislikeThread(int idThread) async {
+  /// REPLY TO A THREAD
+  Future<bool> replyThread({
+    required String token,
+    required int idThread,
+    required String content,
+  }) async {
     try {
-      await dio.delete('$_baseURL/thread/$idThread/unlike');
+      await dio.post(
+        '$_baseURL/thread/$idThread/reply',
+        data: FormData.fromMap({
+          'content': content,
+        }),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  /// DELETE DISLIKE THREAD
+  Future<bool> deleteDislikeThread({
+    required String token,
+    required int idThread,
+  }) async {
+    try {
+      await dio.delete(
+        '$_baseURL/thread/$idThread/unlike',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -236,9 +577,19 @@ class APIServices {
   }
 
   /// DISLIKE THREAD
-  Future<bool> dislikeThread(int idThread) async {
+  Future<bool> dislikeThread({
+    required String token,
+    required int idThread,
+  }) async {
     try {
-      await dio.post('$_baseURL/thread/$idThread/unlike');
+      await dio.post(
+        '$_baseURL/thread/$idThread/unlike',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -247,37 +598,171 @@ class APIServices {
     }
   }
 
-  /// GET THREAD BY ID
-  Future getThreadById(int idThread) async {
+  /// GET LIST OF PERSONAL NOTIFICATION
+  Future notification() async {
     try {
-      var response = await dio.get('$_baseURL/thread');
+      var response = await dio.get('$_baseURL/notification');
 
-      List<ThreadModel> category =
-          (response.data as List).map((e) => ThreadModel.fromJson(e)).toList();
+      if (response.statusCode == 200) {
+        return [
+          NotificationModel(
+            id: response.data['context']['author']['id'],
+            username: response.data['context']['author']['username'],
+            image: response.data['context']['author']['profile_image'],
+          )
+        ];
+      }
 
-      return category.first;
-    } on Exception catch (e) {
+      return <NotificationModel>[];
+    } catch (e) {
       log(e.toString());
-      return ThreadModel();
+      return <NotificationModel>[];
+    }
+  }
+
+  /// GET NOTIFICATION CONTEXT
+  /// UNREAD ALL NOTIF
+
+  /// GET LIST OF MODERATOR REQUEST
+  Future getModrequest(String token) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/modrequest',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      List<ModrequestModel> result = (response.data as List)
+          .map((e) => ModrequestModel.fromJson(e))
+          .toList();
+
+      return result;
+    } catch (e) {
+      log(e.toString());
+      return [];
+    }
+  }
+
+  /// REJECT MODERATOR REQUEST
+  /// GET LIST OF REPORTS
+  Future getReports({
+    required String token,
+    required String scope,
+    required int limit,
+  }) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/report',
+        queryParameters: {
+          'scope': scope,
+          'limit': limit,
+          'offset': 0,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (scope == 'thread') {
+        List<ReportThreadModel> result = (response.data as List)
+            .map((e) => ReportThreadModel.fromJson(e))
+            .toList();
+        return result;
+      } else if (scope == 'reply') {
+        List<ReportReplyModel> result = (response.data as List)
+            .map((e) => ReportReplyModel.fromJson(e))
+            .toList();
+        return result;
+      } else if (scope == 'topic') {
+        List<ReportCategoryModel> result = (response.data as List)
+            .map((e) => ReportCategoryModel.fromJson(e))
+            .toList();
+        return result;
+      } else if (scope == 'user') {
+        List<ReportUserModel> result = (response.data as List)
+            .map((e) => ReportUserModel.fromJson(e))
+            .toList();
+        return result;
+      }
+
+      return [];
+    } catch (e) {
+      log(e.toString());
+      if (scope == 'thread') {
+        return <ReportThreadModel>[];
+      } else if (scope == 'reply') {
+        return <ReportReplyModel>[];
+      } else if (scope == 'topic') {
+        return <ReportCategoryModel>[];
+      } else if (scope == 'user') {
+        return <ReportUserModel>[];
+      }
+      return [];
+    }
+  }
+
+  /// TAKE ACTION OF A REPORT
+
+  /// UPDATE EXISTING TOPIC
+  /// GET BAN REQUEST
+  /// MARK REVIEWED BAN REQUEST
+  /// REJECT BAN REQUEST
+  /// QUIT MODERATOR
+
+  /// GET LIST OF REPORT REASON
+  /// CREATE REPORT REASON
+  /// DELETE REPORT REASON
+
+  /// REPLY
+  Future getReply({
+    required String scope,
+    required int idThread,
+    required int limit,
+    int? offset,
+  }) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/reply',
+        queryParameters: {
+          'scope': scope,
+          'threadId': idThread,
+          'limit': limit,
+          'offset': offset ?? 0,
+        },
+      );
+
+      List<ReplyModel> reply =
+          (response.data as List).map((e) => ReplyModel.fromJson(e)).toList();
+
+      return reply;
+    } catch (e) {
+      log(e.toString());
+      return null;
     }
   }
 
   /// DELETE REPLY
 
-  /// GET REPLY By ID
-  Future getReply({required int replyId, required String relation}) async {
+  /// GET REPLY'S CHILD BY REPLY ID
+  Future getReplyChild({required int replyId}) async {
     try {
       var response = await dio.get(
-        '$_baseURL/reply/$replyId',
+        '$_baseURL/reply/$replyId/childs',
         queryParameters: {
-          'relation': relation,
-          'max_depth': '',
+          'limit': 20,
+          'offset': 0,
         },
       );
 
-      ReplyModel reply = ReplyModel.fromJson(response.data);
+      List<ReplyModel> reply =
+          (response.data as List).map((e) => ReplyModel.fromJson(e)).toList();
 
-      return [reply];
+      return reply;
     } catch (e) {
       log(e.toString());
       return null;
@@ -285,10 +770,22 @@ class APIServices {
   }
 
   /// EDIT REPLY
-  /// DELETE LIKE REPLY
-  Future<bool> deleteLikeReply(int idThread) async {
+  /// GET REPLYS CHILDS
+
+  /// DELETE LIKE FROM REPLY
+  Future<bool> deleteLikeReply({
+    required String token,
+    required int idReply,
+  }) async {
     try {
-      await dio.delete('$_baseURL/reply/$idThread/like');
+      await dio.delete(
+        '$_baseURL/reply/$idReply/like',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -298,9 +795,16 @@ class APIServices {
   }
 
   /// LIKE REPLY
-  Future<bool> likeReply(int idThread) async {
+  Future<bool> likeReply({required String token, required int idReply}) async {
     try {
-      await dio.post('$_baseURL/reply/$idThread/like');
+      await dio.post(
+        '$_baseURL/reply/$idReply/like',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -309,10 +813,18 @@ class APIServices {
     }
   }
 
-  /// DELETE DISLIKE REPLY
-  Future<bool> deleteDisikeReply(int idThread) async {
+  /// DELETE DISLIKE FROM REPLY
+  Future<bool> deleteDislikeReply(
+      {required String token, required int idReply}) async {
     try {
-      await dio.delete('$_baseURL/reply/$idThread/unlike');
+      await dio.delete(
+        '$_baseURL/reply/$idReply/unlike',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -321,10 +833,18 @@ class APIServices {
     }
   }
 
-  /// DISLIKE REPLY
-  Future<bool> dislikeReply(int idThread) async {
+  /// DISLIKe REPLY
+  Future<bool> dislikeReply(
+      {required String token, required int idReply}) async {
     try {
-      await dio.post('$_baseURL/reply/$idThread/unlike');
+      await dio.post(
+        '$_baseURL/reply/$idReply/unlike',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
       return true;
     } catch (e) {
@@ -333,136 +853,23 @@ class APIServices {
     }
   }
 
-  /// POST REPLY CHILD ? REPLY TO REPLY
+  /// REPLY TO A REPLY
   Future replyChild({
-    required UserModel author,
-    required ReplyModel replyParent,
+    required String token,
+    required int idReplyParent,
     required String content,
   }) async {
     try {
       await dio.post(
-        '$_baseURL/reply/${replyParent.thread!.id}/reply',
-        data: {
-          "author": {
-            "id": author.id,
-            "profile_image": author.profileImage,
-            "username": author.username
-          },
+        '$_baseURL/reply/$idReplyParent/reply',
+        data: FormData.fromMap({
           "content": content,
-          "parent": replyParent.toJson(),
-          "thread": replyParent.thread!.toJson()
-        },
-      );
-    } catch (e) {
-      log(e.toString());
-    }
-  }
-
-  /// REQUEST MODERATOR CATEGORY
-  Future requestModerator(CategoryModel categoryModel) async {
-    try {
-      await dio.post('$_baseURL/topic/${categoryModel.id}/modrequest');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// SUBSCRIBE TO CATEGORY
-  Future subscribeCategory(int idCategory) async {
-    try {
-      await dio.get('$_baseURL/topic/$idCategory/subscribe');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// UNSUBSCRIBE TO CATEGORY
-  Future unsubscribeCategory(int idCategory) async {
-    try {
-      await dio.get('$_baseURL/topic/$idCategory/unsubscribe');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// FOLLOW USER
-  Future followUser(int idUser) async {
-    try {
-      await dio.get('$_baseURL/user/$idUser/follow');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// UNFOLLOW USER
-  Future unfollowUser(int idUser) async {
-    try {
-      await dio.get('$_baseURL/topic/$idUser/unfollow');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// REPORT USER
-  Future reportUser(
-      UserModel currentUserModel, UserModel userModel, String reason) async {
-    try {
-      await dio.put(
-        '$_baseURL/user/${userModel.id}/report',
-        data: {
-          "created_at": DateTime.now().toString(),
-          "id": 3,
-          "reason": reason,
-          "reporter": {
-            "id": "${currentUserModel.id}",
-            "profile_image": "${currentUserModel.profileImage}",
-            "username": "${currentUserModel.username}"
+        }),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
           },
-          "reviewed": false,
-          "suspect": {
-            "id": "${userModel.id}",
-            "profile_image": "${userModel.profileImage}",
-            "username": "${userModel.username}"
-          }
-        },
-      );
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// REPORT CATEGORY
-  Future reportCategory(CategoryModel categoryModel, String reason) async {
-    try {
-      await dio.put(
-        '$_baseURL/topic/${categoryModel.id}/report',
-        data: {},
-      );
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// REPORT THREAD
-  Future reportThread(ThreadModel threadModel, String reason) async {
-    try {
-      await dio.put(
-        '$_baseURL/thread/${threadModel.id}/report',
-        data: threadModel.toJson(),
+        ),
       );
       return true;
     } catch (e) {
@@ -472,25 +879,18 @@ class APIServices {
   }
 
   /// REPORT REPLY
-  Future reportReply(
-      ReplyModel replyModel, String reason, UserModel reporter) async {
+  Future reportReply(String token, ReplyModel replyModel, int reasonId) async {
     try {
-      await dio.put(
+      await dio.post(
         '$_baseURL/reply/${replyModel.id}/report',
-        data: {
-          "created_at": DateTime.now().toIso8601String(),
-          "id": replyModel.id,
-          "reason": reason,
-          "reply": replyModel.toJson(),
-          "reporter": {
-            "id": reporter.id,
-            "profile_image": reporter.profileImage,
-            "username": reporter.username
-          },
-          "reviewed": false,
-          "thread": replyModel.thread!.toJson(),
-          "topic": replyModel.thread!.topic!.toJson()
+        queryParameters: {
+          "reasonId": reasonId,
         },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
       return true;
     } catch (e) {
@@ -499,79 +899,143 @@ class APIServices {
     }
   }
 
-  /// POST | UPLOAD THREAD
-  Future uploadThread(ThreadModel threadModel) async {
+  /// REPORT THREAD
+  Future reportThread(
+      String token, ThreadModel threadModel, int reasonId) async {
     try {
       await dio.post(
-        '$_baseURL/topic/${threadModel.topic!.id}/thread',
-        data: threadModel.toJson(),
+        '$_baseURL/thread/${threadModel.id}/report',
+        queryParameters: {
+          "reasonId": reasonId,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
-
       return true;
     } catch (e) {
       log(e.toString());
-      return true;
+      return false;
     }
   }
 
-  /// GET PERSONAL PROFILE
-  Future getUserProfile() async {
+  /// REPORT TOPIC
+  Future reportCategory(
+      String token, CategoryModel categoryModel, int reasonId) async {
     try {
-      var response = await dio.get('$_baseURL/profile');
+      await dio.post(
+        '$_baseURL/topic/${categoryModel.id}/report',
+        queryParameters: {
+          'reasonId': reasonId,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
 
-      var users = UserModel.fromJson(response.data);
+  /// REPORT USER
+  Future reportUser(String token, UserModel userModel, int reasonId) async {
+    try {
+      await dio.post(
+        '$_baseURL/user/${userModel.iD}/report',
+        queryParameters: {
+          "reasonId": reasonId,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
 
-      return users;
+  /// SEARCH
+  Future getSearchResult({
+    required int limit,
+    required int offset,
+    required String keyword,
+    required String scope,
+  }) async {
+    try {
+      var response = await dio.get(
+        '$_baseURL/search',
+        queryParameters: {
+          'limit': limit,
+          'offset': offset,
+          'keyword': keyword,
+          'scope': scope,
+        },
+      );
+
+      if (scope == 'thread') {
+        List<ThreadModel> searchResult = (response.data as List)
+            .map((e) => ThreadModel.fromJson(e))
+            .toList();
+        return searchResult;
+      } else if (scope == 'topic') {
+        List<SearchCategoryModel> searchResult = (response.data as List)
+            .map((e) => SearchCategoryModel.fromJson(e))
+            .toList();
+        return searchResult;
+      } else {
+        List<SearchUserModel> searchResult = (response.data as List)
+            .map((e) => SearchUserModel.fromJson(e))
+            .toList();
+        return searchResult;
+      }
     } on Exception catch (e) {
       log(e.toString());
+      if (scope == 'thread') {
+        return <ThreadModel>[];
+      } else if (scope == 'topic') {
+        return <SearchCategoryModel>[];
+      } else {
+        return <SearchUserModel>[];
+      }
     }
   }
 
-  /// EDIT PROFILE
-  Future editProfile(UserModel userProfile) async {
-    try {
-      await dio.put(
-        '$_baseURL/profile',
-        data: userProfile.toJson(),
-      );
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
+  /// GET POPULAR USER
+  // Future getUsers() async {
+  //   try {
+  //     var response = await dio.get('$_baseURL/profile');
+  //     // List<UserModel> topics = (response.data as List)
+  //     //     .map((e) => UserModel.fromJson(e))
+  //     //     .toList();
+  //     var users = UserModel.fromJson(response.data);
+  //     return [users];
+  //   } on Exception catch (e) {
+  //     log(e.toString());
+  //     return <UserModel>[];
+  //   }
+  // }
 
-  /// EDIT PROFILE IMAGE
-  Future editProfileImage() async {
-    try {
-      await dio.put('$_baseURL/profile/image');
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// CHECK USERNAME AVAILABILITY
-  Future checkUsername({required String username}) async {
-    try {
-      await dio.post(
-        '$_baseURL/user/check',
-        queryParameters: {
-          'username': username,
-        },
-      );
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
-  /// EDIT PROFILE PASSWORD
-  /// REQUEST EMAIL VERIFICATION CODE
-  /// SUBMIT EMAILVERIFICATION CODE
-  /// CHECK USERNAME AVAILABILITY
-  ///
+  /// GET THREAD BY ID
+  // Future getThreadById(int idThread) async {
+  //   try {
+  //     var response = await dio.get('$_baseURL/thread');
+  //     List<ThreadModel> category =
+  //         (response.data as List).map((e) => ThreadModel.fromJson(e)).toList();
+  //     return category.first;
+  //   } on Exception catch (e) {
+  //     log(e.toString());
+  //     return ThreadModel();
+  //   }
+  // }
 
 }

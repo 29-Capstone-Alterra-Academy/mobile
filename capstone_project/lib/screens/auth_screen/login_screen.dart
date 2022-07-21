@@ -1,9 +1,11 @@
-import 'dart:developer';
-
 import 'package:capstone_project/screens/components/button_widget.dart';
+import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/viewmodel/authentication_viewmodel/login_provider.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone_project/screens/components/header.dart';
 import 'package:capstone_project/screens/components/appbar.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -15,7 +17,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   var email = TextEditingController();
   var password = TextEditingController();
+
   var formkey = GlobalKey<FormState>();
+  var emailKey = GlobalKey<FormFieldState>();
+  var passwordKey = GlobalKey<FormFieldState>();
 
   @override
   void dispose() {
@@ -26,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<LoginProvider>(context, listen: false);
     return Scaffold(
       appBar: const AppBarComponent(
         logoImage: "assets/images/nomizo-icon.png",
@@ -45,8 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 35,
                 ),
                 userLoginForm(),
-                resetPassword(),
-                button(),
+                resetPassword(provider),
+                button(provider),
               ],
             ),
           ),
@@ -56,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget userLoginForm() {
+    final provider = Provider.of<LoginProvider>(context, listen: false);
     return Form(
       key: formkey,
       child: Column(
@@ -74,7 +81,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 8,
               ),
               TextFormField(
+                key: emailKey,
                 controller: email,
+                onChanged: (value) => emailKey.currentState!.validate(),
                 decoration: InputDecoration(
                   filled: true,
                   contentPadding: const EdgeInsets.all(8),
@@ -89,6 +98,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return '* Silahkan memasukkan Email';
+                  }
+                  if (!EmailValidator.validate(value)) {
+                    return '* Masukkan email yang valid';
                   }
                   return null;
                 },
@@ -111,26 +123,39 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 8,
               ),
-              TextFormField(
-                controller: password,
-                obscureText: true,
-                decoration: InputDecoration(
-                  filled: true,
-                  contentPadding: const EdgeInsets.all(8),
-                  fillColor: Colors.white,
-                  suffixIcon: const Icon(Icons.remove_red_eye_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                style: const TextStyle(
-                  fontSize: 13,
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '* Silahkan memasukkan Password';
-                  }
-                  return null;
+              Consumer<LoginProvider>(
+                builder: (context, value, _) {
+                  return TextFormField(
+                    key: passwordKey,
+                    controller: password,
+                    onChanged: (value) => passwordKey.currentState!.validate(),
+                    obscureText: value.obscurePassword,
+                    decoration: InputDecoration(
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(8),
+                      fillColor: Colors.white,
+                      suffixIcon: InkWell(
+                        onTap: () => provider.changeObscurePassword(),
+                        child: value.obscurePassword
+                            ? const Icon(Icons.remove_red_eye_outlined)
+                            : const Icon(Icons.remove_red_eye),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    style: const TextStyle(
+                      fontSize: 13,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '* Silahkan memasukkan Password';
+                      } else if (value.length < 8) {
+                        return '* Password harus minimal 8 karakter';
+                      }
+                      return null;
+                    },
+                  );
                 },
               ),
             ],
@@ -140,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget resetPassword() {
+  Widget resetPassword(LoginProvider provider) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -153,6 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         TextButton(
           onPressed: () {
+            provider.resetObscure();
             Navigator.of(context).pushNamed('/verifiedEmail');
           },
           child: const Text(
@@ -168,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget button() {
+  Widget button(LoginProvider provider) {
     return Container(
       margin: const EdgeInsets.only(top: 32),
       child: Column(
@@ -176,13 +202,24 @@ class _LoginScreenState extends State<LoginScreen> {
           // Login Button
           elevatedBtnLong42(
             context,
-            () {
+            () async {
               final loginValid = formkey.currentState!.validate();
               if (loginValid) {
                 // action
-                log('login success');
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/navbar', (route) => false);
+                buildLoading(context);
+                await provider.loginUser(email.text, password.text).then(
+                  (value) {
+                    Navigator.pop(context);
+                    if (value) {
+                      buildToast('Login Berhasil');
+                      provider.resetObscure();
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/navbar', (route) => false);
+                    } else {
+                      buildToast('Login Gagal');
+                    }
+                  },
+                );
               } else {
                 // action
               }
@@ -202,6 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               TextButton(
                 onPressed: () {
+                  provider.resetObscure();
                   Navigator.of(context).pushNamed('/register');
                 },
                 child: const Text(

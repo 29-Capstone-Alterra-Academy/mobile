@@ -11,7 +11,7 @@ import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import provider
-import 'package:capstone_project/modelview/upload_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/upload_provider.dart';
 
 class SelectCategoryScreen extends StatefulWidget {
   const SelectCategoryScreen({Key? key}) : super(key: key);
@@ -97,35 +97,41 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                 child: Text('Something Wrong!!!'),
               );
             } else {
-              if (value.popularCategory == null &&
-                  value.newestCategory == null) {
+              if (value.popularCategory.isEmpty ||
+                  value.newestCategory.isEmpty) {
                 return const Center(
                   child: Text('Kategori tidak ada'),
                 );
               }
               return TabBarView(
                 children: [
-                  ListView.builder(
-                    itemCount: value.popularCategory!.length,
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                    itemBuilder: (context, index) {
-                      return selectCategory(
-                        context,
-                        value.popularCategory![index],
-                        provider,
-                      );
-                    },
+                  RefreshIndicator(
+                    onRefresh: () async => provider.getPopularCategory(),
+                    child: ListView.builder(
+                      itemCount: value.popularCategory.length,
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                      itemBuilder: (context, index) {
+                        return selectCategory(
+                          context,
+                          value.popularCategory[index],
+                          provider,
+                        );
+                      },
+                    ),
                   ),
-                  ListView.builder(
-                    itemCount: value.newestCategory!.length,
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                    itemBuilder: (context, index) {
-                      return selectCategory(
-                        context,
-                        value.popularCategory![index],
-                        provider,
-                      );
-                    },
+                  RefreshIndicator(
+                    onRefresh: () async => provider.getNewesCategory(),
+                    child: ListView.builder(
+                      itemCount: value.newestCategory.length,
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                      itemBuilder: (context, index) {
+                        return selectCategory(
+                          context,
+                          value.newestCategory[index],
+                          provider,
+                        );
+                      },
+                    ),
                   ),
                 ],
               );

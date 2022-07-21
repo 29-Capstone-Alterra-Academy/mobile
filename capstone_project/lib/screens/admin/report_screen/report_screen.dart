@@ -1,12 +1,15 @@
 import 'package:badges/badges.dart';
-import 'package:capstone_project/model/report_category_model.dart' as category;
-import 'package:capstone_project/model/report_reply_model.dart' as reply;
-import 'package:capstone_project/model/report_thread_model.dart' as thread;
-import 'package:capstone_project/model/report_user_model.dart' as user;
+import 'package:capstone_project/model/report_model/report_category_model.dart' as category;
+import 'package:capstone_project/model/report_model/report_reply_model.dart' as reply;
+import 'package:capstone_project/model/report_model/report_thread_model.dart' as thread;
+import 'package:capstone_project/model/report_model/report_user_model.dart' as user;
 import 'package:capstone_project/screens/admin/report_screen/detail_report_screen.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
+import 'package:capstone_project/utils/finite_state.dart';
+import 'package:capstone_project/viewmodel/admin_viewmodel/admin_report_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class ReportScreen extends StatefulWidget {
@@ -17,6 +20,14 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreenState extends State<ReportScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<AdminReportProvider>(context, listen: false).getReports();
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -47,102 +58,81 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
         ),
         body: SafeArea(
-          child: TabBarView(
-            children: [
-              // thread report
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const DetailReportScreen(
-                        tabIndex: 0,
-                      ),
-                    ),
-                  );
-                },
-                child: reportThreadItem(reportThreadModel),
-              ),
-              // reply report
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const DetailReportScreen(
-                        tabIndex: 1,
-                      ),
-                    ),
-                  );
-                },
-                child: reportReplyItem(reportReplyModel),
-              ),
-              // category report
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const DetailReportScreen(
-                        tabIndex: 2,
-                      ),
-                    ),
-                  );
-                },
-                child: reportCategoryItem(reportCategoryModel),
-              ),
-              // user report
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const DetailReportScreen(
-                        tabIndex: 3,
-                      ),
-                    ),
-                  );
-                },
-                child: reportUserItem(reportUserModel),
-              ),
-            ],
-          ),
+          child: Consumer<AdminReportProvider>(builder: (context, value, _) {
+            if (value.state == FiniteState.loading) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: NomizoTheme.nomizoTosca.shade600,
+                ),
+              );
+            } else {
+              return TabBarView(
+                children: [
+                  // thread report
+                  reportThreadItem(value.threads),
+                  // reply report
+                  reportReplyItem(value.replies),
+                  // category report
+                  reportCategoryItem(value.categories),
+                  // user report
+                  reportUserItem(value.users),
+                ],
+              );
+            }
+          }),
         ),
       ),
     );
   }
 
   // report category item
-  Widget reportThreadItem(thread.ReportThreadModel threadModel) {
+  Widget reportThreadItem(List<thread.ReportThreadModel> threadModel) {
+    if (threadModel.isEmpty) {
+      return const Center(
+        child: Text('Lapoarn Kosong'),
+      );
+    }
     return ListView.builder(
-      itemCount: 2,
+      itemCount: threadModel.length,
       itemBuilder: (context, index) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          color: NomizoTheme.nomizoDark.shade50,
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // moderator profile picture
-              circlePic(42, threadModel.reporter!.profileImage!),
-              const SizedBox(width: 8),
-              // moderator report section
-              Flexible(
-                child: reportDescription(
-                  reporterName: threadModel.reporter!.username!,
-                  highlight: threadModel.thread!.title!,
-                  type: 'thread',
-                  time: threadModel.createdAt!,
-                  reason: threadModel.reason!.detail!,
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const DetailReportScreen(
+                  tabIndex: 0,
                 ),
               ),
-              // isReviewed
-              Badge(
-                badgeColor: NomizoTheme.nomizoRed.shade600,
-                position: BadgePosition.topEnd(top: 0, end: 0),
-              ),
-            ],
+            );
+          },
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            color: NomizoTheme.nomizoDark.shade50,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // moderator profile picture
+                circlePic(42, threadModel[index].reporter!.profileImage ?? ''),
+                const SizedBox(width: 8),
+                // moderator report section
+                Flexible(
+                  child: reportDescription(
+                    reporterName: threadModel[index].reporter!.username!,
+                    highlight: threadModel[index].thread!.title!,
+                    type: 'thread',
+                    time: threadModel[index].createdAt!,
+                    reason: threadModel[index].reason!.detail!,
+                  ),
+                ),
+                // isReviewed
+                Badge(
+                  badgeColor: NomizoTheme.nomizoRed.shade600,
+                  position: BadgePosition.topEnd(top: 0, end: 0),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -150,36 +140,53 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   // report category item
-  Widget reportReplyItem(reply.ReportReplyModel replyModel) {
+  Widget reportReplyItem(List<reply.ReportReplyModel> replyModel) {
+    if (replyModel.isEmpty) {
+      return const Center(
+        child: Text('Lapoarn Kosong'),
+      );
+    }
     return ListView.builder(
-      itemCount: 2,
+      itemCount: replyModel.length,
       itemBuilder: (context, index) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          color: NomizoTheme.nomizoDark.shade50,
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // moderator profile picture
-              circlePic(42, replyModel.reporter!.profileImage!),
-              const SizedBox(width: 8),
-              // moderator report section
-              Flexible(
-                child: reportDescription(
-                  reporterName: replyModel.reporter!.username!,
-                  highlight: replyModel.reply!.content!,
-                  type: 'reply',
-                  time: replyModel.createdAt!,
-                  reason: replyModel.reason!.detail!,
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const DetailReportScreen(
+                  tabIndex: 1,
                 ),
               ),
-              // isReviewed
-              Badge(
-                badgeColor: NomizoTheme.nomizoRed.shade600,
-                position: BadgePosition.topEnd(top: 0, end: 0),
-              ),
-            ],
+            );
+          },
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            color: NomizoTheme.nomizoDark.shade50,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // moderator profile picture
+                circlePic(42, replyModel[index].reporter!.profileImage!),
+                const SizedBox(width: 8),
+                // moderator report section
+                Flexible(
+                  child: reportDescription(
+                    reporterName: replyModel[index].reporter!.username!,
+                    highlight: replyModel[index].reply!.content!,
+                    type: 'reply',
+                    time: replyModel[index].createdAt!,
+                    reason: replyModel[index].reason!.detail!,
+                  ),
+                ),
+                // isReviewed
+                Badge(
+                  badgeColor: NomizoTheme.nomizoRed.shade600,
+                  position: BadgePosition.topEnd(top: 0, end: 0),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -187,36 +194,53 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   // report category item
-  Widget reportCategoryItem(category.ReportCategoryModel categoryModel) {
+  Widget reportCategoryItem(List<category.ReportCategoryModel> categoryModel) {
+    if (categoryModel.isEmpty) {
+      return const Center(
+        child: Text('Lapoarn Kosong'),
+      );
+    }
     return ListView.builder(
-      itemCount: 2,
+      itemCount: categoryModel.length,
       itemBuilder: (context, index) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          color: NomizoTheme.nomizoDark.shade50,
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // moderator profile picture
-              circlePic(42, categoryModel.reporter!.profileImage!),
-              const SizedBox(width: 8),
-              // moderator report section
-              Flexible(
-                child: reportDescription(
-                  reporterName: categoryModel.reporter!.username!,
-                  highlight: categoryModel.topic!.name!,
-                  type: 'category',
-                  time: categoryModel.createdAt!,
-                  reason: categoryModel.reason!.detail!,
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const DetailReportScreen(
+                  tabIndex: 2,
                 ),
               ),
-              // isReviewed
-              Badge(
-                badgeColor: NomizoTheme.nomizoRed.shade600,
-                position: BadgePosition.topEnd(top: 0, end: 0),
-              ),
-            ],
+            );
+          },
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            color: NomizoTheme.nomizoDark.shade50,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // moderator profile picture
+                circlePic(42, '${categoryModel[index].reporter!.profileImage}'),
+                const SizedBox(width: 8),
+                // moderator report section
+                Flexible(
+                  child: reportDescription(
+                    reporterName: categoryModel[index].reporter!.username!,
+                    highlight: categoryModel[index].topic!.name!,
+                    type: 'category',
+                    time: categoryModel[index].createdAt!,
+                    reason: categoryModel[index].reason!.detail!,
+                  ),
+                ),
+                // isReviewed
+                Badge(
+                  badgeColor: NomizoTheme.nomizoRed.shade600,
+                  position: BadgePosition.topEnd(top: 0, end: 0),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -224,36 +248,53 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   // report user item
-  Widget reportUserItem(user.ReportUserModel userModel) {
+  Widget reportUserItem(List<user.ReportUserModel> userModel) {
+    if (userModel.isEmpty) {
+      return const Center(
+        child: Text('Lapoarn Kosong'),
+      );
+    }
     return ListView.builder(
-      itemCount: 2,
+      itemCount: userModel.length,
       itemBuilder: (context, index) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          color: NomizoTheme.nomizoDark.shade50,
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // moderator profile picture
-              circlePic(42, userModel.reporter!.profileImage!),
-              const SizedBox(width: 8),
-              // moderator report section
-              Flexible(
-                child: reportDescription(
-                  reporterName: userModel.reporter!.username!,
-                  highlight: '@${userModel.suspect!.username!}',
-                  type: 'user',
-                  time: userModel.createdAt!,
-                  reason: userModel.reason!.detail!,
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const DetailReportScreen(
+                  tabIndex: 3,
                 ),
               ),
-              // isReviewed
-              Badge(
-                badgeColor: NomizoTheme.nomizoRed.shade600,
-                position: BadgePosition.topEnd(top: 0, end: 0),
-              ),
-            ],
+            );
+          },
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            color: NomizoTheme.nomizoDark.shade50,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // moderator profile picture
+                circlePic(42, '${userModel[index].reporter!.profileImage}'),
+                const SizedBox(width: 8),
+                // moderator report section
+                Flexible(
+                  child: reportDescription(
+                    reporterName: '${userModel[index].reporter!.username}',
+                    highlight: '@${userModel[index].suspect!.username!}',
+                    type: 'user',
+                    time: userModel[index].createdAt!,
+                    reason: userModel[index].reason!.detail!,
+                  ),
+                ),
+                // isReviewed
+                Badge(
+                  badgeColor: NomizoTheme.nomizoRed.shade600,
+                  position: BadgePosition.topEnd(top: 0, end: 0),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -352,64 +393,4 @@ class _ReportScreenState extends State<ReportScreen> {
       ],
     );
   }
-
-  user.ReportUserModel reportUserModel = user.ReportUserModel(
-    reporter: user.Reporter(
-      id: 1,
-      username: 'mapti',
-      profileImage: '',
-    ),
-    reason: user.Reason(id: 2, detail: 'Kekerasan'),
-    suspect: user.Suspect(
-      id: 17,
-      username: 'fami',
-      profileImage: '',
-    ),
-    createdAt: '2022-07-14T14:29:28.538845Z',
-  );
-
-  category.ReportCategoryModel reportCategoryModel =
-      category.ReportCategoryModel(
-    reporter: category.Reporter(
-      id: 1,
-      username: 'mapti',
-      profileImage: '',
-    ),
-    reason: category.Reason(id: 2, detail: 'Kekerasan'),
-    topic: category.Topic(id: 2, name: 'Foods', profileImage: ''),
-    createdAt: '2022-07-14T14:29:28.538845Z',
-  );
-
-  thread.ReportThreadModel reportThreadModel = thread.ReportThreadModel(
-    reporter: thread.Reporter(
-      id: 1,
-      username: 'mapti',
-      profileImage: '',
-    ),
-    reason: thread.Reason(id: 2, detail: 'Kekerasan'),
-    topic: thread.Topic(id: 2, name: 'Foods', profileImage: ''),
-    thread: thread.Thread(
-      id: 3,
-      title: 'Ambatukam',
-      content: '',
-      image1: '',
-      image2: '',
-      image3: '',
-      image4: '',
-      image5: '',
-    ),
-    createdAt: '2022-07-14T14:29:28.538845Z',
-  );
-
-  reply.ReportReplyModel reportReplyModel = reply.ReportReplyModel(
-    reporter: reply.Reporter(
-      id: 1,
-      username: 'mapti',
-      profileImage: '',
-    ),
-    reason: reply.Reason(id: 2, detail: 'Kekerasan'),
-    topic: reply.Topic(id: 2, name: 'Foods', profileImage: ''),
-    reply: reply.Reply(id: 3, content: 'Bertumbuk kita', image: ''),
-    createdAt: '2022-07-14T14:29:28.538845Z',
-  );
 }

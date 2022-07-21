@@ -12,10 +12,11 @@ import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 
 // import model
-import 'package:capstone_project/model/category_model.dart';
+import 'package:capstone_project/model/category_model/category_model.dart';
 
 // import provider
-import 'package:capstone_project/modelview/create_category_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/upload_provider.dart';
+import 'package:capstone_project/viewmodel/category_viewmodel/create_category_provider.dart';
 
 class CreateCategoryScreen extends StatefulWidget {
   const CreateCategoryScreen({Key? key}) : super(key: key);
@@ -51,8 +52,10 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
   Widget build(BuildContext context) {
     final provider =
         Provider.of<CreateCategoryProvider>(context, listen: false);
+    final category = Provider.of<UploadProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: () async {
+        category.getAllCategory();
         provider.resetForm();
         return true;
       },
@@ -61,6 +64,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
           automaticallyImplyLeading: false,
           leading: IconButton(
             onPressed: () {
+              category.getAllCategory();
               provider.resetForm();
               Navigator.pop(context);
             },
@@ -81,27 +85,34 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                       _formKey.currentState!.save();
 
                       buildLoading(context);
-                      String? msg;
-                      await provider
-                          .createCategory(CategoryModel(
-                        profileImage: value.img?.path,
-                        name: _nameController.text,
-                        description: _bioController.text,
-                        rules: _rulesController.text,
-                        activityCount: 0,
-                        contributorCount: 0,
-                        moderatorCount: 0,
-                      ))
-                          .then((value) {
-                        if (value) {
-                          msg = 'Kategori berhasil dibuat';
+                      if (await provider.checkCategoryName(
+                          name: _nameController.text)) {
+                        String? msg;
+                        await provider
+                            .createCategory(CategoryModel(
+                          profileImage: value.img?.path ?? '',
+                          name: _nameController.text,
+                          description: _bioController.text,
+                          rules: _rulesController.text,
+                          activityCount: 0,
+                          contributorCount: 0,
+                          moderatorCount: 0,
+                        ))
+                            .then((value) {
+                          if (value) {
+                            msg = 'Kategori berhasil dibuat';
+                            category.getAllCategory();
+                            Navigator.pop(context);
+                          } else {
+                            msg = 'Kategori gagal dibuat';
+                          }
                           Navigator.pop(context);
-                        } else {
-                          msg = 'Kategori gagal dibuat';
-                        }
+                        });
+                        buildToast(msg ?? '');
+                      } else {
                         Navigator.pop(context);
-                      });
-                      buildToast(msg ?? '');
+                        buildToast('Nama kategori sudah dipakai.');
+                      }
                     }
                   },
                   'Simpan',
@@ -140,14 +151,12 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                 TextFormField(
                   controller: _nameController,
                   maxLines: 1,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     isDense: true,
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                     hintText: 'Apa nama kategori yang ingin dibuat?',
-                    hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: NomizoTheme.nomizoDark.shade500,
-                        ),
                   ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '* Silahkan memasukkan nama kategori';
@@ -161,14 +170,12 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                 TextFormField(
                   controller: _bioController,
                   maxLines: 1,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     isDense: true,
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                     hintText: 'Berikan penjelasan atas kategori yang dibuat',
-                    hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: NomizoTheme.nomizoDark.shade500,
-                        ),
                   ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '* Silahkan memasukkan Bio kategori';
@@ -184,14 +191,12 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                   minLines: 1,
                   maxLines: 10,
                   keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     isDense: true,
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                     hintText: 'Berikan aturan terhadap kategori ini',
-                    hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: NomizoTheme.nomizoDark.shade500,
-                        ),
                   ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '* Silahkan memasukkan aturan kategori';

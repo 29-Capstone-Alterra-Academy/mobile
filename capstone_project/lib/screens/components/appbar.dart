@@ -15,7 +15,6 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       title: Container(
         padding: const EdgeInsets.only(top: 44),
-        // child: SvgPicture.asset(logoImage),
         child: Image.asset(
           logoImage,
           height: 58,

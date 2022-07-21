@@ -8,7 +8,7 @@ import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 
 // import provider
-import 'package:capstone_project/modelview/search_screen_provider.dart';
+import 'package:capstone_project/viewmodel/search_viewmodel/search_screen_provider.dart';
 
 class PopularCategoryScreen extends StatefulWidget {
   const PopularCategoryScreen({Key? key}) : super(key: key);
@@ -52,14 +52,14 @@ class _PopularCategoryScreenState extends State<PopularCategoryScreen> {
       ),
       body: Consumer<SearchScreenProvider>(
         builder: (context, value, _) {
-          if (value.state == FiniteState.loading) {
+          if (value.categoryState == FiniteState.loading) {
             return Center(
               child: CircularProgressIndicator(
                 color: NomizoTheme.nomizoTosca.shade600,
               ),
             );
           }
-          if (value.state == FiniteState.failed) {
+          if (value.categoryState == FiniteState.failed) {
             return const Center(
               child: Text('Something Wrong!!!'),
             );

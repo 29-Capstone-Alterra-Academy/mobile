@@ -1,6 +1,6 @@
-import 'package:capstone_project/modelview/splash_screen_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:capstone_project/viewmodel/splash_screen_viewmodel/splash_screen_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -18,6 +18,9 @@ class _SplashScreenState extends State<SplashScreen> {
         if (provider.isOnboard!) {
           Navigator.pushNamedAndRemoveUntil(
               context, '/onboard', (route) => false);
+        } else if (provider.isLogin) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/navbar', (route) => false);
         } else {
           Navigator.pushNamedAndRemoveUntil(
               context, '/login', (route) => false);

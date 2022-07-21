@@ -10,7 +10,7 @@ import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 
 // import provider
-import 'package:capstone_project/modelview/upload_provider.dart';
+import 'package:capstone_project/viewmodel/thread_viewmodel/upload_provider.dart';
 
 class SearchSelectCategoryScreen extends StatefulWidget {
   const SearchSelectCategoryScreen({Key? key}) : super(key: key);
@@ -53,8 +53,13 @@ class _SearchSelectCategoryScreenState
         title: TextField(
           controller: _searchController,
           autofocus: true,
-          onSubmitted: (value) {
-            provider.searchCategory(_searchController.text.trim());
+          onChanged: (value) {
+            if (value.isNotEmpty) {
+              provider.searchCategory(_searchController.text.trim());
+            }
+            else {
+              provider.resetSearchResult();
+            }
           },
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
@@ -88,19 +93,19 @@ class _SearchSelectCategoryScreenState
               child: Text('Something Wrong!!!'),
             );
           } else {
-            if (value.results == null || value.results!.topics == null) {
+            if (value.results.isEmpty) {
               if (value.isSearched) {
                 return notFound(context);
               }
               return Container();
             } else {
               return ListView.builder(
-                itemCount: value.results!.threads!.length,
+                itemCount: value.results.length,
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                 itemBuilder: (context, index) {
                   return selectCategory(
                     context,
-                    value.results!.topics![index],
+                    value.results[index],
                     provider,
                   );
                 },

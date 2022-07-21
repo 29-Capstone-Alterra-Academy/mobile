@@ -7,8 +7,11 @@ import 'package:capstone_project/utils/finite_state.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 
+// import model
+import 'package:capstone_project/model/user_model/user_model.dart';
+
 // import provider
-import 'package:capstone_project/modelview/search_screen_provider.dart';
+import 'package:capstone_project/viewmodel/search_viewmodel/search_screen_provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -61,14 +64,14 @@ class _SearchScreenState extends State<SearchScreen> {
               // Popular Category
               Consumer<SearchScreenProvider>(
                 builder: (context, value, _) {
-                  if (value.state == FiniteState.loading) {
+                  if (value.categoryState == FiniteState.loading) {
                     return Center(
                       child: CircularProgressIndicator(
                         color: NomizoTheme.nomizoTosca.shade600,
                       ),
                     );
                   }
-                  if (value.state == FiniteState.failed) {
+                  if (value.categoryState == FiniteState.failed) {
                     return const Center(
                       child: Text('Something Wrong!!!'),
                     );
@@ -80,7 +83,10 @@ class _SearchScreenState extends State<SearchScreen> {
                       return Column(
                         children: [
                           ListView.builder(
-                            itemCount: value.popularCategory.length,
+                            itemCount: value.popularCategory.length > 3
+                                ? 3
+                                : value.popularCategory.length,
+                            physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               return categoryCard(
@@ -106,18 +112,19 @@ class _SearchScreenState extends State<SearchScreen> {
               const SizedBox(height: 8),
               Consumer<SearchScreenProvider>(
                 builder: (context, value, _) {
-                  if (value.state == FiniteState.loading) {
+                  if (value.userState == FiniteState.loading) {
                     return Center(
                       child: CircularProgressIndicator(
                         color: NomizoTheme.nomizoTosca.shade600,
                       ),
                     );
                   }
-                  if (value.state == FiniteState.failed) {
+                  if (value.userState == FiniteState.failed) {
                     return const Center(
                       child: Text('Something Wrong!!!'),
                     );
                   } else {
+                    // if (value.popularUser.isEmpty) {
                     if (value.popularUser.isEmpty) {
                       return const Center(
                           child: Text('Pengguna Terpopuler Tidak Ada'));
@@ -125,11 +132,24 @@ class _SearchScreenState extends State<SearchScreen> {
                       return Column(
                         children: [
                           ListView.builder(
-                            itemCount: value.popularUser.length,
+                            itemCount: value.popularUser.length > 3
+                                ? 3
+                                : value.popularUser.length,
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
+                              // return userCard(
+                              //     context, value.popularUser[index]);
                               return userCard(
-                                  context, value.popularUser[index]);
+                                  context,
+                                  UserModel(
+                                    iD: value.popularUser[index].id,
+                                    profileImage:
+                                        value.popularUser[index].profileImage,
+                                    username: value.popularUser[index].username,
+                                    followersCount:
+                                        value.popularUser[index].followersCount,
+                                  ));
                             },
                           ),
                           const SizedBox(height: 4),

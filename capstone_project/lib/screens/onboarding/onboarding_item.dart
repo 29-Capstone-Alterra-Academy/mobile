@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
-import 'package:capstone_project/modelview/onboarding_provider.dart';
+import 'package:capstone_project/viewmodel/onboarding_viewmodel/onboarding_provider.dart';
 
 class OnboardingItem extends StatefulWidget {
   final OnboardingProvider provider;
@@ -40,9 +40,8 @@ class _OnboardingItemState extends State<OnboardingItem> {
         ),
         const SizedBox(height: 10),
         // subtitle
-        Container(
-          width: 328,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             widget.provider.items[widget.indexPage]['subtitle'],
             textAlign: TextAlign.center,

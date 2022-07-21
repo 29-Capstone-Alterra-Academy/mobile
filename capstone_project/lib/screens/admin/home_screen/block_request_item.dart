@@ -1,7 +1,7 @@
-import 'package:capstone_project/model/thread_model.dart';
+import 'package:capstone_project/model/thread_model/thread_model.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
-import 'package:capstone_project/screens/components/thread_component.dart';
+import 'package:capstone_project/screens/components/thread_card.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -98,8 +98,11 @@ class _BlockRequestItemState extends State<BlockRequestItem> {
       ),
       child: IgnorePointer(
         ignoring: true,
-        child:
-            ThreadComponent(threadModel: threadModelExample, isOpened: false),
+        child: threadCard(
+          context: context,
+          threadModel: threadModelExample,
+          isOpened: false,
+        ),
       ),
     );
   }
@@ -145,7 +148,6 @@ class _BlockRequestItemState extends State<BlockRequestItem> {
   ThreadModel threadModelExample = ThreadModel(
       author: Author(
         id: 3,
-        profileImage: '',
         username: 'raymond',
       ),
       content: 'Content Thread Bla Bla Bla...',
@@ -154,18 +156,13 @@ class _BlockRequestItemState extends State<BlockRequestItem> {
       image1: '',
       image2: '',
       image3: '',
-      image4: null,
-      image5: null,
+      image4: '',
+      image5: '',
       title: 'Judul Thread',
       topic: Topic(
-        activityCount: 0,
-        contributorCount: 0,
-        description: 'jkjkj',
         id: 88,
-        moderatorCount: 0,
         name: 'jk',
         profileImage: '',
-        rules: 'rules',
       ),
       updatedAt: '2016-08-29T09:12:33.001Z');
 }
