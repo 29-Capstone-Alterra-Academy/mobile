@@ -105,27 +105,33 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
               }
               return TabBarView(
                 children: [
-                  ListView.builder(
-                    itemCount: value.popularCategory.length,
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                    itemBuilder: (context, index) {
-                      return selectCategory(
-                        context,
-                        value.popularCategory[index],
-                        provider,
-                      );
-                    },
+                  RefreshIndicator(
+                    onRefresh: () async => provider.getPopularCategory(),
+                    child: ListView.builder(
+                      itemCount: value.popularCategory.length,
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                      itemBuilder: (context, index) {
+                        return selectCategory(
+                          context,
+                          value.popularCategory[index],
+                          provider,
+                        );
+                      },
+                    ),
                   ),
-                  ListView.builder(
-                    itemCount: value.newestCategory.length,
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                    itemBuilder: (context, index) {
-                      return selectCategory(
-                        context,
-                        value.newestCategory[index],
-                        provider,
-                      );
-                    },
+                  RefreshIndicator(
+                    onRefresh: () async => provider.getNewesCategory(),
+                    child: ListView.builder(
+                      itemCount: value.newestCategory.length,
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                      itemBuilder: (context, index) {
+                        return selectCategory(
+                          context,
+                          value.newestCategory[index],
+                          provider,
+                        );
+                      },
+                    ),
                   ),
                 ],
               );

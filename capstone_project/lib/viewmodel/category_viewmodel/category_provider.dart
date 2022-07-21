@@ -95,7 +95,14 @@ class CategoryProvider extends ChangeNotifier {
   /// Get Moderator On This Category
   void getModerator() async {
     changeState(FiniteState.loading);
-    moderators = await _apiServices.getModerator(currentCategory.id ?? 9);
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      moderators = await _apiServices.getModerator(
+        token: token,
+        idCategory: currentCategory.id!,
+      );
+    }
     changeState(FiniteState.none);
   }
 

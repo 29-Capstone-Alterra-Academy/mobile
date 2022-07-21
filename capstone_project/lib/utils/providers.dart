@@ -13,6 +13,7 @@ import 'package:capstone_project/viewmodel/profile_viewmodel/edit_profile_provid
 import 'package:capstone_project/viewmodel/authentication_viewmodel/login_provider.dart';
 import 'package:capstone_project/viewmodel/search_viewmodel/search_screen_provider.dart';
 import 'package:capstone_project/viewmodel/thread_viewmodel/detail_thread_provider.dart';
+import 'package:capstone_project/viewmodel/search_viewmodel/search_history_provider.dart';
 import 'package:capstone_project/viewmodel/admin_viewmodel/admin_moderator_provider.dart';
 import 'package:capstone_project/viewmodel/onboarding_viewmodel/onboarding_provider.dart';
 import 'package:capstone_project/viewmodel/authentication_viewmodel/register_provider.dart';
@@ -33,6 +34,7 @@ List<SingleChildWidget> providers = [
   ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
   ChangeNotifierProvider(create: (_) => SearchScreenProvider()),
   ChangeNotifierProvider(create: (_) => SearchUserProvider()),
+  ChangeNotifierProvider(create: (_) => SearchHistoryProvider()),
   ChangeNotifierProvider(create: (_) => CategoryProvider()),
   ChangeNotifierProvider(create: (_) => UserProvider()),
   ChangeNotifierProvider(create: (_) => UploadProvider()),

@@ -68,23 +68,41 @@ class UploadProvider extends ChangeNotifier {
   void getAllCategory() async {
     changeState(FiniteState.loading);
     // get popular category
+    await getPopularCategory();
+    // get newest category
+    await getNewesCategory();
+    changeState(FiniteState.none);
+  }
+
+  Future getPopularCategory() async {
     popularCategory =
         await _apiServices.getCategory(limit: 20, sortby: 'activity_count');
     popularCategory
         .sort((a, b) => a.activityCount!.compareTo(b.activityCount!));
     popularCategory = popularCategory.reversed.toList();
-    // get newest category
+    notifyListeners();
+  }
+
+  Future getNewesCategory() async {
     newestCategory = await _apiServices.getCategory(limit: 20, sortby: 'date');
     newestCategory.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
     newestCategory = newestCategory.reversed.toList();
-    changeState(FiniteState.none);
+    notifyListeners();
   }
 
   /// Search ALl Category
   void searchCategory(String keyword) async {
     changeState(FiniteState.loading);
-    results = await _apiServices.getSearchResult(
-        limit: 100, offset: 0, keyword: keyword, scope: 'topic');
+    results.clear();
+    for (var element in newestCategory) {
+      if (element.name!.contains(keyword) ||
+          element.name!.contains(keyword.characters.first.toUpperCase())) {
+        results.add(element);
+      }
+    }
+    isSearched = true;
+    // results = await _apiServices.getSearchResult(
+    //     limit: 100, offset: 0, keyword: keyword, scope: 'topic');
     changeState(FiniteState.none);
   }
 

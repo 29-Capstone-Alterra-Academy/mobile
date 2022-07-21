@@ -151,14 +151,12 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                 TextFormField(
                   controller: _nameController,
                   maxLines: 1,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     isDense: true,
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                     hintText: 'Apa nama kategori yang ingin dibuat?',
-                    hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: NomizoTheme.nomizoDark.shade500,
-                        ),
                   ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '* Silahkan memasukkan nama kategori';
@@ -172,14 +170,12 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                 TextFormField(
                   controller: _bioController,
                   maxLines: 1,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     isDense: true,
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                     hintText: 'Berikan penjelasan atas kategori yang dibuat',
-                    hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: NomizoTheme.nomizoDark.shade500,
-                        ),
                   ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '* Silahkan memasukkan Bio kategori';
@@ -195,14 +191,12 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                   minLines: 1,
                   maxLines: 10,
                   keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     isDense: true,
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                     hintText: 'Berikan aturan terhadap kategori ini',
-                    hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: NomizoTheme.nomizoDark.shade500,
-                        ),
                   ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '* Silahkan memasukkan aturan kategori';

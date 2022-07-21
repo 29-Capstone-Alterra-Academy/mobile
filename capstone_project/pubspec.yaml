@@ -47,6 +47,7 @@ dependencies:
   intl: ^0.17.0
   timeago: ^3.2.2
   file_picker: ^3.0.4
+  sqflite: ^2.0.3
 
 dev_dependencies:
   flutter_test:

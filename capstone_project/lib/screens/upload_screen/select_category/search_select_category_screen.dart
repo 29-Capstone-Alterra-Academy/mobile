@@ -53,8 +53,13 @@ class _SearchSelectCategoryScreenState
         title: TextField(
           controller: _searchController,
           autofocus: true,
-          onSubmitted: (value) {
-            provider.searchCategory(_searchController.text.trim());
+          onChanged: (value) {
+            if (value.isNotEmpty) {
+              provider.searchCategory(_searchController.text.trim());
+            }
+            else {
+              provider.resetSearchResult();
+            }
           },
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
