@@ -352,7 +352,8 @@ Widget searchHistoryCard(BuildContext context, SearchHistoryModel history) {
         const Icon(Icons.schedule, size: 24),
         const SizedBox(width: 8),
         Expanded(
-            child: Text(history.keyword!, style: Theme.of(context).textTheme.bodyMedium)),
+            child: Text(history.keyword!,
+                style: Theme.of(context).textTheme.bodyMedium)),
         const SizedBox(width: 8),
         InkWell(
           onTap: () {
@@ -434,6 +435,81 @@ Widget notFound(BuildContext context) {
       ),
     ],
   ));
+}
+
+/// ADMIN BLOCK CONFIRMATION
+Widget blockConfirmation({
+  required BuildContext context,
+  required String title,
+  required String subtitle,
+  required String button1,
+  required String button2,
+  required void Function()? function,
+}) {
+  return AlertDialog(
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 16,
+    ),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 24,
+          width: MediaQuery.of(context).size.width,
+          alignment: Alignment.centerRight,
+          child: InkWell(
+            onTap: () => Navigator.pop(context),
+            child: const Icon(Icons.close),
+          ),
+        ),
+        const SizedBox(height: 18),
+        Image.asset(
+          'assets/img/confirmation.png',
+          width: 168,
+          height: 120,
+        ),
+        const SizedBox(height: 18),
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+        Text(
+          subtitle,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 18),
+      ],
+    ),
+    actions: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          OutlinedButton(
+            onPressed: () => Navigator.pop(context),
+            style: Theme.of(context).outlinedButtonTheme.style?.copyWith(
+                  fixedSize: MaterialStateProperty.all(const Size(100, 42)),
+                ),
+            child: Text(button1),
+          ),
+          ElevatedButton(
+            onPressed: function,
+            style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
+                  fixedSize: MaterialStateProperty.all(const Size(100, 42)),
+                ),
+            child: Text(button2),
+          ),
+        ],
+      ),
+    ],
+  );
 }
 
 /// BUILD TOAST MESSAGE

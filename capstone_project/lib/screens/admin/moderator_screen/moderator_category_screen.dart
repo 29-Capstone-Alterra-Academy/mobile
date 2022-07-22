@@ -2,7 +2,10 @@ import 'package:capstone_project/model/category_model/category_model.dart';
 import 'package:capstone_project/model/user_model/user_model.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
 import 'package:capstone_project/themes/nomizo_theme.dart';
+import 'package:capstone_project/utils/finite_state.dart';
+import 'package:capstone_project/viewmodel/admin_viewmodel/admin_moderator_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ModeratorCategoryScreen extends StatefulWidget {
   final CategoryModel categoryModel;
@@ -20,6 +23,10 @@ class _ModeratorCategoryScreenState extends State<ModeratorCategoryScreen> {
   @override
   void initState() {
     categoryModel = widget.categoryModel;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<AdminModeratorProvider>(context, listen: false)
+          .getModerator(categoryModel.id!);
+    });
     super.initState();
   }
 
@@ -35,16 +42,35 @@ class _ModeratorCategoryScreenState extends State<ModeratorCategoryScreen> {
         ),
         title: Text('Moderator di ${categoryModel.name}'),
       ),
-      body: ListView.builder(
-        itemCount: 2,
-        padding: const EdgeInsets.only(top: 12),
-        itemBuilder: (context, index) {
-          return moderatorItem(
-            userModel: UserModel(
-                iD: 9,
-                profileImage: '',
-                username: 'Map95'),
-          );
+      body: Consumer<AdminModeratorProvider>(
+        builder: (context, value, _) {
+          if (value.state == FiniteState.loading) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: NomizoTheme.nomizoTosca.shade600,
+              ),
+            );
+          } else {
+            if (value.moderators.isEmpty) {
+              return const Center(
+                child: Text('Tidak ada moderator'),
+              );
+            } else {
+              return ListView.builder(
+                itemCount: value.moderators.length,
+                padding: const EdgeInsets.only(top: 12),
+                itemBuilder: (context, index) {
+                  return moderatorItem(
+                    userModel: UserModel(
+                      iD: value.moderators[index].id,
+                      profileImage: value.moderators[index].profileImage,
+                      username: value.moderators[index].username,
+                    ),
+                  );
+                },
+              );
+            }
+          }
         },
       ),
     );
@@ -61,31 +87,11 @@ class _ModeratorCategoryScreenState extends State<ModeratorCategoryScreen> {
           circlePic(52, userModel.profileImage ?? ''),
           const SizedBox(width: 12),
           // Profile Detail
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // username
-              Text(
-                '@${userModel.username}',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-              ),
-              // fullname
-              Text(
-                'Rowmapto',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: NomizoTheme.nomizoDark.shade500,
-                    ),
-              ),
-              // followers
-              Text(
-                '877 Ribu Pengikut',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: NomizoTheme.nomizoDark.shade500,
-                    ),
-              ),
-            ],
+          Text(
+            '@${userModel.username}',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
           ),
         ],
       ),

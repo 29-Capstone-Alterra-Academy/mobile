@@ -1,7 +1,9 @@
 import 'package:capstone_project/model/moderator_model/modrequest_model.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/viewmodel/admin_viewmodel/admin_moderator_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class RequestModeratorItem extends StatefulWidget {
@@ -28,7 +30,7 @@ class _RequestModeratorItemState extends State<RequestModeratorItem> {
           ),
           const SizedBox(height: 12),
           // Approval button
-          approvalButton(),
+          approvalButton(widget.model),
         ],
       ),
     );
@@ -101,14 +103,54 @@ class _RequestModeratorItemState extends State<RequestModeratorItem> {
   }
 
   // Approval button
-  Widget approvalButton() {
+  Widget approvalButton(ModrequestModel model) {
+    final provider =
+        Provider.of<AdminModeratorProvider>(context, listen: false);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // reject button
-        outlinedBtn42(context, () {}, 'Abaikan'),
+        outlinedBtn42(context, () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return blockConfirmation(
+                context: context,
+                title: 'Apakah yakin mengabaikannya?',
+                subtitle:
+                    'Setelah anda mengabaikannya, maka @${model.user!.username} akan batal menjadi moderator dari ${model.topic!.name}',
+                button1: 'Batalkan',
+                button2: 'Abaikan',
+                function: () async {
+                  Navigator.pop(context);
+                  await provider.rejectModrequest(model.id!);
+                  provider.getModrequest();
+                },
+              );
+            },
+          );
+        }, 'Abaikan'),
         // accept button
-        elevatedBtn42(context, () {}, 'Terima'),
+        elevatedBtn42(context, () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return blockConfirmation(
+                context: context,
+                title: 'Apakah yakin menerimanya?',
+                subtitle:
+                    'Setelah anda menerima, maka @${model.user!.username} akan langsung menjadi moderator dari ${model.topic!.name}',
+                button1: 'Batalkan',
+                button2: 'Terima',
+                function: () async {
+                  Navigator.pop(context);
+                  await provider.acceptModrequest(model.id!);
+                  provider.getModrequest();
+                },
+              );
+            },
+          );
+        }, 'Terima'),
       ],
     );
   }

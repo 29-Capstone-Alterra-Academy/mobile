@@ -80,22 +80,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Navigator.pushNamed(context, '/editProfile');
                     },
                     // logout
-                    () async {
-                      buildLoading(context);
-                      await provider.logout().then((value) {
-                        // reset navbar to home screen
-                        Provider.of<BottomNavbarProvider>(
-                          context,
-                          listen: false,
-                        ).changeIndex(0);
+                    () {
+                      Navigator.pop(context);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return blockConfirmation(
+                            context: context,
+                            title: 'Ingin Keluar?',
+                            subtitle:
+                                'Apabila anda keluar dari akun ini, anda harus masuk kembali untuk dapat beridskusi di nomizo',
+                            button1: 'Batal',
+                            button2: 'Keluar',
+                            function: () async {
+                              buildLoading(context);
+                              await provider.logout().then((value) {
+                                // reset navbar to home screen
+                                Provider.of<BottomNavbarProvider>(
+                                  context,
+                                  listen: false,
+                                ).changeIndex(0);
 
-                        buildToast('Logout Berhasil');
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/login',
-                          (route) => false,
-                        );
-                      });
+                                buildToast('Logout Berhasil');
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  '/login',
+                                  (route) => false,
+                                );
+                              });
+                            },
+                          );
+                        },
+                      );
                     }
                   ],
                 ),

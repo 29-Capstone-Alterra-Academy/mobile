@@ -48,6 +48,17 @@ class AdminReportProvider extends ChangeNotifier {
         scope: 'user',
         limit: 30,
       );
+
+      // sort by created date
+      threads.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
+      replies.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
+      categories.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
+      users.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
+
+      threads = threads.reversed.toList();
+      replies = replies.reversed.toList();
+      categories = categories.reversed.toList();
+      users = users.reversed.toList();
     }
     changeState(FiniteState.none);
   }

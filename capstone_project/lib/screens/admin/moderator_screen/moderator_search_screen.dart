@@ -51,7 +51,11 @@ class _ModeratorSearchScreenState extends State<ModeratorSearchScreen> {
             autofocus: true,
             style: Theme.of(context).textTheme.bodyMedium,
             onChanged: (value) {
-              provider.getSearchResult(category: _searchController.text.trim());
+              if (value.isEmpty) {
+                provider.resetSearchResult();
+              } else {
+                provider.getSearchResult(_searchController.text.trim());
+              }
             },
             decoration: InputDecoration(
               isDense: true,
@@ -94,20 +98,20 @@ class _ModeratorSearchScreenState extends State<ModeratorSearchScreen> {
               child: Text('Something Wrong!!!'),
             );
           } else {
-            if (value.results == null || value.results!.topics == null) {
+            if (value.results.isEmpty) {
               if (value.isSearched) {
                 return notFound(context);
+              } else {
+                return Container();
               }
-              return Container();
             } else {
               return ListView.builder(
-                itemCount: value.results!.topics!.length,
+                itemCount: value.results.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.only(top: 12),
                 itemBuilder: (context, index) {
-                  return CategoryItem(
-                      categoryModel: value.results!.topics![index]);
+                  return CategoryItem(categoryModel: value.results[index]);
                 },
               );
             }

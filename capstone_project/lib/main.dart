@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
     timeago.setLocaleMessages('id', MyCustomMessages());
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Nomizo',
+      title: 'Nomizo',
       theme: NomizoTheme.nomizoTheme,
       initialRoute: '/',
       onGenerateRoute: nomizoRoutes,
