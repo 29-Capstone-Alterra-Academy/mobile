@@ -1,4 +1,5 @@
 // import package
+import 'package:capstone_project/model/moderator_model/moderator_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,7 @@ class AdminModeratorProvider extends ChangeNotifier {
 
   List<CategoryModel> categories = [];
   List<ModrequestModel> modrequest = [];
+  List<ModeratorModel> moderators = [];
   List<CategoryModel> results = [];
 
   FiniteState state = FiniteState.none;
@@ -64,6 +66,20 @@ class AdminModeratorProvider extends ChangeNotifier {
         action: 'approve',
       );
     }
+  }
+
+  /// Get Moderator by Category Id
+  void getModerator(int categoryId) async {
+    changeState(FiniteState.loading);
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      moderators = await _apiServices.getModerator(
+        idCategory: categoryId,
+        token: token,
+      );
+    }
+    changeState(FiniteState.none);
   }
 
   /// Get Moderator Request
