@@ -1,7 +1,9 @@
 import 'package:capstone_project/model/moderator_model/modrequest_model.dart';
 import 'package:capstone_project/screens/components/button_widget.dart';
 import 'package:capstone_project/screens/components/card_widget.dart';
+import 'package:capstone_project/viewmodel/admin_viewmodel/admin_moderator_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class RequestModeratorItem extends StatefulWidget {
@@ -28,10 +30,7 @@ class _RequestModeratorItemState extends State<RequestModeratorItem> {
           ),
           const SizedBox(height: 12),
           // Approval button
-          approvalButton(
-            widget.model.user!.username!,
-            widget.model.topic!.name!,
-          ),
+          approvalButton(widget.model),
         ],
       ),
     );
@@ -104,7 +103,9 @@ class _RequestModeratorItemState extends State<RequestModeratorItem> {
   }
 
   // Approval button
-  Widget approvalButton(String user, String category) {
+  Widget approvalButton(ModrequestModel model) {
+    final provider =
+        Provider.of<AdminModeratorProvider>(context, listen: false);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -117,11 +118,13 @@ class _RequestModeratorItemState extends State<RequestModeratorItem> {
                 context: context,
                 title: 'Apakah yakin mengabaikannya?',
                 subtitle:
-                    'Setelah anda mengabaikannya, maka @$user akan batal menjadi moderator dari $category',
+                    'Setelah anda mengabaikannya, maka @${model.user!.username} akan batal menjadi moderator dari ${model.topic!.name}',
                 button1: 'Batalkan',
                 button2: 'Abaikan',
-                function: () {
+                function: () async {
                   Navigator.pop(context);
+                  await provider.rejectModrequest(model.id!);
+                  provider.getModrequest();
                 },
               );
             },
@@ -136,11 +139,13 @@ class _RequestModeratorItemState extends State<RequestModeratorItem> {
                 context: context,
                 title: 'Apakah yakin menerimanya?',
                 subtitle:
-                    'Setelah anda menerima, maka @$user akan langsung menjadi moderator dari $category',
+                    'Setelah anda menerima, maka @${model.user!.username} akan langsung menjadi moderator dari ${model.topic!.name}',
                 button1: 'Batalkan',
-                button2: 'Blokir',
-                function: () {
+                button2: 'Terima',
+                function: () async {
                   Navigator.pop(context);
+                  await provider.acceptModrequest(model.id!);
+                  provider.getModrequest();
                 },
               );
             },

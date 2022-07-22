@@ -40,6 +40,32 @@ class AdminModeratorProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Reject Moderator Request
+  Future rejectModrequest(int promotionId) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      await _apiServices.actionModrequest(
+        token: token,
+        promotionId: promotionId,
+        action: 'reject',
+      );
+    }
+  }
+
+  /// Approve Moderator Request
+  Future acceptModrequest(int promotionId) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('access_token');
+    if (token != null) {
+      await _apiServices.actionModrequest(
+        token: token,
+        promotionId: promotionId,
+        action: 'approve',
+      );
+    }
+  }
+
   /// Get Moderator Request
   void getModrequest() async {
     changeState(FiniteState.loading);

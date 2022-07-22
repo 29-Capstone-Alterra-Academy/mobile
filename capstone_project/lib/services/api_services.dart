@@ -646,7 +646,33 @@ class APIServices {
     }
   }
 
-  /// REJECT MODERATOR REQUEST
+  /// TAKE ACTION MODERATOR REQUEST
+  Future actionModrequest({
+    required String token,
+    required int promotionId,
+    required String action,
+  }) async {
+    try {
+      await dio.put(
+        '$_baseURL/modrequest',
+        queryParameters: {
+          'promotionId': promotionId,
+          'action': action
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      return true;
+    } on DioError catch (e) {
+      log(e.message);
+      return false;
+    }
+  }
+
   /// GET LIST OF REPORTS
   Future getReports({
     required String token,
@@ -707,6 +733,7 @@ class APIServices {
   }
 
   /// TAKE ACTION OF A REPORT
+  Future actionReport() async {}
 
   /// UPDATE EXISTING TOPIC
   /// GET BAN REQUEST

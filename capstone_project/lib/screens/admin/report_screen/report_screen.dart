@@ -7,7 +7,6 @@ import 'package:capstone_project/model/report_model/report_thread_model.dart'
     as thread;
 import 'package:capstone_project/model/report_model/report_user_model.dart'
     as user;
-import 'package:capstone_project/screens/admin/report_screen/detail_report_screen.dart';
 import 'package:capstone_project/screens/admin/report_screen/report_category_screen.dart';
 import 'package:capstone_project/screens/admin/report_screen/report_thread_screen.dart';
 import 'package:capstone_project/screens/admin/report_screen/report_user_screen.dart';
